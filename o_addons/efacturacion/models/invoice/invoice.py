@@ -275,7 +275,7 @@ class invoice(models.Model):
         os.system("echo 'RESPUESTA:"+r.text+"'")
         try:
             #self.documentoRespuestaZip=ET.fromstring(r.text)[0][0][0].text
-            self.documentoRespuestaZip=ET.fromstring(r.text)[1][0][0].text
+            self.documentoRespuestaZip=ET.fromstring(r.text)[0][1][0][0].text
         except Exception, e:
             self.documentoRespuestaZip=""
         self.documentoRespuesta=r.text
