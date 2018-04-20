@@ -185,6 +185,7 @@ def to_word(number, mi_moneda=None):
     human_readable = []
     human_readable_decimals = []
     num_decimals ='{:,.2f}'.format(round(number,2)).split('.') #Sólo se aceptan 2 decimales
+    nd = '{:,.2f}'.format(round(number,2)).split('.') #Sólo se aceptan 2 decimales
     num_units = num_decimals[0].split(',')
     num_decimals = num_decimals[1].split(',')
     #print num_units
@@ -217,8 +218,10 @@ def to_word(number, mi_moneda=None):
     human_readable_decimals = [item for sublist in human_readable_decimals for item in sublist]
     human_readable_decimals.append(fraccion)
     sentence = ' '.join(human_readable).replace('  ',' ').title().strip()
+    
     if sentence[0:len('un mil')] == 'Un Mil':
         sentence = 'Mil' + sentence[len('Un Mil'):]
     if num_decimals != ['00']:
-        sentence = sentence + ' con ' + ' '.join(human_readable_decimals).replace('  ',' ').title().strip()
+        #sentence = sentence + ' con ' + ' '.join(human_readable_decimals).replace('  ',' ').title().strip()
+        sentence = sentence + ' y ' + nd[1] + '/100 '.replace('  ',' ').title().strip()
     return sentence
