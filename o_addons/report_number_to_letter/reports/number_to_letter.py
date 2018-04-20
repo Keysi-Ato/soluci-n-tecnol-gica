@@ -221,7 +221,7 @@ def to_word(number, mi_moneda=None):
     
     if sentence[0:len('un mil')] == 'Un Mil':
         sentence = 'Mil' + sentence[len('Un Mil'):]
-    if num_decimals != ['00']:
+    #if num_decimals != ['00']:
         #sentence = sentence + ' con ' + ' '.join(human_readable_decimals).replace('  ',' ').title().strip()
-        sentence = sentence + ' y ' + nd[1] + '/100 '.replace('  ',' ').title().strip()
+    sentence = sentence + ' y ' + nd[1] + '/100 '.replace('  ',' ').title().strip()
     return sentence
