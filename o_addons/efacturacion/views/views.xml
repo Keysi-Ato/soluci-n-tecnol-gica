@@ -106,6 +106,7 @@
 			<xpath expr="//page[@name='other_info']" position="after">
                 <page string="Documento XML">
                     <group>
+						<field name="documentoXMLcliente"></field>
                         <field name="documentoXML" />
                     </group>
                 </page>
@@ -191,6 +192,7 @@
                 <field name="total_venta_gratuito"/>
                 <field name="total_descuentos"/>
             </xpath>
+			
         </field>
     </record>
 

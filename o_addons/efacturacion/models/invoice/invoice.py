@@ -111,8 +111,10 @@ class invoice(models.Model):
     _inherit = "account.invoice"
 
     documentoXML=fields.Text("Documento XML",default=" ")
+    documentoXMLcliente=fields.Binary("Documento para el cliente")
     documentoZip=fields.Binary("Documento Zip",default="")
     documentoEnvio=fields.Text("Documento de Envio")
+    paraEnvio=fields.Text("XML para cliente")
     documentoRespuesta=fields.Text("Documento de Respuesta XML")
     documentoRespuestaZip=fields.Binary("Documento de Respuesta ZIP")
 
@@ -223,7 +225,6 @@ class invoice(models.Model):
         uri="/var/lib/odoo/"
         name_file=self.company_id.partner_id.vat+"-"+str(self.journal_id.invoice_type_code_id)+"-"+str(self.number)
         file=open(uri+name_file+".xml","w")
-
         signed_root = XMLSigner(
                                     method=methods.enveloped,
                                     digest_algorithm='sha1',
@@ -233,11 +234,15 @@ class invoice(models.Model):
                                        cert=str(self.company_id.public),
                                        )
         signed_root[0][1][0][0].set("Id","SignatureMT")
-        os.system("echo '"+signed_root[0][1][0][0][0][2][2].text+"'")
         self.digestvalue=signed_root[0][1][0][0][0][2][2].text
-        os.system("echo '" + self.digestvalue+ "'")
         file.write(ET.tostring(signed_root))
         file.close()
+        
+        xfile=open(uri+name_file+".xml","r")
+        xml_file = xfile.read()
+        self.documentoXMLcliente=base64.b64encode(str(xml_file))
+        xfile.close()
+		
         zf=zipfile.ZipFile(uri+name_file+".zip",mode="w")
         try:
             zf.write(uri+name_file+".xml",arcname=name_file+".xml")
@@ -258,15 +263,13 @@ class invoice(models.Model):
                                contentfile=self.documentoZip)
         self.documentoEnvio=EnvioXML.toprettyxml("        ")
 
-
-
     @api.multi
     def enviar(self):
         # Beta
         # url="https://e-beta.sunat.gob.pe:443/ol-ti-itcpfegem-beta/billService"
         # Homologacion
-        #url="https://www.sunat.gob.pe:443/ol-ti-itcpgem-sqa/billService"
-        url="https://e-factura.sunat.gob.pe/ol-ti-itcpfegem/billService"
+        url="https://www.sunat.gob.pe:443/ol-ti-itcpgem-sqa/billService"
+        #url="https://e-factura.sunat.gob.pe/ol-ti-itcpfegem/billService"
         #https://www.sunat.gob.pe/ol-ti-itcpgem-sqa/billService
 
         r=requests.post(url=url,
@@ -274,8 +277,7 @@ class invoice(models.Model):
                         headers={"Content-Type":"text/xml"})
         os.system("echo 'RESPUESTA:"+r.text+"'")
         try:
-            #self.documentoRespuestaZip=ET.fromstring(r.text)[0][0][0].text
-            self.documentoRespuestaZip=ET.fromstring(r.text)[1][0][0].text
+            self.documentoRespuestaZip=ET.fromstring(r.text)[0][0][0].text
         except Exception, e:
             self.documentoRespuestaZip=""
         self.documentoRespuesta=r.text
