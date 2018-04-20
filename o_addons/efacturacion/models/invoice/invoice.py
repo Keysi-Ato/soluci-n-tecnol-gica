@@ -268,8 +268,8 @@ class invoice(models.Model):
         # Beta
         # url="https://e-beta.sunat.gob.pe:443/ol-ti-itcpfegem-beta/billService"
         # Homologacion
-        url="https://www.sunat.gob.pe:443/ol-ti-itcpgem-sqa/billService"
-        #url="https://e-factura.sunat.gob.pe/ol-ti-itcpfegem/billService"
+        #url="https://www.sunat.gob.pe:443/ol-ti-itcpgem-sqa/billService"
+        url="https://e-factura.sunat.gob.pe/ol-ti-itcpfegem/billService"
         #https://www.sunat.gob.pe/ol-ti-itcpgem-sqa/billService
 
         r=requests.post(url=url,
