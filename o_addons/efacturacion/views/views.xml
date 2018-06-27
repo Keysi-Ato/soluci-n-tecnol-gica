@@ -71,10 +71,10 @@
         <field name="inherit_id" ref="account.invoice_form"/>
         <field name="arch" type="xml">
             <xpath expr="//button[@name='invoice_print']" position="after">
-                <!-- <button name="generarFactura"
+                <button name="generarFactura"
                         string="Generar Factura"
                         type="object"
-                        attrs="{'invisible':[('invoice_type_code','!=','01')]}"/> -->
+                        attrs="{'invisible':[('invoice_type_code','!=','01')]}"/>
                 <button name="generarFactura"
                         string="Generar Boleta de Venta"
                         type="object"
@@ -87,10 +87,10 @@
                         string="Generar Nota de Débito"
                         type="object"
                         attrs="{'invisible':[('invoice_type_code','!=','08')]}"/>
-                <!-- <button name="firmar" 
+                <button name="firmar" 
                         string="Firmar" 
                         type="object"
-                        attrs="{'invisible':[('invoice_type_code', '!=', '01')]}"/> -->
+                        attrs="{'invisible':[('invoice_type_code', '!=', '01')]}"/>
                 <button name="firmar" 
                         string="FirmarBoleta" 
                         type="object"
