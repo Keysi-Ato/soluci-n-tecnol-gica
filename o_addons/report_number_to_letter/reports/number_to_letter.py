@@ -188,7 +188,7 @@ def to_word(number, mi_moneda=None):
     nd = '{:,.2f}'.format(round(number,2)).split('.') #Sólo se aceptan 2 decimales
     num_units = num_decimals[0].split(',')
     num_decimals = num_decimals[1].split(',')
-    #print num_units
+    # print num_units
     for i,n in enumerate(num_units):
         if int(n) != 0:
             words = hundreds_word(int(n))
@@ -223,5 +223,7 @@ def to_word(number, mi_moneda=None):
         sentence = 'Mil' + sentence[len('Un Mil'):]
     #if num_decimals != ['00']:
         #sentence = sentence + ' con ' + ' '.join(human_readable_decimals).replace('  ',' ').title().strip()
+    if sentence == '':
+        sentence = 'CERO '
     sentence = sentence + ' y ' + nd[1] + '/100 '.replace('  ',' ').title().strip()
     return sentence

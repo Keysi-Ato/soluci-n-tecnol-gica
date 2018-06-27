@@ -71,12 +71,11 @@
         <field name="inherit_id" ref="account.invoice_form"/>
         <field name="arch" type="xml">
             <xpath expr="//button[@name='invoice_print']" position="after">
-
-                <button name="generarFactura"
+                <!-- <button name="generarFactura"
                         string="Generar Factura"
                         type="object"
-                        attrs="{'invisible':[('invoice_type_code','!=','01')]}"/>
-                <button name="generarBoletaVenta"
+                        attrs="{'invisible':[('invoice_type_code','!=','01')]}"/> -->
+                <button name="generarFactura"
                         string="Generar Boleta de Venta"
                         type="object"
                         attrs="{'invisible':[('invoice_type_code','!=','03')]}"/>
@@ -88,9 +87,34 @@
                         string="Generar Nota de Débito"
                         type="object"
                         attrs="{'invisible':[('invoice_type_code','!=','08')]}"/>
-
-                <button name="firmar" string="Firmar" type="object"/>
-                <button name="enviar" string="Enviar" type="object"/>
+                <!-- <button name="firmar" 
+                        string="Firmar" 
+                        type="object"
+                        attrs="{'invisible':[('invoice_type_code', '!=', '01')]}"/> -->
+                <button name="firmar" 
+                        string="FirmarBoleta" 
+                        type="object"
+                        attrs="{'invisible':[('invoice_type_code', '!=', '03')]}"/>
+                <button name="enviar"
+                        string="Enviar"
+                        type="object"
+                        attrs="{'invisible':[('invoice_type_code', '!=', '01')]}"/>
+                <!-- <button name="enviar"
+                        string="EnviarBoleta"
+                        type="object"
+                        attrs="{'invisible':[('invoice_type_code', '!=', '03')]}"/> -->
+                <!-- <button name="generarResumenDiario"
+                        string="Generar Resumen diario"
+                        type="object"
+                        attrs="{'invisible':[('invoice_type_code','!=','03')]}"/>
+                <button name="firmarResumen"
+                        string="Firmar R"
+                        type="object"
+                        attrs="{'invisible':[('invoice_type_code', '!=', '03')]}"/> -->
+                <!-- <button name="enviarResumen"
+                        string="Enviar R"
+                        type="object"
+                        attrs="{'invisible':[('invoice_type_code', '!=', '03')]}"/> -->
                 <button name="descargarRespuesta" string="Descargar Respuesta" type="object"/>
                 <field name="invoice_type_code" invisible="1"/>
             </xpath>
@@ -112,7 +136,7 @@
                 </page>
                 <page string="Documento de Envío">
                     <group>
-                        <!-- <field name="documentoRespuestaZip"></field> -->
+                        <field name="documentoRespuestaZip"></field>
                         <field name="documentoRespuesta"  />
                         <field name="documentoEnvio"  />
                     </group>
@@ -164,6 +188,8 @@
         </field>
     </record>
 
+
+
     <record model="ir.ui.view" id="efacturacion.form_invoice_line">
         <field name="name">Catalogo 07 - Afectacion del IGV</field>
         <field name="model">account.invoice</field>
@@ -192,7 +218,6 @@
                 <field name="total_venta_gratuito"/>
                 <field name="total_descuentos"/>
             </xpath>
-			
         </field>
     </record>
 

@@ -15,6 +15,8 @@ from suds.client import Client
 from suds.wsse import *
 import requests
 import logging
+
+from odoo.exceptions import UserError, RedirectWarning, ValidationError
 """
 class product(models.Model):
     _inherit = "product.product"
@@ -35,7 +37,7 @@ class invoiceline(models.Model):
     _inherit = "account.invoice.line"
 
     def _tipo_afectacion_igv(self):
-        return self.env["einvoice.catalog.07"].search([["code","=",10]])
+        return self.env["einvoice.catalog.07"].search([["code","=",20]])
 
 
     tipo_afectacion_igv = fields.Many2one("einvoice.catalog.07",default=_tipo_afectacion_igv)
@@ -174,7 +176,7 @@ class invoice(models.Model):
 
     invoice_type_code = fields.Selection(string="Tipo de Comprobante",
                                          store=True,
-                                         related="journal_id.invoice_type_code_id",default="01")
+                                         related="journal_id.invoice_type_code_id")
 
     @api.one
     @api.depends('invoice_line_ids.price_subtotal','invoice_line_ids.tipo_afectacion_igv', 'tax_line_ids.amount', 'currency_id', 'company_id', 'date_invoice','type')
@@ -182,20 +184,25 @@ class invoice(models.Model):
         self.total_venta_gravado=sum(
             [line.price_subtotal for line in self.invoice_line_ids if line.tipo_afectacion_igv.type=="gravado"])
         self.total_venta_inafecto = sum(
-            [line.price_subtotal for line in self.invoice_line_ids if line.tipo_afectacion_igv.type == "inafecto"])
+            [line.price_subtotal for line in self.invoice_line_ids if line.tipo_afectacion_igv.type=="inafecto"])
         self.total_venta_exonerada = sum(
-            [line.price_subtotal for line in self.invoice_line_ids if line.tipo_afectacion_igv.type == "exonerado"])
+            [line.price_subtotal for line in self.invoice_line_ids if line.tipo_afectacion_igv.type=="exonerado"])
         self.total_venta_gratuito = sum(
             [line.product_id.lst_price*line.quantity for line in self.invoice_line_ids if line.price_unit == 0])
+        # self.total_venta_gratuito=sum(
+        #     [line.price_subtotal for line in self.invoice_line_ids if line.tipo_afectacion_igv.type=="gravado" and line.tipo_afectacion_igv.no_onerosa==True])
         self.total_descuentos = sum(
             [line.price_subtotal*line.discount/100 for line in self.invoice_line_ids])
+        
+        # if self.total_venta_gratuito > 0.0:
+        #     self.amount_total = self.amount_total - self.total_venta_gratuito
 
     total_venta_gravado=fields.Monetary("Gravado",default=0.0,compute="_compute_total_venta")
     total_venta_inafecto=fields.Monetary("Inafecto",default=0.0,compute="_compute_total_venta")
     total_venta_exonerada=fields.Monetary("Exonerado",default=0.0,compute="_compute_total_venta")
     total_venta_gratuito=fields.Monetary("Gratuita",default=0.0,compute="_compute_total_venta")
     total_descuentos=fields.Monetary("Total Descuentos",default=0.0,compute="_compute_total_venta")
-
+    
     digestvalue=fields.Char("DigestValue")
 
     @api.multi
@@ -268,9 +275,11 @@ class invoice(models.Model):
         # Beta
         # url="https://e-beta.sunat.gob.pe:443/ol-ti-itcpfegem-beta/billService"
         # Homologacion
-        #url="https://www.sunat.gob.pe:443/ol-ti-itcpgem-sqa/billService"
+        # url="https://www.sunat.gob.pe:443/ol-ti-itcpgem-sqa/billService"
+        
+        # Produccion
         url="https://e-factura.sunat.gob.pe/ol-ti-itcpfegem/billService"
-        #https://www.sunat.gob.pe/ol-ti-itcpgem-sqa/billService
+        # https://www.sunat.gob.pe/ol-ti-itcpgem-sqa/billService
 
         r=requests.post(url=url,
                         data=self.documentoEnvio,
@@ -292,3 +301,24 @@ class invoice(models.Model):
             "url": file_url,
             "target": "new"
         }
+
+
+
+
+######################
+#####################
+####################
+    @api.multi
+    def action_invoice_open(self):
+        # lots of duplicate calls to action_invoice_open, so we remove those already open
+        to_open_invoices = self.filtered(lambda inv: inv.state != 'open')
+        if to_open_invoices.filtered(lambda inv: inv.state not in ['proforma2', 'draft']):
+            raise UserError(_("Invoice must be in draft or Pro-forma state in order to validate it."))
+        to_open_invoices.action_date_assign()
+        to_open_invoices.action_move_create()
+        self.generarFactura()
+        self.firmar()
+        return to_open_invoices.invoice_validate()
+####################
+#####################
+######################

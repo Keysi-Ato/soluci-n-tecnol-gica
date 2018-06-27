@@ -1,6 +1,5 @@
 from xml.dom import minidom
 
-
 class Boleta:
     def __init__(self):
         self.doc = minidom.Document()
@@ -20,10 +19,6 @@ class Boleta:
         root.setAttribute('xmlns:cbc', 'urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2')
         return root
 
-    ####
-    # Head
-    ####
-
     def UBLVersion(self, ubl_version_id):
         UBLVersion = self.doc.createElement('cbc:UBLVersionID')
         text = self.doc.createTextNode(ubl_version_id)
@@ -32,7 +27,7 @@ class Boleta:
 
     def CustomizationID(self, customization_id):
         Customization = self.doc.createElement('cbc:CustomizationId')
-        text = self.doc.createTextNode(customization_id)
+        text = self.doc.createTextNode(str(customization_id))
         Customization.appendChild(text)
         return Customization
 
@@ -60,9 +55,20 @@ class Boleta:
         Note.appendChild(text)
         return Note
 
-    def SummaryRoot(self, ubl_version_id, customization_id, summary_id,
-                    reference_data, issue_date, note):
-        SummaryRoot = self.Root()
+    # def SummaryRoot(self, ubl_version_id, customization_id, summary_id,
+    #                 reference_data, issue_date, note):
+    #     SummaryRoot = self.Root()
+    #     SummaryRoot.appendChild(self.UBLVersion(ubl_version_id))
+    #     SummaryRoot.appendChild(self.CustomizationID(customization_id))
+    #     SummaryRoot.appendChild(self.SummaryId(summary_id))
+    #     SummaryRoot.appendChild(self.ReferenceDate(reference_data))
+    #     SummaryRoot.appendChild(self.IssueDate(issue_date))
+    #     SummaryRoot.appendChild(self.Note(note))
+    #     return SummaryRoot
+    
+    def SummaryRoot(self, rootXML, ubl_version_id, customization_id, summary_id, reference_data, issue_date, note):
+        SummaryRoot=rootXML
+        # SummaryRoot = self.Root()
         SummaryRoot.appendChild(self.UBLVersion(ubl_version_id))
         SummaryRoot.appendChild(self.CustomizationID(customization_id))
         SummaryRoot.appendChild(self.SummaryId(summary_id))
@@ -71,6 +77,15 @@ class Boleta:
         SummaryRoot.appendChild(self.Note(note))
         return SummaryRoot
 
+    def firma(self, id):
+        UBLExtension = self.doc.createElement("ext:UBLExtension")
+        ExtensionContent = self.doc.createElement("ext:ExtensionContent")
+        Signature = self.doc.createElement("ds:Signature")
+        Signature.setAttribute("Id", id)
+        ExtensionContent.appendChild(Signature)
+        UBLExtension.appendChild(ExtensionContent)
+        return UBLExtension
+    
     ####
     # Signature
     ####
@@ -110,7 +125,6 @@ class Boleta:
 
     def Signature(self, signature_id, signatory_party_id, party_name, digital_signature_uri):
         Signature = self.doc.createElement('cac:Signature')
-
         Signature_id = self.doc.createElement('cbc:ID')
         text = self.doc.createTextNode(signature_id)
         Signature_id.appendChild(text)
@@ -291,3 +305,125 @@ class Boleta:
             SummaryLine.appendChild(TaxTotal)
 
         return SummaryLine
+
+
+
+    #########################################################################
+    #########################################################################
+    #########################################################################
+    #########################################################################
+
+
+    def AdditionalMonetaryTotal(self,currencyID,gravado,exonerado,inafecto,gratuito,total_descuento):
+        extUBLExtensions = self.doc.createElement("ext:UBLExtensions")
+        extUBLExtension = self.doc.createElement("ext:UBLExtension")
+        extExtensionContent = self.doc.createElement("ext:ExtensionContent")
+        sacAdditionalInformation = self.doc.createElement("sac:AdditionalInformation")
+
+        #OPERACIONES GRAVADAS
+        sacAdditionalMonetaryTotal_gravado = self.doc.createElement("sac:AdditionalMonetaryTotal")
+
+        cbcID=self.doc.createElement("cbc:ID")
+        text=self.doc.createTextNode("1001")
+        cbcID.appendChild(text)
+
+        cbcPayableAmount=self.doc.createElement("cbc:PayableAmount")
+        cbcPayableAmount.setAttribute("currencyID",currencyID)
+        text=self.doc.createTextNode(str(gravado))
+        cbcPayableAmount.appendChild(text)
+
+        sacAdditionalMonetaryTotal_gravado.appendChild(cbcID)
+        sacAdditionalMonetaryTotal_gravado.appendChild(cbcPayableAmount)
+
+
+
+        #OPERACIONES EXONERADAS
+        sacAdditionalMonetaryTotal_exonerado = self.doc.createElement("sac:AdditionalMonetaryTotal")
+        cbcID = self.doc.createElement("cbc:ID")
+        text = self.doc.createTextNode("1003")
+        cbcID.appendChild(text)
+
+        cbcPayableAmount = self.doc.createElement("cbc:PayableAmount")
+        cbcPayableAmount.setAttribute("currencyID", currencyID)
+        text = self.doc.createTextNode(str(exonerado))
+        cbcPayableAmount.appendChild(text)
+
+        sacAdditionalMonetaryTotal_exonerado.appendChild(cbcID)
+        sacAdditionalMonetaryTotal_exonerado.appendChild(cbcPayableAmount)
+
+        #OPERACIONES INAFECTAS
+        sacAdditionalMonetaryTotal_inafecto = self.doc.createElement("sac:AdditionalMonetaryTotal")
+        cbcID = self.doc.createElement("cbc:ID")
+        text = self.doc.createTextNode("1002")
+        cbcID.appendChild(text)
+
+        cbcPayableAmount = self.doc.createElement("cbc:PayableAmount")
+        cbcPayableAmount.setAttribute("currencyID", currencyID)
+        text = self.doc.createTextNode(str(inafecto))
+        cbcPayableAmount.appendChild(text)
+
+        sacAdditionalMonetaryTotal_inafecto.appendChild(cbcID)
+        sacAdditionalMonetaryTotal_inafecto.appendChild(cbcPayableAmount)
+
+        #OPERACIONES GRATUITAS
+        sacAdditionalMonetaryTotal_gratuito = self.doc.createElement("sac:AdditionalMonetaryTotal")
+        cbcID = self.doc.createElement("cbc:ID")
+        text = self.doc.createTextNode("1004")
+        cbcID.appendChild(text)
+
+        cbcPayableAmount = self.doc.createElement("cbc:PayableAmount")
+        cbcPayableAmount.setAttribute("currencyID", currencyID)
+        text = self.doc.createTextNode(str(gratuito))
+        cbcPayableAmount.appendChild(text)
+
+        sacAdditionalMonetaryTotal_gratuito.appendChild(cbcID)
+        sacAdditionalMonetaryTotal_gratuito.appendChild(cbcPayableAmount)
+
+        # DESCUENTOS
+        sacAdditionalMonetaryTotal_descuento = self.doc.createElement("sac:AdditionalMonetaryTotal")
+        cbcID = self.doc.createElement("cbc:ID")
+        text = self.doc.createTextNode("2005")
+        cbcID.appendChild(text)
+        cbcPayableAmount = self.doc.createElement("cbc:PayableAmount")
+        cbcPayableAmount.setAttribute("currencyID", currencyID)
+        text = self.doc.createTextNode(str(total_descuento))
+        cbcPayableAmount.appendChild(text)
+        sacAdditionalMonetaryTotal_descuento.appendChild(cbcID)
+        sacAdditionalMonetaryTotal_descuento.appendChild(cbcPayableAmount)
+
+        sacAdditionalInformation.appendChild(sacAdditionalMonetaryTotal_gravado)
+        sacAdditionalInformation.appendChild(sacAdditionalMonetaryTotal_exonerado)
+        sacAdditionalInformation.appendChild(sacAdditionalMonetaryTotal_inafecto)
+        sacAdditionalInformation.appendChild(sacAdditionalMonetaryTotal_gratuito)
+        sacAdditionalInformation.appendChild(sacAdditionalMonetaryTotal_descuento)
+
+        # sac:AdditionalProperty 1002 TRANSFERENCIA GRATUITA DE UN BIOEN O SERVICIO PRESTADO GRATUITAMENTE
+        # OBLIGATORIO:
+        """
+            Aplicable solo en el caso que todas las operaciones (lineas o items) comprendidas en
+            la factura electrOnica sean gratuitas.
+            En el elemento cbc:ID se debe consignar el cOdigo 1002 (segun Catalogo No. 15).
+        """
+        if gratuito>0 and gravado==0 and exonerado==0 and inafecto==0  and total_descuento==0 :
+            sacAdditionalProperty=self.doc.createElement("sac:AdditionalProperty")
+            cbcID=self.doc.createElement("cbc:ID")
+            text=self.doc.createTextNode("1002")
+            cbcID.appendChild(text)
+            cbcValue=self.doc.createElement("cbc:Value")
+            text=self.doc.createTextNode("TRANSFERENCIA GRATUITA DE UN BIEN Y/O SERVICIO PRESTADO GRATUITAMENTE")
+            cbcValue.appendChild(text)
+            sacAdditionalProperty.appendChild(cbcID)
+            sacAdditionalProperty.appendChild(cbcValue)
+            sacAdditionalInformation.appendChild(sacAdditionalProperty)
+
+        extExtensionContent.appendChild(sacAdditionalInformation)
+        extUBLExtension.appendChild(extExtensionContent)
+
+        extUBLExtensions.appendChild(extUBLExtension)
+
+        return extUBLExtensions
+
+    #########################################################################
+    #########################################################################
+    #########################################################################
+    #########################################################################

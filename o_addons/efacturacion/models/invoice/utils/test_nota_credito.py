@@ -26,4 +26,4 @@ nota_credito.appendChild(credit_note_line)
 
 nota_credito = nota_credito.toprettyxml(indent=" ")
 
-print nota_credito
+# print nota_credito

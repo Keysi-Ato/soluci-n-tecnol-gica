@@ -42,4 +42,4 @@ ticket.appendChild(summary_line)
 ticket.appendChild(summary_line_2)
 ticket = ticket.toprettyxml(indent=" ")
 
-print(ticket)
+# print(ticket)
