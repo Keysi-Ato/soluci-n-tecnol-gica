@@ -37,7 +37,7 @@ class invoiceline(models.Model):
     _inherit = "account.invoice.line"
 
     def _tipo_afectacion_igv(self):
-        return self.env["einvoice.catalog.07"].search([["code","=",20]])
+        return self.env["einvoice.catalog.07"].search([["code","=",10]])
 
 
     tipo_afectacion_igv = fields.Many2one("einvoice.catalog.07",default=_tipo_afectacion_igv)
