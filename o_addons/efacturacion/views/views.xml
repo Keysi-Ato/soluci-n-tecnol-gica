@@ -40,6 +40,34 @@
             </xpath>
         </field>
     </record>
+<!-- <tree colors="red:codigoretorno=='Error'; lightblue:codigoretorno=='Rechazado/Baja'; lightgreen:codigoretorno=='Aceptado'" decoration-info="state == 'draft'" decoration-muted="state == 'cancel'" string="Invoice"> -->
+    <!-- <record model="ir.ui.view" id="account.invoice_tree">
+        <field name="name">Campos SUNAT</field>
+        <field name="model">account.invoice</field>
+        <field name="arch" type="xml">
+            <tree colors="red:codigoretorno=='Error'; blue:codigoretorno=='Rechazado/Baja'; green:codigoretorno=='Aceptado'" string="Invoice">
+                <field name="partner_id" groups="base.group_user" string="Customer"/>
+                <field name="date_invoice"/>
+                <field name="number"/>
+                <field name="mensajeSUNAT"/>
+                <field name="codigoretorno"/>
+                <field name="commercial_partner_id" invisible="1"/>
+                <field name="reference" invisible="1"/>
+                <field name="name" invisible="1"/>
+                <field name="journal_id" invisible="1"/>
+                <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
+                <field name="user_id"/>
+                <field name="date_due"/>
+                <field name="origin"/>
+                <field name="amount_total_signed" string="Total" sum="Total"/>
+                <field name="residual_signed" string="Amount Due" sum="Amount Due"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="company_currency_id" invisible="1"/>
+                <field name="state"/>
+                <field name="type" invisible="context.get('type',True)"/>
+            </tree>
+        </field>
+    </record> -->
 
     <record model="ir.ui.view" id="efacturacion.form_unidad_medida_cat03">
         <field name="name">Agregación de campos a Form de unidad - Cat03</field>
@@ -65,40 +93,64 @@
         </field>
     </record>
 
+    <record model="ir.ui.view" id="efacturacion.button_cancel_invoice_form">
+        <field name="name">Boton cancelar factura</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account_cancel.invoice_form_cancel_inherit"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_invoice_cancel']" position="replace">
+                <button name="action_invoice_cancel" type="object" states="draft,proforma2,open" string="Cancel Invoice" groups="account.group_account_invoice"/>
+            </xpath>
+        </field>
+    </record>
+
     <record model="ir.ui.view" id="efacturacion.button_invoice_form">
         <field name="name">Boton para generar factura</field>
         <field name="model">account.invoice</field>
         <field name="inherit_id" ref="account.invoice_form"/>
         <field name="arch" type="xml">
             <xpath expr="//button[@name='invoice_print']" position="after">
-                <button name="generarFactura"
+                <!-- <button name="generarFactura"
                         string="Generar Factura"
                         type="object"
-                        attrs="{'invisible':[('invoice_type_code','!=','01')]}"/>
-                <button name="generarFactura"
+                        attrs="{'invisible':[('invoice_type_code','!=','01')]}"/> -->
+                <!-- <button name="generarFactura"
                         string="Generar Boleta de Venta"
                         type="object"
-                        attrs="{'invisible':[('invoice_type_code','!=','03')]}"/>
+                        attrs="{'invisible':[('invoice_type_code','!=','03')]}"/> -->
                 <button name="generarNotaCredito"
                         string="Generar Nota de Crédito"
                         type="object"
-                        attrs="{'invisible':[('invoice_type_code','!=','07')]}"/>
-                <button name="generarNotaDebito"
+                        attrs="{'invisible':[('invoice_type_code','!=','07')]}"
+                        groups="base.group_no_one"/>
+                <!-- <button name="generarNotaDebito"
                         string="Generar Nota de Débito"
                         type="object"
-                        attrs="{'invisible':[('invoice_type_code','!=','08')]}"/>
+                        attrs="{'invisible':[('invoice_type_code','!=','08')]}"/> -->
+                <!-- <button name="firmar" 
+                        string="Firmar" 
+                        type="object"
+                        attrs="{'invisible':[('invoice_type_code', '!=', '01')]}"/> -->
                 <button name="firmar" 
                         string="Firmar" 
                         type="object"
-                        attrs="{'invisible':[('invoice_type_code', '!=', '01')]}"/>
-                <button name="firmar" 
+                        groups="base.group_no_one"/>
+                <!-- <button name="firmar" 
                         string="FirmarBoleta" 
                         type="object"
-                        attrs="{'invisible':[('invoice_type_code', '!=', '03')]}"/>
-                <button name="enviar"
-                        string="Enviar"
+                        attrs="{'invisible':[('invoice_type_code', '!=', '03')]}"/>-->
+                <!-- <button name="enviar"
+                        string="Enviar SUNAT"
                         type="object"
-                        attrs="{'invisible':[('invoice_type_code', '!=', '01')]}"/>
+                        attrs="{'invisible':[('invoice_type_code', '!=', '01')]}"/> -->
+                <button name="enviar"
+                        string="Enviar SUNAT"
+                        attrs="{'invisible':[('invoice_number_begin', '!=', True)]}"
+                        type="object"/>
+                <button name="estadoTicket"
+                        string="Generar ticket"
+                        type="object"
+                        groups="base.group_no_one"/>
                 <!-- <button name="enviar"
                         string="EnviarBoleta"
                         type="object"
@@ -116,7 +168,8 @@
                         type="object"
                         attrs="{'invisible':[('invoice_type_code', '!=', '03')]}"/> -->
                 <button name="descargarRespuesta" string="Descargar Respuesta" type="object"/>
-                <field name="invoice_type_code" invisible="1"/>
+                <field name="invoice_type_code" invisible="1" />
+                <field name="invoice_number_begin" invisible="1"/>
             </xpath>
         </field>
     </record>
@@ -139,6 +192,12 @@
                         <field name="documentoRespuestaZip"></field>
                         <field name="documentoRespuesta"  />
                         <field name="documentoEnvio"  />
+                    </group>
+                </page>
+                <page string="XML ticket" groups="base.group_no_one">
+                    <group>
+                        <field name="mensajeSUNAT"></field>
+						<field name="documentoEnvioTicket"></field>
                     </group>
                 </page>
             </xpath>

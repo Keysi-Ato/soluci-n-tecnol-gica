@@ -919,3 +919,48 @@ class Factura:
         Envelope.appendChild(Body)
 
         return Envelope
+
+    def getStatus(self, username, password, ruc, tipo, numero):
+        Envelope=self.doc.createElement("soapenv:Envelope")
+        Envelope.setAttribute("xmlns:soapenv","http://schemas.xmlsoap.org/soap/envelope/")
+        Envelope.setAttribute("xmlns:ser","http://service.sunat.gob.pe")
+        Envelope.setAttribute("xmlns:wsse","http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd")
+
+        Header=self.doc.createElement("soapenv:Header")
+        Security=self.doc.createElement("wsse:Security")
+        UsernameToken=self.doc.createElement("wsse:UsernameToken")
+        Username=self.doc.createElement("wsse:Username")
+        text=self.doc.createTextNode(ruc+username)
+        Username.appendChild(text)
+        Password=self.doc.createElement("wsse:Password")
+        text=self.doc.createTextNode(password)
+        Password.appendChild(text)
+        UsernameToken.appendChild(Username)
+        UsernameToken.appendChild(Password)
+        Security.appendChild(UsernameToken)
+        Header.appendChild(Security)
+        Envelope.appendChild(Header)
+
+        Body=self.doc.createElement("soapenv:Body")
+        getStatus=self.doc.createElement("ser:getStatus")
+        nruc=self.doc.createElement("rucComprobante")
+        text=self.doc.createTextNode(ruc)
+        nruc.appendChild(text)
+        ntipo=self.doc.createElement("tipoComprobante")
+        text=self.doc.createTextNode(tipo)
+        ntipo.appendChild(text)
+        serie=self.doc.createElement("serieComprobante")
+        text=self.doc.createTextNode(numero[:-9])
+        serie.appendChild(text)
+        num=self.doc.createElement("numeroComprobante")
+        v = numero[6:]
+        text=self.doc.createTextNode(str(int(v)))
+        num.appendChild(text)
+        getStatus.appendChild(nruc)
+        getStatus.appendChild(ntipo)
+        getStatus.appendChild(serie)
+        getStatus.appendChild(num)
+        Body.appendChild(getStatus)
+        Envelope.appendChild(Body)
+
+        return Envelope

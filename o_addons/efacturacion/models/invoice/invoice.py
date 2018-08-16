@@ -37,8 +37,7 @@ class invoiceline(models.Model):
     _inherit = "account.invoice.line"
 
     def _tipo_afectacion_igv(self):
-        return self.env["einvoice.catalog.07"].search([["code","=",10]])
-
+        return self.env["einvoice.catalog.07"].search([["code","=",20]])
 
     tipo_afectacion_igv = fields.Many2one("einvoice.catalog.07",default=_tipo_afectacion_igv)
     no_onerosa = fields.Boolean(related="tipo_afectacion_igv.no_onerosa",string="No Oneroso")
@@ -119,8 +118,47 @@ class invoice(models.Model):
     paraEnvio=fields.Text("XML para cliente")
     documentoRespuesta=fields.Text("Documento de Respuesta XML")
     documentoRespuestaZip=fields.Binary("Documento de Respuesta ZIP")
+    documentoEnvioTicket = fields.Text("Documento de Envio Ticket")
+
+    mensajeSUNAT = fields.Text("Mensaje de respuesta")
+    codigoretorno = fields.Char("Código retorno")
+
+    #####
+    invoice_number_begin=fields.Boolean('Flag button', compute='_compute_number_begin')
+    #####
+
+    def _compute_zip(self):
+        self.documentoRespuestaZip = ET.fromstring(str(self.documentoRespuesta))[1][0][0].text
+
+    def _compute_number_begin(self):
+        # etroot = ET.fromstring(str(self.documentoRespuesta))[1][0][0]
+        # print ET.fromstring(str(self.documentoRespuesta))[1][0][0].text
+        if self.number:
+            if 'F' in self.number:
+                self.invoice_number_begin=True
+            else:
+                self.invoice_number_begin=False
 
 
+    ## MODIFICACIONES DANIEL
+    def enviar_correo(self):
+        template = self.env.ref('account.email_template_edi_invoice', False)
+        """
+        mail_compose=self.env["mail.compose.message"].sudo().create({
+            "model":'account.invoice',
+            "res_id":self.id,
+            "use_template":bool(template),
+            "template_id":template and template.id or False,
+            "composition_mode":'comment',
+            "mark_invoice_as_sent":True,
+            "custom_layout":"account.mail_template_data_notification_email_account_invoice"
+        })
+        """
+        mail_id = self.env["mail.template"].sudo().browse(template.id).send_mail(self.id)
+        mail = self.env["mail.mail"].sudo().browse(mail_id)
+        mail.send()
+    ## MODIFICACION DANIEL 
+    
     def _list_reference_code_credito(self):
         catalogs=self.env["einvoice.catalog.09"].search([])
         list=[]
@@ -192,7 +230,7 @@ class invoice(models.Model):
         # self.total_venta_gratuito=sum(
         #     [line.price_subtotal for line in self.invoice_line_ids if line.tipo_afectacion_igv.type=="gravado" and line.tipo_afectacion_igv.no_onerosa==True])
         self.total_descuentos = sum(
-            [line.price_subtotal*line.discount/100 for line in self.invoice_line_ids])
+            [line.quantity*line.price_unit*line.discount/100 for line in self.invoice_line_ids])
         
         # if self.total_venta_gratuito > 0.0:
         #     self.amount_total = self.amount_total - self.total_venta_gratuito
@@ -270,6 +308,7 @@ class invoice(models.Model):
                                contentfile=self.documentoZip)
         self.documentoEnvio=EnvioXML.toprettyxml("        ")
 
+
     @api.multi
     def enviar(self):
         # Beta
@@ -284,9 +323,9 @@ class invoice(models.Model):
         r=requests.post(url=url,
                         data=self.documentoEnvio,
                         headers={"Content-Type":"text/xml"})
-        os.system("echo 'RESPUESTA:"+r.text+"'")
+        # os.system("echo 'RESPUESTA:"+r.text+"'")
         try:
-            self.documentoRespuestaZip=ET.fromstring(r.text)[0][0][0].text
+            self.documentoRespuestaZip=ET.fromstring(r.text)[1][0][0].text
         except Exception, e:
             self.documentoRespuestaZip=""
         self.documentoRespuesta=r.text
@@ -301,11 +340,51 @@ class invoice(models.Model):
             "url": file_url,
             "target": "new"
         }
-
-
-
-
+####################
 ######################
+    @api.multi
+    def estadoTicket(self):
+        FacturaObject = Factura()
+        EnvioXML = FacturaObject.getStatus(
+            username = str(self.company_id.sunat_username),
+            password = str(self.company_id.sunat_password),
+            ruc = str(self.company_id.partner_id.vat),
+            tipo = str(self.invoice_type_code),
+            numero = self.number
+            )
+        self.documentoEnvioTicket=EnvioXML.toprettyxml("        ")
+        self.enviarTicket()
+    
+    @api.multi
+    def enviarTicket(self):
+        # Beta
+        # url="https://e-beta.sunat.gob.pe:443/ol-ti-itcpfegem-beta/billService"
+        # Homologacion
+        # url="https://www.sunat.gob.pe:443/ol-ti-itcpgem-sqa/billService"
+        
+        # Produccion
+        # URL 1
+        # url="https://e-factura.sunat.gob.pe/ol-ti-itcpfegem/billService"
+        url = "https://www.sunat.gob.pe/ol-it-wsconscpegem/billConsultService"
+        r=requests.post(url=url,
+                        data=self.documentoEnvioTicket,
+                        headers={"Content-Type":"text/xml"})
+        
+        # codigo = ET.fromstring(r.text)[0][0][0][0].text
+        # mensaje = ET.fromstring(r.text)[0][0][0][1].text
+        print ET.fromstring(r.text.encode('utf-8'))[0][0][0][1].text.encode('utf-8')
+        # mensaje = ET.fromstring(r.text.encode('utf-8'))[0][0][0][1].text.encode('utf-8')
+        #ET.fromstring(r.text)[0][0][0][1].text
+        codigo = ET.fromstring(r.text.encode('utf-8'))[0][0][0][0].text.encode('utf-8')
+        if codigo == '0001':
+            self.codigoretorno = "Aceptado"
+        elif (codigo == '0002') or (codigo == '0003'):
+            self.codigoretorno = "Rechazado/Baja"
+        else:
+            self.codigoretorno = "Error"
+        self.mensajeSUNAT = ET.fromstring(r.text.encode('utf-8'))[0][0][0][1].text.encode('utf-8')
+        
+        self.documentoRespuesta=r.text
 #####################
 ####################
     @api.multi
@@ -316,9 +395,20 @@ class invoice(models.Model):
             raise UserError(_("Invoice must be in draft or Pro-forma state in order to validate it."))
         to_open_invoices.action_date_assign()
         to_open_invoices.action_move_create()
-        self.generarFactura()
+        
+        if self.invoice_type_code in ('01','03'):
+            self.generarFactura()
+        # elif self.invoice_type_code == '03':
+        #     self.generarBoletaVenta()
+        elif self.invoice_type_code == '07':
+            self.generarNotaCredito()
+        elif self.invoice_type_code == '08':
+            self.generarNotaDebito()
+        
         self.firmar()
-        return to_open_invoices.invoice_validate()
+        response = to_open_invoices.invoice_validate()
+        # self.enviar_correo()
+        return response
 ####################
 #####################
 ######################

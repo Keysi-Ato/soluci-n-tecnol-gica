@@ -95,6 +95,21 @@ class NotaCredito:
         extExtensionContent = self.doc.createElement("ext:ExtensionContent")
         sacAdditionalInformation = self.doc.createElement("sac:AdditionalInformation")
 
+        #OPERACIONES DESCUENTOS
+        sacAdditionalMonetaryTotal_descuentos = self.doc.createElement("sac:AdditionalMonetaryTotal")
+
+        cbcID=self.doc.createElement("cbc:ID")
+        text=self.doc.createTextNode("2005")
+        cbcID.appendChild(text)
+
+        cbcPayableAmount=self.doc.createElement("cbc:PayableAmount")
+        cbcPayableAmount.setAttribute("currencyID",currencyID)
+        text=self.doc.createTextNode(str(total_descuento))
+        cbcPayableAmount.appendChild(text)
+
+        sacAdditionalMonetaryTotal_descuentos.appendChild(cbcID)
+        sacAdditionalMonetaryTotal_descuentos.appendChild(cbcPayableAmount)
+
         #OPERACIONES GRAVADAS
         sacAdditionalMonetaryTotal_gravado = self.doc.createElement("sac:AdditionalMonetaryTotal")
 
@@ -109,8 +124,6 @@ class NotaCredito:
 
         sacAdditionalMonetaryTotal_gravado.appendChild(cbcID)
         sacAdditionalMonetaryTotal_gravado.appendChild(cbcPayableAmount)
-
-
 
         #OPERACIONES EXONERADAS
         sacAdditionalMonetaryTotal_exonerado = self.doc.createElement("sac:AdditionalMonetaryTotal")
@@ -143,6 +156,8 @@ class NotaCredito:
         sacAdditionalInformation.appendChild(sacAdditionalMonetaryTotal_gravado)
         sacAdditionalInformation.appendChild(sacAdditionalMonetaryTotal_exonerado)
         sacAdditionalInformation.appendChild(sacAdditionalMonetaryTotal_inafecto)
+        sacAdditionalInformation.appendChild(sacAdditionalMonetaryTotal_descuentos)
+
 
         # sac:AdditionalProperty 1002 TRANSFERENCIA GRATUITA DE UN BIOEN O SERVICIO PRESTADO GRATUITAMENTE
         # OBLIGATORIO:
@@ -470,7 +485,7 @@ class NotaCredito:
         TaxScheme.appendChild(TaxTypeCode)
         TaxCategory.appendChild(TaxExemptionCode)
         TaxCategory.appendChild(TaxScheme)
-        TaxSubtotal.appendChild(TaxableAmount)
+        # TaxSubtotal.appendChild(TaxableAmount)
         TaxSubtotal.appendChild(TaxAmountSubtotal)
         TaxSubtotal.appendChild(TaxCategory)
 

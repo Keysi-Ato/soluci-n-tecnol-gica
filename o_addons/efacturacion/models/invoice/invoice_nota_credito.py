@@ -41,9 +41,15 @@ class invoice_nota_credito(models.Model):
                                                        issue_time=False,
                                                        currency_code=str(self.company_id.currency_id.name))
 
+        if self.motivo != False:
+            motivo = self.motivo
+        else:
+            motivo = "Default"
+
         discrepancy_response = NotaCreditoObject.DiscrepancyResponse(reference_id=str(self.referenceID),
                                                                      response_code=str(self.response_code_credito),
-                                                                     description=str(self.motivo if self.motivo!=False else "" ))
+                                                                     description=motivo)
+                                                                     #description=str(self.motivo if self.motivo!=False else "" ))
 
         DocumentTypeCode="03" if self.referenceID[0]=="B" else ("01" if self.referenceID[0]=="F" else "-")
 
@@ -72,10 +78,31 @@ class invoice_nota_credito(models.Model):
                                                            nombre_proveedor=str(
                                                                self.company_id.partner_id.registration_name),
                                                            codigo_pais="PE")
-
-        customer_party = NotaCreditoObject.cacAccountCustomerParty(num_doc_identidad=str(self.partner_id.vat),
-                                                        tipo_doc_identidad=str(self.partner_id.catalog_06_id.code),
-                                                        nombre_cliente=str(self.partner_id.registration_name))
+############################################
+        # DOCUMENTO DE IDENTIDAD
+        num_doc_ident = str(self.partner_id.vat)
+        if num_doc_ident == 'False':
+            num_doc_ident = '-'
+        
+        parent = self.partner_id.parent_id
+        if parent:
+            doc_code = str(self.partner_id.parent_id.catalog_06_id.code)
+            nom_cli = self.partner_id.parent_id.registration_name
+            if nom_cli == False:
+                nom_cli = self.partner_id.parent_id.name
+        else:
+            doc_code = str(self.partner_id.catalog_06_id.code)
+            nom_cli = self.partner_id.registration_name
+            if nom_cli == False:
+                nom_cli = self.partner_id.name
+###############################################        
+        
+        customer_party = NotaCreditoObject.cacAccountCustomerParty(num_doc_identidad=num_doc_ident,
+                                                        tipo_doc_identidad=doc_code,
+                                                        nombre_cliente=nom_cli)
+        # customer_party = NotaCreditoObject.cacAccountCustomerParty(num_doc_identidad=str(self.partner_id.vat),
+        #                                                 tipo_doc_identidad=str(self.partner_id.catalog_06_id.code),
+        #                                                 nombre_cliente=str(self.partner_id.registration_name))
 
         nota_credito.appendChild(discrepancy_response)
         nota_credito.appendChild(billing_reference)
@@ -145,14 +172,20 @@ class invoice_nota_credito(models.Model):
             for Tax in TaxTotals:
                 a.appendChild(Tax)
 
-            discount = (line.price_subtotal if line.price_subtotal else 0.0) * (line.discount / 100)
+            # discount = (line.price_subtotal if line.price_subtotal else 0.0) * (line.discount / 100)
+            # a.appendChild(NotaCreditoObject.cacItem(str(line.product_id.id), line.name))
+            # a.appendChild(NotaCreditoObject.cacPrice(str(line.price_subtotal)))
+            # discount = (line.price_unit if line.price_unit else 0.0) * (line.discount / 100)
             a.appendChild(NotaCreditoObject.cacItem(str(line.product_id.id), line.name))
-            a.appendChild(NotaCreditoObject.cacPrice(str(line.price_subtotal)))
-            if discount > 0:
-                a.appendChild(
-                    NotaCreditoObject.AllowanceCharge(str(round(discount, 2)), str(self.company_id.currency_id.name)))
+            a.appendChild(NotaCreditoObject.cacPrice(str(line.price_unit)))
+            # if discount > 0:
+                # a.appendChild(
+                    # NotaCreditoObject.AllowanceCharge(str(round(discount, 2)), str(self.company_id.currency_id.name)))
             id = id + 1
             nota_credito.appendChild(a)
 
-        I = nota_credito.toprettyxml("        ")
-        self.documentoXML='<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>'+I
+        # I = nota_credito.toprettyxml("        ")
+        # self.documentoXML='<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>'+I
+
+        I=nota_credito.toprettyxml("   ")
+        self.documentoXML =  I
