@@ -37,7 +37,7 @@ class invoiceline(models.Model):
     _inherit = "account.invoice.line"
 
     def _tipo_afectacion_igv(self):
-        return self.env["einvoice.catalog.07"].search([["code","=",20]])
+        return self.env["einvoice.catalog.07"].search([["code","=",10]])
 
     tipo_afectacion_igv = fields.Many2one("einvoice.catalog.07",default=_tipo_afectacion_igv)
     no_onerosa = fields.Boolean(related="tipo_afectacion_igv.no_onerosa",string="No Oneroso")
@@ -268,6 +268,9 @@ class invoice(models.Model):
         for prefix, uri in namespaces.iteritems():
             ET.register_namespace(prefix, uri)
         uri="/var/lib/odoo/"
+        print self.company_id.partner_id.vat
+        print str(self.journal_id.invoice_type_code_id)
+        print str(self.number)
         name_file=self.company_id.partner_id.vat+"-"+str(self.journal_id.invoice_type_code_id)+"-"+str(self.number)
         file=open(uri+name_file+".xml","w")
         signed_root = XMLSigner(
