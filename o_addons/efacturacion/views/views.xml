@@ -93,7 +93,7 @@
         </field>
     </record>
 
-    <record model="ir.ui.view" id="efacturacion.button_cancel_invoice_form">
+    <!-- <record model="ir.ui.view" id="efacturacion.button_cancel_invoice_form">
         <field name="name">Boton cancelar factura</field>
         <field name="model">account.invoice</field>
         <field name="inherit_id" ref="account_cancel.invoice_form_cancel_inherit"/>
@@ -102,7 +102,18 @@
                 <button name="action_invoice_cancel" type="object" states="draft,proforma2,open" string="Cancel Invoice" groups="account.group_account_invoice"/>
             </xpath>
         </field>
-    </record>
+    </record> -->
+
+    <!-- <record model="ir.ui.view" id="efacturacion.invoice_tree_view">
+        <field name="name">Tree view</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="account.invoice_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='number']" position="after">
+                <field name="invoice_number_begin"/>
+            </xpath>
+        </field>
+    </record> -->
 
     <record model="ir.ui.view" id="efacturacion.button_invoice_form">
         <field name="name">Boton para generar factura</field>
@@ -143,9 +154,12 @@
                         string="Enviar SUNAT"
                         type="object"
                         attrs="{'invisible':[('invoice_type_code', '!=', '01')]}"/> -->
-                <button name="enviar"
+                <!-- <button name="enviar"
                         string="Enviar SUNAT"
                         attrs="{'invisible':[('invoice_number_begin', '!=', True)]}"
+                        type="object"/> -->
+                <button name="enviar"
+                        string="Enviar SUNAT"
                         type="object"/>
                 <button name="estadoTicket"
                         string="Generar ticket"
@@ -169,7 +183,7 @@
                         attrs="{'invisible':[('invoice_type_code', '!=', '03')]}"/> -->
                 <button name="descargarRespuesta" string="Descargar Respuesta" type="object"/>
                 <field name="invoice_type_code" invisible="1" />
-                <field name="invoice_number_begin" invisible="1"/>
+                <!-- <field name="invoice_number_begin" invisible="1"/> -->
             </xpath>
         </field>
     </record>

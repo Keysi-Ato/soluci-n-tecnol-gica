@@ -25,13 +25,13 @@ import os
 
 class SaleOrder(models.Model):
     _inherit = "sale.order"
-    tipo_documento=fields.Selection(string="Tipo de Documento",selection=[('01','Factura'),('03','Boleta')], required=True)
+    tipo_documento=fields.Selection(string="Tipo de Documento",selection=[('01','Factura'),('03','Boleta')], required=True, default='01')
 
     @api.multi
     def action_view_invoice(self):
         invoices = self.mapped('invoice_ids')
         action = self.env.ref('account.action_invoice_tree1').read()[0]
-
+        print self.tipo_documento
         if len(invoices) > 1:
             action['domain'] = [('id', 'in', invoices.ids)]
         elif len(invoices) == 1:

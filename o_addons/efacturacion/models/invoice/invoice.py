@@ -124,7 +124,7 @@ class invoice(models.Model):
     codigoretorno = fields.Char("Código retorno")
 
     #####
-    invoice_number_begin=fields.Boolean('Flag button', compute='_compute_number_begin')
+    # invoice_number_begin=fields.Boolean('Flag button', compute='_compute_number_begin')
     #####
 
     def _compute_zip(self):
@@ -133,12 +133,16 @@ class invoice(models.Model):
     def _compute_number_begin(self):
         # etroot = ET.fromstring(str(self.documentoRespuesta))[1][0][0]
         # print ET.fromstring(str(self.documentoRespuesta))[1][0][0].text
+        # print self.number
+        
         if self.number:
             if 'F' in self.number:
-                self.invoice_number_begin=True
+                # self.invoice_number_begin=True
+                return True
             else:
-                self.invoice_number_begin=False
-
+                # self.invoice_number_begin=False
+                return False
+        
 
     ## MODIFICACIONES DANIEL
     def enviar_correo(self):
