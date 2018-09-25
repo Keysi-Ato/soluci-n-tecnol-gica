@@ -320,12 +320,12 @@ class invoice(models.Model):
     @api.multi
     def enviar(self):
         # Beta
-        url="https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService"
+        # url="https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService"
         # Homologacion
         # url="https://www.sunat.gob.pe:443/ol-ti-itcpgem-sqa/billService"
         
         # Produccion
-        # url="https://e-factura.sunat.gob.pe/ol-ti-itcpfegem/billService"
+        url="https://e-factura.sunat.gob.pe/ol-ti-itcpfegem/billService"
         # https://www.sunat.gob.pe/ol-ti-itcpgem-sqa/billService
 
         r=requests.post(url=url,
@@ -366,13 +366,13 @@ class invoice(models.Model):
     @api.multi
     def enviarTicket(self):
         # Beta
-        url="https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService"
+        # url="https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService"
         # Homologacion
         # url="https://www.sunat.gob.pe:443/ol-ti-itcpgem-sqa/billService"
         
         # Produccion
         # URL 1
-        # url="https://e-factura.sunat.gob.pe/ol-ti-itcpfegem/billService"
+        url="https://e-factura.sunat.gob.pe/ol-ti-itcpfegem/billService"
         # url = "https://www.sunat.gob.pe/ol-it-wsconscpegem/billConsultService"
         r=requests.post(url=url,
                         data=self.documentoEnvioTicket,
