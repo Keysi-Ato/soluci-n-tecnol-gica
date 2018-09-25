@@ -194,9 +194,10 @@
         <field name="model">account.invoice</field>
         <field name="inherit_id" ref="account.invoice_form"/>
         <field name="arch" type="xml">
-			<xpath expr="//page[@name='other_info']" position="after">
+			<xpath expr="//page[@name='other_info']" position="after">            
                 <page string="Documento XML">
                     <group>
+                        <field name="operacionTipo"/>
 						<field name="documentoXMLcliente"></field>
                         <field name="documentoXML" />
                     </group>
@@ -280,7 +281,7 @@
                 <!--domain="[('code','in',[10,20,30])]"-->
                 <field name="tipo_afectacion_igv"
                        options="{'no_create':True}"/>
-                <field name="discount"/>
+                <!--<field name="discount"/>-->
                 <!--
                 <field name="tipo_sistema_calculo_isc"></field>-->
             </xpath>

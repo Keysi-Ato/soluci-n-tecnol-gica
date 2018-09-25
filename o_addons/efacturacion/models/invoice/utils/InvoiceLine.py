@@ -685,7 +685,7 @@ class Factura:
     #########################################################################
 
 
-    def AdditionalMonetaryTotal(self,currencyID,gravado,exonerado,inafecto,gratuito,total_descuento, incoterm):
+    def AdditionalMonetaryTotal(self,currencyID,gravado,exonerado,inafecto,gratuito,total_descuento, incoterm, operacion):
         extUBLExtensions = self.doc.createElement("ext:UBLExtensions")
         extUBLExtension = self.doc.createElement("ext:UBLExtension")
         extExtensionContent = self.doc.createElement("ext:ExtensionContent")
@@ -774,6 +774,15 @@ class Factura:
             sacAdditionalInformation.appendChild(sacAdditionalMonetaryTotal_gratuito)
             sacAdditionalInformation.appendChild(sacAdditionalMonetaryTotal_descuento)
 
+            if operacion == '04':
+                sacSUNATTransaction = self.doc.createElement('sac:SUNATTransaction')
+                
+                cbcID = self.doc.createElement('cbc:ID')
+                text = self.doc.createTextNode(operacion)
+                cbcID.appendChild(text)
+
+                sacSUNATTransaction.appendChild(cbcID)
+                sacAdditionalInformation.appendChild(sacSUNATTransaction)
         # sac:AdditionalProperty 1002 TRANSFERENCIA GRATUITA DE UN BIOEN O SERVICIO PRESTADO GRATUITAMENTE
         # OBLIGATORIO:
         """

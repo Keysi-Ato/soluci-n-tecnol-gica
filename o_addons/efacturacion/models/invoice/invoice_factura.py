@@ -31,7 +31,8 @@ class invoice_factura(models.Model):
 			gratuito=round(self.total_venta_gratuito,2),
 			total_descuento=round(self.total_descuentos,2),
 			currencyID=str(self.currency_id.name),
-            incoterm=ico)
+            incoterm=ico,
+            operacion=self.operacionTipo)
 
         # Total = FacturaObject.AdditionalMonetaryTotal(
 		# 	gravado=str(round(self.total_venta_gravado,2)),

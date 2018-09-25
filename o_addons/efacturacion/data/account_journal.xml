@@ -16,14 +16,7 @@
                     <field name="invoice_type_code" attrs="{'invisible':True}"></field>
                 </xpath>
                 <xpath expr="//page[@name='other_info']//field[@name='origin']" position="replace">
-
                     <field name="origin" groups="base.group_user" attrs="{'invisible':[('invoice_type_code','not in',['07','08'])],'required':[('invoice_type_code','in',['07','08'])]}"></field>
-                    <!--
-                    <field name="origin"
-                           groups="base.group_user"
-                           attrs="{'invisible': [('origin', '=', False)]}"/>
-                           -->
-
                 </xpath>
             </field>
         </record>
