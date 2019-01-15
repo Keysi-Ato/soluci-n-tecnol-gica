@@ -183,7 +183,6 @@ class invoice_factura(models.Model):
 
             subtotal=line.price_subtotal
             for tax in line.invoice_line_tax_ids.sorted(key=lambda r:r.tax_group_id.sequence):
-
                 if tax.price_include==True:
                     if tax.amount_type=="percent":
 
