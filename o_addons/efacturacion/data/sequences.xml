@@ -1,11 +1,10 @@
 <odoo>
     <data>
         <!--SEQUENCE BEGIN-->
-
         <record model="ir.sequence" id="ef_sequence_factura">
             <field name="name">Factura - sequence</field>
             <field name="implementation">no_gap</field>
-            <field name="prefix">FF11-</field>
+            <field name="prefix">F001-</field>
             <field name="padding">8</field>
             <field name="number_increment">1</field>
         </record>
@@ -21,7 +20,7 @@
         <record model="ir.sequence" id="ef_sequence_debit_note">
             <field name="name">Nota de Débito (oficial)</field>
             <field name="implementation">no_gap</field>
-            <field name="prefix">F001-</field>
+            <field name="prefix">FD01-</field>
             <field name="padding">8</field>
             <field name="number_increment">1</field>
         </record>

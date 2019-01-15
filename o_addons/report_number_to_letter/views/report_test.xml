@@ -99,10 +99,8 @@
 						<p t-field="o.reference"/>
 					</div>
 				</div>
-            
 				<!-- Is there a discount on at least one line? -->
 				<t t-set="display_discount" t-value="any([l.discount for l in o.invoice_line_ids])"/>
-
 				<table class="table table-condensed">
 					<thead>
 						<tr>
@@ -117,7 +115,7 @@
 					</thead>
 					<tbody class="invoice_tbody" style="font-size:10px;">
 						<tr t-foreach="o.invoice_line_ids" t-as="l">
-						  <td><span t-field="l.product_id.isbn"/> - <span t-field="l.name"/></td>
+						  <td><span t-field="l.name"/></td>
 							<td class="hidden"><span t-field="l.origin"/></td>
 							<td class="text-right">
 								<span t-field="l.quantity"/>
@@ -136,7 +134,6 @@
 						</tr>
 					</tbody>
 				</table>
-
 				<div class="row">
 					<div class="col-xs-4 pull-right">
 						<table class="table table-condensed">

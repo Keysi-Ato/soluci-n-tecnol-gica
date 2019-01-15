@@ -113,6 +113,7 @@ class invoice(models.Model):
 
     documentoXML=fields.Text("Documento XML",default=" ")
     documentoXMLcliente=fields.Binary("Documento para el cliente")
+    documentoXMLcliente_fname = fields.Char("Prueba name", compute="set_xml_filename")
     documentoZip=fields.Binary("Documento Zip",default="")
     documentoEnvio=fields.Text("Documento de Envio")
     paraEnvio=fields.Text("XML para cliente")
@@ -128,6 +129,9 @@ class invoice(models.Model):
     # invoice_number_begin=fields.Boolean('Flag button', compute='_compute_number_begin')
     #####
 
+    def set_xml_filename(self):
+        self.documentoXMLcliente_fname = str(self.number) + ".xml"
+    
     def _compute_zip(self):
         self.documentoRespuestaZip = ET.fromstring(str(self.documentoRespuesta))[1][0][0].text
 

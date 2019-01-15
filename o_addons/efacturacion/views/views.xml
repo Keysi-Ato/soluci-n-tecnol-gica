@@ -198,7 +198,9 @@
                 <page string="Documento XML">
                     <group>
                         <field name="operacionTipo"/>
-						<field name="documentoXMLcliente"></field>
+						<!-- <field name="documentoXMLcliente"></field> -->
+                        <field name="documentoXMLcliente" filename="documentoXMLcliente_fname"></field>
+                        <field name="documentoXMLcliente_fname" invisible="1"></field>
                         <field name="documentoXML" />
                     </group>
                 </page>
