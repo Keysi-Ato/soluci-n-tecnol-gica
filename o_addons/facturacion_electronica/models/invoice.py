@@ -368,6 +368,8 @@ class invoice(models.Model):
     # @api.model
     def _envio_masivo(self):
         facturas = self.search([['codigoretorno', '=', False], ['state', 'in', ['open', 'paid']], ['journal_id.invoice_type_code_id', '=', '01']])
+        print('Facturas a consultar:')
+        print(facturas)
         for f in facturas:
             FacturaObject = Factura()
             EnvioXML = FacturaObject.getStatus(
