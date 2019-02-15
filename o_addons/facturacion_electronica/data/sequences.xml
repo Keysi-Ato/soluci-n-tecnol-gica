@@ -61,13 +61,13 @@
             <field name="sequence_id" ref="facturacion_electronica.ef_sequence_debit_note"/>
         </record>
 
-        <record model="account.journal" id="ef_account_journal_boleta_venta">
+        <!-- <record model="account.journal" id="ef_account_journal_boleta_venta">
             <field name="name">Boleta de Venta (oficial)</field>
             <field name="type">sale</field>
             <field name="invoice_type_code_id">03</field>
             <field name="code">B001</field>
             <field name="sequence_id" ref="facturacion_electronica.ef_sequence_boleta_venta"/>
-        </record>
+        </record> -->
         <!--DIARIOS END-->
 
 
