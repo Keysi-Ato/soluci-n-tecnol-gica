@@ -116,7 +116,7 @@ class invoice_factura(models.Model):
                             currency_id=self.currency_id.name,
                             unitcode=str(line.uom_id.code),
                             quantity=str(round(line.quantity, 2)),
-                            description=line.name,
+                            description=line.product_id.name,
                             price=str(round(line.price_unit, 2)),
                             taxtotal=str(round(line.price_subtotal*line.invoice_line_tax_ids.amount/100,2)),
                             afectacion=str(line.tipo_afectacion_igv.code),
