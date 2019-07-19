@@ -329,3 +329,86 @@ class NotaCredito:
         CreditNoteLine.appendChild(Price)
 
         return CreditNoteLine
+
+    def cacTaxTotal(self, currency_id, taxtotal, price, gratuitas, gravadas, inafectas, exoneradas):
+    
+        if gravadas > 0.0:
+            monto = gravadas
+            taxcode = '1000'
+            taxname = 'IGV'
+            taxtype = 'VAT'
+            pricetype = '01'
+            priceamount = price
+        elif gratuitas > 0.0:
+            monto = gratuitas
+            taxcode = '9996'
+            taxname = 'GRA'
+            taxtype = 'FRE'
+            pricetype = '02'
+            priceamount = '0.0'
+        elif exoneradas > 0.0:
+            monto = exoneradas
+            taxcode = '9997'
+            taxname = 'EXO'
+            taxtype = 'VAT'
+            pricetype = '01'
+            priceamount = price
+        elif inafectas > 0.0:
+            monto = inafectas
+            taxcode = '9998'
+            taxname = 'INA'
+            taxtype = 'FRE'
+            pricetype = '01'
+            priceamount = price
+
+
+        cacTaxTotal = self.doc.createElement('cac:TaxTotal')
+
+        cbcTaxAmount = self.doc.createElement('cbc:TaxAmount')
+        cbcTaxAmount.setAttribute('currencyID', currency_id)
+        text = self.doc.createTextNode(str(taxtotal))
+        cbcTaxAmount.appendChild(text)
+
+        cacTaxSubtotal = self.doc.createElement('cac:TaxSubtotal')
+        cbcTaxableAmount = self.doc.createElement('cbc:TaxableAmount')
+        cbcTaxableAmount.setAttribute('currencyID', currency_id)
+        text = self.doc.createTextNode(str(monto))
+        cbcTaxableAmount.appendChild(text)
+
+        _cbcTaxAmount = self.doc.createElement('cbc:TaxAmount')
+        _cbcTaxAmount.setAttribute('currencyID', currency_id)
+        text = self.doc.createTextNode(str(taxtotal))
+        _cbcTaxAmount.appendChild(text)
+
+        cacTaxCategory = self.doc.createElement('cac:TaxCategory')
+        cacTaxScheme = self.doc.createElement('cac:TaxScheme')
+        cbcID = self.doc.createElement('cbc:ID')
+        # text = self.doc.createTextNode('9996')
+        text = self.doc.createTextNode(taxcode)
+        cbcID.appendChild(text)
+        cbcName = self.doc.createElement('cbc:Name')
+        # text = self.doc.createTextNode('GRA')
+        text = self.doc.createTextNode(taxname)
+        cbcName.appendChild(text)
+
+        cbcTaxTypeCode = self.doc.createElement('cbc:TaxTypeCode')
+        # text = self.doc.createTextNode('FRE')
+        text = self.doc.createTextNode(taxtype)
+        cbcTaxTypeCode.appendChild(text)
+
+        cacTaxScheme.appendChild(cbcID)
+        cacTaxScheme.appendChild(cbcName)
+        cacTaxScheme.appendChild(cbcTaxTypeCode)
+
+        cacTaxCategory.appendChild(cacTaxScheme)
+
+        cacTaxSubtotal.appendChild(cbcTaxableAmount)
+        cacTaxSubtotal.appendChild(_cbcTaxAmount)
+        cacTaxSubtotal.appendChild(cacTaxCategory)
+
+        cacTaxTotal.appendChild(cbcTaxAmount)
+
+        # if gratuitas > 0:
+        cacTaxTotal.appendChild(cacTaxSubtotal)
+
+        return cacTaxTotal

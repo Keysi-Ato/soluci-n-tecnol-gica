@@ -19,6 +19,7 @@ import logging
 
 class invoice_nota_credito(models.Model):
     _inherit = "account.invoice"
+    
     @api.multi
     def generarNotaCredito(self):
         NotaCreditoObject=NotaCredito()

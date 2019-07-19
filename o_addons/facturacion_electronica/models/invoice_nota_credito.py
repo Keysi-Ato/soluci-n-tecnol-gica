@@ -89,10 +89,24 @@ class invoice_nota_credito(models.Model):
         legal_monetary = NotaCreditoObject.LegalMonetaryTotal(payable_amount=str(self.amount_total))
 
         nota_credito.appendChild(discrepancy_response)
-        nota_credito.appendChild(billing_reference)
+        # nota_credito.appendChild(billing_reference)
         nota_credito.appendChild(signature)
+        
         nota_credito.appendChild(supplierParty)
         nota_credito.appendChild(customerParty)
+        
+
+        if self.tax_line_ids:
+            for tax in self.tax_line_ids:
+                TaxTotal=NotaCreditoObject.cacTaxTotal(
+                    currency_id=str(self.currency_id.name),
+                    taxtotal=str(round(tax.amount,2)),
+                    price='0.0',
+                    gratuitas=self.total_venta_gratuito,
+                    gravadas=self.total_venta_gravado,
+                    inafectas=self.total_venta_inafecto,
+                    exoneradas=self.total_venta_exonerada)
+                nota_credito.appendChild(TaxTotal)
         nota_credito.appendChild(legal_monetary)
 
         id = 1
