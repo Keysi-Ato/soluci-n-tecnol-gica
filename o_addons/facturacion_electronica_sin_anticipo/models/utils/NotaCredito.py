@@ -59,19 +59,12 @@ class NotaCredito:
 
         return cbcID
 
-    def issueDate(self, fecha):
+    def issueDate(self,fecha):
         cbcIssueDate = self.doc.createElement('cbc:IssueDate')
         text = self.doc.createTextNode(str(fecha))
         cbcIssueDate.appendChild(text)
 
         return cbcIssueDate
-
-    def issueTime(self):
-        cbcIssueTime = self.doc.createElement('cbc:IssueTime')
-        text = self.doc.createTextNode('00:00:00')
-        cbcIssueTime.appendChild(text)
-
-        return cbcIssueTime
 
     def documentCurrencyCode(self,documentcurrencycode):
         cbcDocumentCurrencyCode = self.doc.createElement('cbc:DocumentCurrencyCode')
@@ -109,27 +102,26 @@ class NotaCredito:
         text = self.doc.createTextNode(invoice_id)
         InvoiceId.appendChild(text)
 
-        InvoiceTypeCode = self.doc.createElement('cbc:DocumentTypeCode')
-        text = self.doc.createTextNode(invoice_type_code)
-        InvoiceTypeCode.appendChild(text)
+        # InvoiceTypeCode = self.doc.createElement('cbc:DocumentTypeCode')
+        # text = self.doc.createTextNode(invoice_type_code)
+        # InvoiceTypeCode.appendChild(text)
             
         InvoiceDocumentReference.appendChild(InvoiceId)
-        InvoiceDocumentReference.appendChild(InvoiceTypeCode)
+        # InvoiceDocument.appendChild(InvoiceTypeCode)
 
         BillingReference.appendChild(InvoiceDocumentReference)
         
         return BillingReference
 
-    def NotaCreditoRoot(self, rootXML, versionid, customizationid, id, issue_date):
+    def NotaCreditoRoot(self, rootXML, versionid, customizationid, id, issue_date, documentcurrencycode):
         NotaCreditoRoot = rootXML
         NotaCreditoRoot.appendChild(self.UBLVersion(versionid))
         NotaCreditoRoot.appendChild(self.CustomizationID(customizationid))
         NotaCreditoRoot.appendChild(self.ID(id))
         NotaCreditoRoot.appendChild(self.issueDate(issue_date))
-        NotaCreditoRoot.appendChild(self.issueTime())
-
+        NotaCreditoRoot.appendChild(self.documentCurrencyCode(documentcurrencycode))
         return NotaCreditoRoot
-
+    
     def Signature(self, signatureid, partyid, partyname, uri):
         Signature = self.doc.createElement('cac:Signature')
 
@@ -173,18 +165,12 @@ class NotaCredito:
     def AccountingSupplierParty(self, registrationname, companyid):
         AccountingSupplierParty = self.doc.createElement('cac:AccountingSupplierParty')
         Party = self.doc.createElement('cac:Party')
-
         PartyIdentification = self.doc.createElement('cac:PartyIdentification')
         ID = self.doc.createElement('cbc:ID')
         ID.setAttribute('schemeID', '6')
         text = self.doc.createTextNode(companyid)
         ID.appendChild(text)
-
-        PartyName = self.doc.createElement('cac:PartyName')
-        Name = self.doc.createElement('cbc:Name')
-        text = self.doc.createTextNode(registrationname)
-        Name.appendChild(text)
-
+        
         PartyLegalEntity = self.doc.createElement('cac:PartyLegalEntity')
         RegistrationName = self.doc.createElement('cbc:RegistrationName')
         text = self.doc.createTextNode(registrationname)
@@ -198,24 +184,22 @@ class NotaCredito:
         RegistrationAddress.appendChild(AddressTypeCode)
 
         PartyIdentification.appendChild(ID)
-        PartyName.appendChild(Name)
         PartyLegalEntity.appendChild(RegistrationName)
         PartyLegalEntity.appendChild(RegistrationAddress)
 
         Party.appendChild(PartyIdentification)
-        Party.appendChild(PartyName)
         Party.appendChild(PartyLegalEntity)
 
         AccountingSupplierParty.appendChild(Party)
 
         return AccountingSupplierParty
 
-    def AccountingCustomerParty(self, customername, customerid, customertipo):
+    def AccountingCustomerParty(self, customername, customerid):
         AccountingCustomerParty = self.doc.createElement('cac:AccountingCustomerParty')
         Party = self.doc.createElement('cac:Party')
         PartyIdentification = self.doc.createElement('cac:PartyIdentification')
         ID = self.doc.createElement('cbc:ID')
-        ID.setAttribute('schemeID', str(customertipo))
+        ID.setAttribute('schemeID', '6')
         text = self.doc.createTextNode(customerid)
         ID.appendChild(text)
         
@@ -235,11 +219,11 @@ class NotaCredito:
         return AccountingCustomerParty
 
 
-    def LegalMonetaryTotal(self, payable_amount, currency):
+    def LegalMonetaryTotal(self, payable_amount):
         LegalMonetaryTotal = self.doc.createElement('cac:LegalMonetaryTotal')
 
         PayableAmount = self.doc.createElement('cbc:PayableAmount')
-        PayableAmount.setAttribute('currencyID', str(currency))
+        PayableAmount.setAttribute('currencyID', 'PEN')
         text = self.doc.createTextNode(payable_amount)
         PayableAmount.appendChild(text)
 
@@ -261,19 +245,6 @@ class NotaCredito:
         LineExtensionAmount.setAttribute('currencyID', currency)
         text = self.doc.createTextNode(str(valor))
         LineExtensionAmount.appendChild(text)
-
-        cacPricingReference = self.doc.createElement('cac:PricingReference')
-        cacAlternativeConditionPrice = self.doc.createElement('cac:AlternativeConditionPrice')
-        cbcPriceAmount = self.doc.createElement('cbc:PriceAmount')
-        cbcPriceAmount.setAttribute('currencyID', currency)
-        text = self.doc.createTextNode(str(price))
-        cbcPriceAmount.appendChild(text)
-        cbcPriceTypeCode = self.doc.createElement('cbc:PriceTypeCode')
-        text = self.doc.createTextNode('01')
-        cbcPriceTypeCode.appendChild(text)
-        cacAlternativeConditionPrice.appendChild(cbcPriceAmount)
-        cacAlternativeConditionPrice.appendChild(cbcPriceTypeCode)
-        cacPricingReference.appendChild(cacAlternativeConditionPrice)
 
         Price = self.doc.createElement('cac:Price')
         PriceAmount = self.doc.createElement('cbc:PriceAmount')
@@ -310,16 +281,11 @@ class NotaCredito:
             taxname = 'IGV'
             taxtype = 'VAT'
 
-        elif afectacion in ('11', '12', '13', '14', '15', '16', '21', '31', '32', '33', '34', '35', '36', '37'):
+        elif afectacion in ('11', '12', '13', '14', '15', '16', '21', '31', '32', '33', '34', '35', '36'):
             taxcode = '9996'
             taxname = 'GRA'
             taxtype = 'FRE'
         
-        elif afectacion == '40':
-            taxcode = '9995'
-            taxname = 'EXP'
-            taxtype = 'FRE'
-
         elif afectacion == '20':
             taxcode = '9997'
             taxname = 'EXO'
@@ -359,14 +325,13 @@ class NotaCredito:
         CreditNoteLine.appendChild(ID)
         CreditNoteLine.appendChild(CreditedQuantity)
         CreditNoteLine.appendChild(LineExtensionAmount)
-        CreditNoteLine.appendChild(cacPricingReference)
         CreditNoteLine.appendChild(TaxTotal)
         CreditNoteLine.appendChild(Price)
 
         return CreditNoteLine
 
     def cacTaxTotal(self, currency_id, taxtotal, price, gratuitas, gravadas, inafectas, exoneradas):
-
+    
         if gravadas > 0.0:
             monto = gravadas
             taxcode = '1000'

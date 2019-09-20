@@ -80,33 +80,37 @@
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account.invoice_form"/>
             <field name="arch" type="xml">
+                <!--<xpath expr="//button[@name='193']" position="replace">
+                </xpath>-->
                 <xpath expr="//button[@name='invoice_print']" position="after">
                     <button name="generarFactura"
-                        string="Generar Factura"
-                        type="object"
-                        attrs="{'invisible':[('invoice_type_code','!=','01')]}"
-                        groups="base.group_no_one"/>
+                            string="Generar Factura"
+                            type="object"
+                            attrs="{'invisible':[('invoice_type_code','!=','01')]}"
+                            groups="base.group_no_one"/>
                     <button name="generarNotaCredito"
-                        string="Generar NOTA DE CREDITO"
+                        string="Generar Nota de Crédito"
                         type="object"
+                        attrs="{'invisible':[('invoice_type_code','!=','07')]}"
                         groups="base.group_no_one"/>
-                    <!-- <button name="generarNotaDebito"
+                    <button name="generarNotaDebito"
                         string="Generar Nota de Débito"
                         type="object"
                         attrs="{'invisible':[('invoice_type_code','!=','08')]}"
-                        groups="base.group_no_one"/> -->
-                    <button name="firmar" 
-                        string="Firmar" 
-                        type="object"
                         groups="base.group_no_one"/>
+                    <button name="firmar" 
+                            string="Firmar" 
+                            type="object"
+                            groups="base.group_no_one"/>
                     <button name="enviar"
-                        string="Enviar SUNAT"
-                        type="object"
-                        attrs="{'invisible':[('estado_envio', '=', True)]}"/>
+                            string="Enviar SUNAT"
+                            type="object"
+                            attrs="{'invisible':[('estado_envio', '=', True)]}"/>
                     <button name="estadoTicket"
-                        string="Consultar SUNAT"
-                        type="object"/>
-                    <field name="invoice_type_code" invisible="1"/>
+                            string="Consultar estado"
+                            type="object"
+                            groups="base.group_no_one"/>
+                    <field name="invoice_type_code"/>
                 </xpath>
             </field>
         </record>
@@ -118,11 +122,11 @@
             <field name="inherit_id" ref="account.invoice_tree"/>
             <field name="arch" type="xml">
                 <data>
-                    <tree position="attributes">
-                        <attribute name="decoration-bf">codigoretorno == '0001'</attribute>
-                        <attribute name="decoration-warning">codigoretorno in ('0004', '0005', '0006', '0007', '0008', '0009', '0010', '0011', '0012')</attribute>
-                    </tree>
-                </data>
+					<tree position="attributes">
+						<attribute name="decoration-bf">codigoretorno == '0001'</attribute>
+                    	<attribute name="decoration-warning">codigoretorno in ('0004', '0005', '0006', '0007', '0008', '0009', '0010', '0011', '0012')</attribute>
+					</tree>
+				</data>
                 <xpath expr="//field[@name='origin']" position="replace">
                     <field name="codigoretorno" invisible="1"></field>
                 </xpath>
@@ -146,7 +150,6 @@
                     <field name="muestra" attrs="{'readonly':[('state', '!=', 'draft')]}"/>
                     <field name="type" groups="base.group_no_one"/>
                     <field name="numeracion" groups="base.group_no_one"/>
-                    <field name="final"/>
                 </xpath>
                 <xpath expr="//page[@name='other_info']" position="after">
                     <page string="Facturación Electrónica">
@@ -166,7 +169,7 @@
                             <field name="documentoXML"/>
                         </group>
                     </page>
-                    <page string="Documento de Envío">
+                    <page string="Documento de Envío" groups="base.group_no_one">
                         <group>
                             <field name="send_route"/>
                             <field name="documentoRespuestaZip"/>
@@ -176,20 +179,21 @@
                     </page>
                     <page string="XML ticket" groups="base.group_no_one">
                         <group>
+                            <!-- <field name="mensajeSUNAT"></field> -->
                             <field name="documentoEnvioTicket"></field>
                         </group>
                     </page>
                 </xpath>
                 <xpath expr="//field[@name='type']" position="after">
-                    <!-- <field name="invoice_type_code"/> -->
+                    <!--<field name="invoice_type_code"/>-->
                     <group attrs="{'invisible':[('invoice_type_code','!=','07')]}">
-                        <field name="response_code_credito" class="oe_inline" attrs="{'required':[('type','=','out_refund')]}"/>
+                        <field name="response_code_credito" class="oe_inline"/>
                     </group>
                     <group attrs="{'invisible':[('invoice_type_code','!=','08')]}">
                         <field name="response_code_debito" class="oe_inline"/>
                     </group>
                     <group>
-                        <!-- <field name="referenceID" class="oe_inline" attrs="{'invisible':[('invoice_type_code','not in',['07','08'])]}"/> -->
+                        <field name="referenceID" class="oe_inline" attrs="{'invisible':[('invoice_type_code','not in',['07','08'])]}"/>
                         <field name="motivo" class="oe_inline" attrs="{'invisible':[('invoice_type_code','not in',['07','08'])]}"/>
                     </group>
                 </xpath>

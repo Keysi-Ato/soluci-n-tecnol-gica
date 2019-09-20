@@ -112,55 +112,7 @@ class Factura:
         Signature.appendChild(DigitalSignatureAttachment)
 
         return Signature
-
-    def cacAdditionalDocumentReference(self, documento, num_doc_ident, tipo_doc_ident):
-        cacAdditionalDocumentReference = self.doc.createElement('cac:AdditionalDocumentReference')
-        cbcID = self.doc.createElement('cbc:ID')
-        text = self.doc.createTextNode(documento)
-        cbcID.appendChild(text)
-
-        cbcDocumentTypeCode = self.doc.createElement('cbc:DocumentTypeCode')
-        text = self.doc.createTextNode('02')
-        cbcDocumentTypeCode.appendChild(text)
-
-        cbcDocumentStatusCode = self.doc.createElement('cbc:DocumentStatusCode')
-        text = self.doc.createTextNode(documento)
-        cbcDocumentStatusCode.appendChild(text)
-
-        cacIssuerParty = self.doc.createElement('cac:IssuerParty')
-        cacPartyIdentification = self.doc.createElement('cac:PartyIdentification')
-        cbcIDip = self.doc.createElement('cbc:ID')
-        cbcIDip.setAttribute('schemeID', tipo_doc_ident)
-        text = self.doc.createTextNode(num_doc_ident)
-        cbcIDip.appendChild(text)
-
-        cacPartyIdentification.appendChild(cbcIDip)
-
-        cacIssuerParty.appendChild(cacPartyIdentification)
-
-        cacAdditionalDocumentReference.appendChild(cbcID)
-        cacAdditionalDocumentReference.appendChild(cbcDocumentTypeCode)
-        cacAdditionalDocumentReference.appendChild(cbcDocumentStatusCode)
-        cacAdditionalDocumentReference.appendChild(cacIssuerParty)
-
-        return cacAdditionalDocumentReference
-
-    def cacPrepaidPayment(self, currency, monto, documento):
-        cacPrepaidPayment = self.doc.createElement('cac:PrepaidPayment')
-        cbcID = self.doc.createElement('cbc:ID')
-        cbcID.setAttribute('schemeID', '02')
-        text = self.doc.createTextNode(documento)
-        cbcID.appendChild(text)
-
-        cbcPaidAmount = self.doc.createElement('cbc:PaidAmount')
-        cbcPaidAmount.setAttribute('currencyID', currency)
-        text = self.doc.createTextNode(str(monto))
-        cbcPaidAmount.appendChild(text)
-
-        cacPrepaidPayment.appendChild(cbcID)
-        cacPrepaidPayment.appendChild(cbcPaidAmount)
-
-        return cacPrepaidPayment
+    
     #########################################################################
     #########################################################################
     ## /Invoice/cac:AccountingSupplierParty/cac:Party/cac:PartyIdentification/cbc:ID
@@ -171,14 +123,15 @@ class Factura:
     #########################################################################
     def cacAccountingSupplierParty(self,num_doc_ident, tipo_doc_ident, nombre_comercial, codigo_ubigeo, nombre_direccion_full, nombre_direccion_division, nombre_departamento, nombre_provincia, nombre_distrito, nombre_proveedor, codigo_pais):
         cacAccountingSupplierParty = self.doc.createElement('cac:AccountingSupplierParty')
-
+        
         cacParty = self.doc.createElement('cac:Party')
-
+    
         cacPartyIdentification = self.doc.createElement('cac:PartyIdentification')
         cbcID = self.doc.createElement('cbc:ID')
         cbcID.setAttribute('schemeID', '6')
         text = self.doc.createTextNode(num_doc_ident)
         cbcID.appendChild(text)
+
         cacPartyIdentification.appendChild(cbcID)
 
         cacPartyLegalEntity = self.doc.createElement('cac:PartyLegalEntity')
@@ -194,7 +147,7 @@ class Factura:
 
         cacPartyLegalEntity.appendChild(cbcRegistrationName)
         cacPartyLegalEntity.appendChild(cacRegistrationAddress)
-
+        
         cacParty.appendChild(cacPartyIdentification)
         cacParty.appendChild(cacPartyLegalEntity)
 
@@ -242,6 +195,7 @@ class Factura:
     #########################################################################
     #########################################################################
     #########################################################################
+    
     #########################################################################
     #########################################################################
     ## /Invoice/cac:TaxTotal/cbc:TaxAmount
@@ -276,6 +230,15 @@ class Factura:
         cbcTaxAmount.setAttribute('currencyID', currency_id)
         text = self.doc.createTextNode(str(taxtotal))
         cbcTaxAmount.appendChild(text)
+
+        # /Invoice/cac:TaxTotal/cac:TaxSubtotal/cbc:TaxableAmount (Total valor de venta)
+        # /Invoice/cac:TaxTotal/cac:TaxSubtotal/cbc:TaxableAmount (Total valor de venta)@currencyID
+        # /Invoice/cac:TaxTotal/cac:TaxSubtotal/cbc:TaxAmount (Importe del tributo)
+        # /Invoice/cac:TaxTotal/cac:TaxSubtotal/cbc:TaxAmount (Importe del tributo)@currencyID
+        
+        # /Invoice/cac:TaxTotal/cac:TaxSubtotal/cac:TaxCategory/cac:TaxScheme/cbc:ID (Codigo de tributo)
+        # /Invoice/cac:TaxTotal/cac:TaxSubtotal/cac:TaxCategory/cac:TaxScheme/cbc:Name (Nombre de tributo)
+        # /Invoice/cac:TaxTotal/cac:TaxSubtotal/cac:TaxCategory/cac:TaxScheme/cbc:TaxTypeCode (Codigo internacional de tributo)
 
         cacTaxSubtotal = self.doc.createElement('cac:TaxSubtotal')
         cbcTaxableAmount = self.doc.createElement('cbc:TaxableAmount')
@@ -327,20 +290,14 @@ class Factura:
     ## /Invoice/cac:LegalMonetaryTotal/cbc:PayableAmount
     #########################################################################
     #########################################################################
-    def cacLegalMonetaryTotal(self, total, prepaid, currency_id):
+    def cacLegalMonetaryTotal(self, total, currency_id):
         cacLegalMonetaryTotal = self.doc.createElement('cac:LegalMonetaryTotal')
-
-        cbcPrepaidAmount = self.doc.createElement('cbc:PrepaidAmount')
-        cbcPrepaidAmount.setAttribute('currencyID', currency_id)
-        text = self.doc.createTextNode(str(prepaid))
-        cbcPrepaidAmount.appendChild(text)
 
         cbcPayableAmount = self.doc.createElement('cbc:PayableAmount')
         cbcPayableAmount.setAttribute('currencyID', currency_id)
         text = self.doc.createTextNode(str(total))
         cbcPayableAmount.appendChild(text)
 
-        cacLegalMonetaryTotal.appendChild(cbcPrepaidAmount)
         cacLegalMonetaryTotal.appendChild(cbcPayableAmount)
 
         return cacLegalMonetaryTotal
@@ -384,9 +341,9 @@ class Factura:
     ## /Invoice/cac:InvoiceLine/cac:TaxTotal/cac:TaxSubtotal/cac:TaxCategory/cac:TaxScheme/cbc:TaxTypeCode
     #########################################################################
     #########################################################################
-    def cacInvoiceLine(self, operacionTipo, idline, muestra, valor, currency_id, unitcode, quantity, description, price, taxtotal, afectacion, taxcode, taxname, taxtype):
+    def cacInvoiceLine(self, operacionTipo, idline, valor, currency_id, unitcode, quantity, description, price, taxtotal, afectacion, taxcode, taxname, taxtype):
         # Definimos variables a usar en el esquema
-        if operacionTipo in ('0101', '0401'):
+        if operacionTipo == '0101':
             if afectacion == '10':
                 taxcode = '1000'
                 taxname = 'IGV'
@@ -416,7 +373,7 @@ class Factura:
                 priceamount = price
 
         elif operacionTipo == '0200':
-            if muestra == True:
+            if price == '0.0':
                 taxcode = '9996'
                 taxname = 'GRA'
                 taxtype = 'FRE'
@@ -449,15 +406,7 @@ class Factura:
         cbcDescription = self.doc.createElement('cbc:Description')
         text = self.doc.createTextNode(description)
         cbcDescription.appendChild(text)
-
-        cacCommodityClassification = self.doc.createElement('cac:CommodityClassification')
-        cbcItemClassificationCode = self.doc.createElement('cbc:ItemClassificationCode')
-        text = self.doc.createTextNode(str('55101509'))
-        cbcItemClassificationCode.appendChild(text)
-        cacCommodityClassification.appendChild(cbcItemClassificationCode)
-
         cacItem.appendChild(cbcDescription)
-        cacItem.appendChild(cacCommodityClassification)
         
         cacPrice = self.doc.createElement('cac:Price')
         cbcPriceAmount = self.doc.createElement('cbc:PriceAmount')
@@ -466,7 +415,7 @@ class Factura:
         text = self.doc.createTextNode(priceamount)
         cbcPriceAmount.appendChild(text)
         cacPrice.appendChild(cbcPriceAmount)
-
+            
         cacPricingReference = self.doc.createElement('cac:PricingReference')
         cacAlternativeConditionPrice = self.doc.createElement('cac:AlternativeConditionPrice')
         cbcPriceAmount = self.doc.createElement('cbc:PriceAmount')
@@ -496,12 +445,12 @@ class Factura:
         _cbcTaxAmount.setAttribute('currencyID', currency_id)
         text = self.doc.createTextNode(str(taxtotal))
         _cbcTaxAmount.appendChild(text)
-
+                
         cacTaxCategory = self.doc.createElement('cac:TaxCategory')
         cbcPercent = self.doc.createElement('cbc:Percent')
         text = self.doc.createTextNode('18.00')
         cbcPercent.appendChild(text)
-
+                    
         cbcTaxExemptionReasonCode = self.doc.createElement('cbc:TaxExemptionReasonCode')
         text = self.doc.createTextNode(str(afectacion))
         cbcTaxExemptionReasonCode.appendChild(text)
@@ -511,7 +460,7 @@ class Factura:
         _cbcID = self.doc.createElement('cbc:ID')
         text = self.doc.createTextNode(str(taxcode))
         _cbcID.appendChild(text)
-
+                        
         cbcName = self.doc.createElement('cbc:Name')
         text = self.doc.createTextNode(str(taxname))
         cbcName.appendChild(text)
@@ -519,15 +468,15 @@ class Factura:
         cbcTaxTypeCode = self.doc.createElement('cbc:TaxTypeCode')
         text = self.doc.createTextNode(str(taxtype))
         cbcTaxTypeCode.appendChild(text)
-
+                        
         cacTaxScheme.appendChild(_cbcID)
         cacTaxScheme.appendChild(cbcName)
         cacTaxScheme.appendChild(cbcTaxTypeCode)
-
+                    
         cacTaxCategory.appendChild(cbcPercent)
         cacTaxCategory.appendChild(cbcTaxExemptionReasonCode)
         cacTaxCategory.appendChild(cacTaxScheme)
-
+                
         cacTaxSubtotal.appendChild(cbcTaxableAmount)
         cacTaxSubtotal.appendChild(_cbcTaxAmount)
         cacTaxSubtotal.appendChild(cacTaxCategory)

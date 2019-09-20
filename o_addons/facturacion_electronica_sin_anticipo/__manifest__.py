@@ -17,7 +17,6 @@
     'depends': ['base', 'sale', 'account', 'odoope_einvoice_base', 'odoope_ruc_validation', 'odoope_toponyms', 'backend_theme_v10', 'web_responsive'],
     'data': [
         'views/views.xml',
-        # 'views/notas.xml',
         'data/account_journal.xml',
         'data/sequences.xml'
     ],

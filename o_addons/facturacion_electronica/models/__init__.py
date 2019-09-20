@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
-import invoice
-import invoice_factura
-import invoice_nota_credito
-import invoice_nota_debito
-import saleorder
+import account_journal
+import account_tax_group
+import product_uom
+import res_company
+import account_invoice
+import account_invoice_line
+import account_invoice_refund
+import sale_order

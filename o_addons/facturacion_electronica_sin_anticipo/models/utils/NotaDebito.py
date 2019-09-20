@@ -189,12 +189,12 @@ class NotaDebito:
 
         return AccountingSupplierParty
 
-    def AccountingCustomerParty(self, customername, customerid, customertipo):
+    def AccountingCustomerParty(self, customername, customerid):
         AccountingCustomerParty = self.doc.createElement('cac:AccountingCustomerParty')
         Party = self.doc.createElement('cac:Party')
         PartyIdentification = self.doc.createElement('cac:PartyIdentification')
         ID = self.doc.createElement('cbc:ID')
-        ID.setAttribute('schemeID', str(customertipo))
+        ID.setAttribute('schemeID', '6')
         text = self.doc.createTextNode(customerid)
         ID.appendChild(text)
         
