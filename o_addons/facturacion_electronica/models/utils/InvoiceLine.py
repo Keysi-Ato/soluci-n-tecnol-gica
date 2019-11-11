@@ -450,14 +450,14 @@ class Factura:
         text = self.doc.createTextNode(description)
         cbcDescription.appendChild(text)
 
-        cacCommodityClassification = self.doc.createElement('cac:CommodityClassification')
-        cbcItemClassificationCode = self.doc.createElement('cbc:ItemClassificationCode')
-        text = self.doc.createTextNode(str('55101509'))
-        cbcItemClassificationCode.appendChild(text)
-        cacCommodityClassification.appendChild(cbcItemClassificationCode)
+        # cacCommodityClassification = self.doc.createElement('cac:CommodityClassification')
+        # cbcItemClassificationCode = self.doc.createElement('cbc:ItemClassificationCode')
+        # text = self.doc.createTextNode(str('55101509'))
+        # cbcItemClassificationCode.appendChild(text)
+        # cacCommodityClassification.appendChild(cbcItemClassificationCode)
 
         cacItem.appendChild(cbcDescription)
-        cacItem.appendChild(cacCommodityClassification)
+        # cacItem.appendChild(cacCommodityClassification)
         
         cacPrice = self.doc.createElement('cac:Price')
         cbcPriceAmount = self.doc.createElement('cbc:PriceAmount')
