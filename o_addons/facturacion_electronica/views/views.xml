@@ -107,6 +107,7 @@
                         string="Consultar SUNAT"
                         type="object"/>
                     <field name="invoice_type_code" invisible="1"/>
+                    <button name="descargarRespuesta" string="Descargar Respuesta" type="object" groups="base.group_no_one"/>
                 </xpath>
             </field>
         </record>

@@ -113,7 +113,7 @@
                             string="Consultar estado"
                             type="object"
                             groups="base.group_no_one"/>
-                    <!-- <button name="descargarRespuesta" string="Descargar Respuesta" type="object"/> -->
+                    <!-- <button name="descargarRespuesta" string="Descargar Respuesta" type="object" groups="base.group_no_one"/> -->
                     <field name="invoice_type_code" invisible="1" />
                 </xpath>
             </field>
