@@ -562,17 +562,21 @@ class accountInvoice(models.Model):
 
         p1 = 0
         p2 = 0
-        multiplier = 10 ** 2
+        # multiplier = 10 ** 2
+        round_curr = self.currency_id.round
         for l in self.invoice_line_ids:
             if l.quantity > 0:
-                p1 = p1 + (math.floor(l.price_subtotal*1.18*multiplier)/multiplier)
-                # p1 = p1 + (math.floor(l.price_subtotal*1.18) / multiplier)
+                p1 = p1 + (round_curr(l.price_subtotal)+round_curr(l.price_subtotal*0.18))
+                # print('P1-1:'+str(round_curr(l.price_subtotal*0.18)))
+                # print('P1-2:'+str(l.price_subtotal))
+                # print('P1-3:'+str(round_curr(l.price_subtotal)))
+                # print('P1-4:'+str(round_curr(l.price_subtotal)+round_curr(l.price_subtotal*0.18)))
             else:
                 p2 = p2 + (l.price_subtotal*(-1))
 
         LegalMonetaryTotal = FacturaObject.cacLegalMonetaryTotal(
-            total = math.floor(p1*multiplier)/multiplier,
-            prepaid = math.floor(p2*multiplier)/multiplier,
+            total = p1,
+            prepaid = p2,
             currency_id = str(self.currency_id.name)
         )
         # LegalMonetaryTotal = FacturaObject.cacLegalMonetaryTotal(
