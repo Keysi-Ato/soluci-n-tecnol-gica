@@ -16,6 +16,7 @@ import base64
 import os
 import logging
 import json
+import math
 
 # mapping invoice type to refund type
 TYPE2REFUND = {
@@ -335,7 +336,7 @@ class accountInvoice(models.Model):
     def enviar(self):
         url = self.company_id.send_route
         r=requests.post(url=url, data=self.documentoEnvio, headers={"Content-Type":"text/xml"})
-        
+
         try:
             self.documentoRespuestaZip=ET.fromstring(r.text)[0][0][0].text
         except Exception, e:
@@ -555,17 +556,23 @@ class accountInvoice(models.Model):
                 gratuitas=self.total_venta_gratuito)
             Invoice.appendChild(TaxTotal)
 
+        # round_down(n, decimals=0):
+            
+        #     return math.floor(n * multiplier) / multiplier
+
         p1 = 0
         p2 = 0
+        multiplier = 10 ** 2
         for l in self.invoice_line_ids:
             if l.quantity > 0:
-                p1 = p1 + round(l.price_subtotal*1.18,2)
+                p1 = p1 + (math.floor(l.price_subtotal*1.18*multiplier)/multiplier)
+                # p1 = p1 + (math.floor(l.price_subtotal*1.18) / multiplier)
             else:
                 p2 = p2 + (l.price_subtotal*(-1))
 
         LegalMonetaryTotal = FacturaObject.cacLegalMonetaryTotal(
-            total = round(p1, 2),
-            prepaid = round(p2, 2),
+            total = math.floor(p1*multiplier)/multiplier,
+            prepaid = math.floor(p2*multiplier)/multiplier,
             currency_id = str(self.currency_id.name)
         )
         # LegalMonetaryTotal = FacturaObject.cacLegalMonetaryTotal(
