@@ -216,6 +216,7 @@ class accountInvoice(models.Model):
         res = super(accountInvoice, self).default_get(fields_list)
 
         journal_id=self.env['account.journal'].search([['invoice_type_code_id', '=', self._context.get("type_code")]], limit=1)
+        res["journal_id"] = journal_id.id
         return res
 
     @api.one

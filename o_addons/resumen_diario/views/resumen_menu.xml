@@ -1,0 +1,11 @@
+<odoo>
+<data>
+    <act_window id="action_account_summary"
+        name="Resumen Diario"
+        res_model="account.summary"
+        view_mode="tree,form" />
+    <menuitem id="menu_account_summary"
+        name="Resumen Diario"
+        action="action_account_summary"/>
+</data>
+</odoo>
