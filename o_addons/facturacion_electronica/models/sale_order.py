@@ -24,7 +24,7 @@ class saleOrder(models.Model):
             # action['domain'] = [('journal_id.invoice_type_code_id','=','01')]
             action['views'] = [(self.env.ref('account.invoice_form').id, 'form')]
             action['res_id'] = invoices.ids[0]
-            
+
             default_journal_id = self.env["account.journal"].search([["invoice_type_code_id", "=", self.tipo_documento]])
             action["context"] = "{'type_code':'"+self.tipo_documento+"'}"
         else:

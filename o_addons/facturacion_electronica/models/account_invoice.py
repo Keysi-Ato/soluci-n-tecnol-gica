@@ -29,19 +29,19 @@ TYPE2REFUND = {
 class accountInvoice(models.Model):
     _inherit = "account.invoice"
 
-    documentoXML = fields.Text("Documento XML",default=" ")
-    documentoXMLcliente = fields.Binary("XML cliente")
-    documentoXMLcliente_fname = fields.Char("Prueba name", compute="set_xml_filename")
-    documentoZip = fields.Binary("Documento Zip",default="")
-    documentoEnvio = fields.Text("Documento de Envio")
-    paraEnvio = fields.Text("XML para cliente")
-    documentoRespuesta = fields.Text("Documento de Respuesta XML")
-    documentoRespuestaZip = fields.Binary("CDR SUNAT")
-    documentoEnvioTicket = fields.Text("Documento de Envio Ticket")
-    numeracion = fields.Char("Número de factura")
-    mensajeSUNAT = fields.Char("Respuesta SUNAT")
-    codigoretorno = fields.Char("Código retorno", default = '0000')
-    estado_envio = fields.Boolean("Enviado a SUNAT", default = False)
+    documentoXML = fields.Text("Documento XML",default=" ", copy=False)
+    documentoXMLcliente = fields.Binary("XML cliente", copy=False)
+    documentoXMLcliente_fname = fields.Char("Prueba name", compute="set_xml_filename", copy=False)
+    documentoZip = fields.Binary("Documento Zip",default="", copy=False)
+    documentoEnvio = fields.Text("Documento de Envio", copy=False)
+    paraEnvio = fields.Text("XML para cliente", copy=False)
+    documentoRespuesta = fields.Text("Documento de Respuesta XML", copy=False)
+    documentoRespuestaZip = fields.Binary("CDR SUNAT", copy=False)
+    documentoEnvioTicket = fields.Text("Documento de Envio Ticket", copy=False)
+    numeracion = fields.Char("Número de factura", copy=False)
+    mensajeSUNAT = fields.Char("Respuesta SUNAT", copy=False)
+    codigoretorno = fields.Char("Código retorno", default = '0000', copy=False)
+    estado_envio = fields.Boolean("Enviado a SUNAT", default = False, copy=False)
     operacionTipo = fields.Selection(string="Tipo de operación",
         selection=[
             ('0101', 'Venta interna'),
@@ -55,8 +55,8 @@ class accountInvoice(models.Model):
     muestra = fields.Boolean("Muestra", default = False)
     send_route = fields.Selection(string="Ruta de envío", store=True, related="company_id.send_route", readonly=True)
 
-    response_code=fields.Char("response_code")
-    referenceID = fields.Char("Referencia")
+    response_code=fields.Char("response_code", copy=False)
+    referenceID = fields.Char("Referencia", copy=False)
     motivo = fields.Text("Motivo")
 
     total_venta_gravado=fields.Monetary("Gravado", default=0.0, compute="_compute_total_venta")
@@ -66,7 +66,7 @@ class accountInvoice(models.Model):
     total_descuentos=fields.Monetary("Total Descuentos", default=0.0, compute="_compute_total_venta")
 
     digestvalue=fields.Char("DigestValue")
-    final = fields.Boolean("Es final?", default=False)
+    final = fields.Boolean("Es final?", default=False, copy=False)
 
     # @api.one
     # def _set_invoice_type_code(self):
@@ -216,8 +216,6 @@ class accountInvoice(models.Model):
         res = super(accountInvoice, self).default_get(fields_list)
 
         journal_id=self.env['account.journal'].search([['invoice_type_code_id', '=', self._context.get("type_code")]], limit=1)
-        res["journal_id"] = journal_id.id
-
         return res
 
     @api.one
@@ -566,7 +564,9 @@ class accountInvoice(models.Model):
         round_curr = self.currency_id.round
         for l in self.invoice_line_ids:
             if l.quantity > 0:
-                p1 = p1 + (round_curr(l.price_subtotal)+round_curr(l.price_subtotal*0.18))
+                # p1 = p1 + (round_curr(l.price_subtotal)+round_curr(l.price_subtotal*0.18))
+                # p1 = p1 + (round_curr(l.price_subtotal+(l.price_subtotal*0.18)))
+                p1 = self.amount_total
                 # print('P1-1:'+str(round_curr(l.price_subtotal*0.18)))
                 # print('P1-2:'+str(l.price_subtotal))
                 # print('P1-3:'+str(round_curr(l.price_subtotal)))

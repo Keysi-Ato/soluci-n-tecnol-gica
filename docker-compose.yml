@@ -6,6 +6,8 @@ services:
     environment:
       - POSTGRES_PASSWORD=odoo
       - POSTGRES_USER=odoo
+    ports:
+      - "11002:5432"
 
   odoo10:
     # image: odoo:11.0
