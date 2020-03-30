@@ -43,7 +43,7 @@ class ComunicacionBaja(models.Model):
             ('07', 'Nota de crédito'),
             ('08', 'Nota de débito'),
         ], default='01')
-    
+
     document_serie = fields.Char(string="Serie del documento")
     document_number = fields.Integer(string="Número de documento", help="Colocar el número de documento sin '0' a la izquierda.")
 

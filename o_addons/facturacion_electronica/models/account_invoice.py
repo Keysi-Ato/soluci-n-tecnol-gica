@@ -1,14 +1,19 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from odoo import fields,models,api,_
+from odoo import fields, models, api, _
 from odoo.tools.safe_eval import safe_eval
 from odoo.exceptions import UserError, RedirectWarning, ValidationError
+from odoo.http import request
+from odoo.tools.float_utils import float_compare
 from utils.InvoiceLine import Factura
 from utils.NotaCredito import NotaCredito
 from utils.NotaDebito import NotaDebito
 from suds.client import Client
 from suds.wsse import *
-from signxml import XMLSigner, XMLVerifier,methods
+from signxml import XMLSigner, XMLVerifier, methods
+from datetime import datetime, timedelta
+from cStringIO import StringIO
+
 import xml.etree.ElementTree as ET
 import requests
 import zipfile
@@ -17,6 +22,7 @@ import os
 import logging
 import json
 import math
+import time
 
 # mapping invoice type to refund type
 TYPE2REFUND = {
@@ -48,9 +54,22 @@ class accountInvoice(models.Model):
             ('0200', 'Exportación de bienes'),
             ('0401', 'Ventas no domiciliados que no califican como exportación')],
         default='0101')
-    
+
     # invoice_type_code = fields.Selection(string="Tipo de Comprobante", store=True, related="journal_id.invoice_type_code_id", readonly=True)
     # invoice_type_code = fields.Char(string="Tipo de Comprobante", default=_set_invoice_type_code, readonly=True)
+
+    # Para docuementos de proveedor
+    def _list_invoice_type(self):
+        catalogs = self.env["einvoice.catalog.01"].search([])
+        list = []
+        for cat in catalogs:
+            list.append((cat.code, cat.name))
+        return list
+
+    tipo_documento = fields.Selection(
+        string="Tipo de Documento", selection=_list_invoice_type, default="01"
+    )
+
 
     muestra = fields.Boolean("Muestra", default = False)
     send_route = fields.Selection(string="Ruta de envío", store=True, related="company_id.send_route", readonly=True)
@@ -843,3 +862,182 @@ class accountInvoice(models.Model):
 
         I=nota_debito.toprettyxml("   ")
         self.documentoXML =  I
+
+    
+
+class PrintReportTextPrueba(models.TransientModel):
+    _name = "print.prueba.reporte.contabilidad"
+
+    def _list_anios(self):
+        d = datetime.now()
+
+        list = []
+
+        i = 0
+        while i < 3:
+            anios = timedelta(days=365 * i)
+            reference_date = d - anios
+            list.append((str(reference_date.year), str(reference_date.year)))
+            i += 1
+
+        return list
+
+    def get_month(self):
+        d = datetime.now()
+        # return d.month
+        return "{:02d}".format(d.month)
+
+    def get_year(self):
+        d = datetime.now()
+        return "{:04d}".format(d.year)
+
+    invoice_summary_file = fields.Binary("Reporte de Prueba")
+    file_name = fields.Char("File Name")
+    invoice_report_printed = fields.Boolean("Reporte de Prueba")
+    years = fields.Selection(string="Año", selection=_list_anios, default=get_year)
+    months = fields.Selection(
+        string="Mes",
+        selection=[
+            ("01", "Enero"),
+            ("02", "Febrero"),
+            ("03", "Marzo"),
+            ("04", "Abril"),
+            ("05", "Mayo"),
+            ("06", "Junio"),
+            ("07", "Julio"),
+            ("08", "Agosto"),
+            ("09", "Septiembre"),
+            ("10", "Octubre"),
+            ("11", "Noviembre"),
+            ("12", "Diciembre"),
+        ],
+        default=get_month,
+    )
+
+    @api.multi
+    def reporte_prueba(self):
+
+        # self.years
+        # self.month
+        invoice_objs = self.env["account.invoice"].search(
+            [
+                ("date_invoice", ">=", self.years + "-01-01"),
+                ("date_invoice", "<=", self.years + "-12-31"),
+                ("type", "=", "in_invoice"),
+                ("state", "not in", ["draft", "cancel"]),
+            ]
+        )
+
+        for wizard in self:
+            fp = StringIO()
+            # fp.write("\tTest line\n" + self.years + self.months)
+            for line in invoice_objs:
+                di = datetime.strptime(line.date_invoice, '%Y-%m-%d')
+
+                if line.date_due is False:
+                    dd = line.date_invoice
+                else:
+                    dd = line.date_due
+
+                if line.reference is False:
+                    reference = '0-0'
+                else:
+                    reference = line.reference
+
+                fp.write(
+                    self.years + self.months + "00"
+                    + "|"
+                    + "CUO"
+                    + "|"
+                    + "ASIENTO CONTABLE"
+                    + "|"
+                    + str(di)
+                    + "|"
+                    + str(dd)
+                    + "|"
+                    + str(line.tipo_documento)
+                    + "|"
+                    + str(reference.split("-")[0])
+                    + "|"
+                    + "ANO DUA"
+                    + "|"
+                    + str(reference.split("-")[1])
+                    + "|"
+                    + ""
+                    + "|"
+                    + str(line.partner_id.catalog_06_id.code)
+                    + "|"
+                    + str(line.partner_id.vat)
+                    + "|"
+                    + str(line.partner_id.name)
+                    + "|"
+                    + str(line.amount_untaxed)
+                    + "|"
+                    + str(line.amount_tax)
+                    + "|"
+                    + "0"
+                    + "|"
+                    + "0"
+                    + "|"
+                    + "0"
+                    + "|"
+                    + "0"
+                    + "|"
+                    + "0"
+                    + "|"
+                    + "0"
+                    + "|"
+                    + "0"
+                    + "|"
+                    + str(line.amount_total)
+                    + "|"
+                    + line.currency_id.name
+                    + "|"
+                    + "01/01/0001"
+                    + "|"
+                    + "0"
+                    + "|"
+                    + "-"
+                    + "|"
+                    + ""
+                    + "|"
+                    + "-"
+                    + "|"
+                    + "01/01/0001"
+                    + "|"
+                    + "0"
+                    + "|"
+                    + ""
+                    + "|"
+                    + "1"
+                    + ""
+                    + "|"
+                    + ""
+                    + "|"
+                    + ""
+                    + "|"
+                    + ""
+                    + "|"
+                    + ""
+                    + "|"
+                    + ""
+                    + "|"
+                    + "ESTADO"
+                )
+
+            # workbook.save(fp)
+            excel_file = base64.encodestring(fp.getvalue())
+            wizard.invoice_summary_file = excel_file
+            wizard.file_name = "Prueba.txt"
+            wizard.invoice_report_printed = True
+            fp.close()
+
+            return {
+                "view_mode": "form",
+                "res_id": wizard.id,
+                "res_model": "print.prueba.reporte.contabilidad",
+                "view_type": "form",
+                "type": "ir.actions.act_window",
+                "context": wizard.env.context,
+                "target": "new",
+            }
