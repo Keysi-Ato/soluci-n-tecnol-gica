@@ -864,7 +864,7 @@ class accountInvoice(models.Model):
         self.documentoXML =  I
 
     
-
+# REGISTRO DE COMPRAS
 class PrintReportTextPrueba(models.TransientModel):
     _name = "print.prueba.reporte.contabilidad"
 
@@ -1023,6 +1023,7 @@ class PrintReportTextPrueba(models.TransientModel):
                     + ""
                     + "|"
                     + "ESTADO"
+                    + "\n"
                 )
 
             # workbook.save(fp)
@@ -1036,6 +1037,171 @@ class PrintReportTextPrueba(models.TransientModel):
                 "view_mode": "form",
                 "res_id": wizard.id,
                 "res_model": "print.prueba.reporte.contabilidad",
+                "view_type": "form",
+                "type": "ir.actions.act_window",
+                "context": wizard.env.context,
+                "target": "new",
+            }
+
+
+# registro de ventas
+class PrintReportTextVentas(models.TransientModel):
+    _name = "print.diario.reporte.contabilidad"
+
+    def _list_anios(self):
+        d = datetime.now()
+
+        list = []
+
+        i = 0
+        while i < 3:
+            anios = timedelta(days=365 * i)
+            reference_date = d - anios
+            list.append((str(reference_date.year), str(reference_date.year)))
+            i += 1
+
+        return list
+
+    def get_month(self):
+        d = datetime.now()
+        # return d.month
+        return "{:02d}".format(d.month)
+
+    def get_year(self):
+        d = datetime.now()
+        return "{:04d}".format(d.year)
+
+    invoice_summary_file = fields.Binary("Reporte de Diario")
+    file_name = fields.Char("File Name")
+    invoice_report_printed = fields.Boolean("Reporte de Diario")
+    years = fields.Selection(string="Año", selection=_list_anios, default=get_year)
+    months = fields.Selection(
+        string="Mes",
+        selection=[
+            ("01", "Enero"),
+            ("02", "Febrero"),
+            ("03", "Marzo"),
+            ("04", "Abril"),
+            ("05", "Mayo"),
+            ("06", "Junio"),
+            ("07", "Julio"),
+            ("08", "Agosto"),
+            ("09", "Septiembre"),
+            ("10", "Octubre"),
+            ("11", "Noviembre"),
+            ("12", "Diciembre"),
+        ],
+        default=get_month,
+    )
+
+    @api.multi
+    def reporte_prueba(self):
+
+        # self.years
+        # self.month
+        # invoice_objs = self.env["account.invoice"].search(
+        #     [
+        #         ("date_invoice", ">=", self.years + "-01-01"),
+        #         ("date_invoice", "<=", self.years + "-12-31"),
+        #         ("type", "=", "out_invoice"),
+        #         ("state", "not in", ["draft", "cancel"]),
+        #     ]
+        # )
+
+        invoice_objs = self.env["account.move.line"].search(
+            [
+                ("date", ">=", self.years + "-01-01"),
+                ("date", "<=", self.years + "-12-31")
+            ]
+        )
+
+        for wizard in self:
+            fp = StringIO()
+            # fp.write("\tTest line\n" + self.years + self.months)
+            for line in invoice_objs:
+                di = datetime.strptime(line.date, '%Y-%m-%d')
+
+                if line.date_maturity is False:
+                    dd = line.date
+                else:
+                    dd = line.date_maturity
+
+            if line.move_id.name.find('-') > 0:
+                documento = line.move_id.name
+            else:
+                documento = line.ref
+                # if line.ref is False:
+                #     referencia = '0-0'
+                # else:
+                #     referencia = line.ref
+                referencia = "0-0"
+
+                # if line.ref is "":
+                #     document = ""
+                # else:
+                #     document = self.env["account.invoice"].search([("number", "=", line.ref)])
+                #     print("ahora es aqui")
+                print(line.move_id.name.find('-'))
+                #     print(document)
+
+                fp.write(
+                    self.years + self.months + "00"
+                    + "|"
+                    + "CUO"
+                    + "|"
+                    + "ASIENTO CONTABLE"
+                    + "|"
+                    + str(line.account_id.code)
+                    + "|"
+                    + "CODIGO DE LA UNIDAD DE OPERACION"
+                    + "|"
+                    + "CODIGO DE CENTRO DE COSTOS"
+                    + "|"
+                    + str(line.currency_id.name)
+                    + "|"
+                    + str(line.company_id.partner_id.catalog_06_id.code)
+                    + "|"
+                    + str(line.company_id.partner_id.vat)
+                    + "|"
+                    + "str(document[0].tipo_documento)"
+                    + "|"
+                    + str(referencia.split("-")[0])
+                    + "|"
+                    + str(referencia.split("-")[1])
+                    + "|"
+                    + str(di)
+                    + "|"
+                    + str(dd)
+                    + "|"
+                    + str(di)
+                    + "|"
+                    + "GLOSA O DESCRIPCION"
+                    + "|"
+                    + "GLOSA REFERENCIAL"
+                    + "|"
+                    + str(line.debit)
+                    + "|"
+                    + str(line.credit)
+                    + "|"
+                    + "COD LIBRO&VCAMPO1&CMAPO2&CAMPO3"
+                    + "|"
+                    + "ESTADO"
+                    + "|"
+                    + ""
+                    + "\n"
+                )
+
+            # workbook.save(fp)
+            excel_file = base64.encodestring(fp.getvalue())
+            wizard.invoice_summary_file = excel_file
+            wizard.file_name = "Diario_ventas.txt"
+            wizard.invoice_report_printed = True
+            fp.close()
+
+            return {
+                "view_mode": "form",
+                "res_id": wizard.id,
+                "res_model": "print.diario.reporte.contabilidad",
                 "view_type": "form",
                 "type": "ir.actions.act_window",
                 "context": wizard.env.context,
