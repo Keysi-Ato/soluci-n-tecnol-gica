@@ -865,8 +865,8 @@ class accountInvoice(models.Model):
 
     
 # REGISTRO DE COMPRAS
-class PrintReportTextPrueba(models.TransientModel):
-    _name = "print.prueba.reporte.contabilidad"
+class PrintReportTextCompras(models.TransientModel):
+    _name = "print.compras.reporte.contabilidad"
 
     def _list_anios(self):
         d = datetime.now()
@@ -891,9 +891,9 @@ class PrintReportTextPrueba(models.TransientModel):
         d = datetime.now()
         return "{:04d}".format(d.year)
 
-    invoice_summary_file = fields.Binary("Reporte de Prueba")
+    invoice_summary_file = fields.Binary("Reporte de Compras")
     file_name = fields.Char("File Name")
-    invoice_report_printed = fields.Boolean("Reporte de Prueba")
+    invoice_report_printed = fields.Boolean("Reporte de Compras")
     years = fields.Selection(string="Año", selection=_list_anios, default=get_year)
     months = fields.Selection(
         string="Mes",
@@ -915,7 +915,7 @@ class PrintReportTextPrueba(models.TransientModel):
     )
 
     @api.multi
-    def reporte_prueba(self):
+    def generaReporte(self):
 
         # self.years
         # self.month
@@ -1029,14 +1029,194 @@ class PrintReportTextPrueba(models.TransientModel):
             # workbook.save(fp)
             excel_file = base64.encodestring(fp.getvalue())
             wizard.invoice_summary_file = excel_file
-            wizard.file_name = "Prueba.txt"
+            wizard.file_name = "Compras.txt"
             wizard.invoice_report_printed = True
             fp.close()
 
             return {
                 "view_mode": "form",
                 "res_id": wizard.id,
-                "res_model": "print.prueba.reporte.contabilidad",
+                "res_model": "print.compras.reporte.contabilidad",
+                "view_type": "form",
+                "type": "ir.actions.act_window",
+                "context": wizard.env.context,
+                "target": "new",
+            }
+
+# REGISTRO DE VENTAS
+class PrintReportTextVentas(models.TransientModel):
+    _name = "print.ventas.reporte.contabilidad"
+
+    def _list_anios(self):
+        d = datetime.now()
+
+        list = []
+
+        i = 0
+        while i < 3:
+            anios = timedelta(days=365 * i)
+            reference_date = d - anios
+            list.append((str(reference_date.year), str(reference_date.year)))
+            i += 1
+
+        return list
+
+    def get_month(self):
+        d = datetime.now()
+        return "{:02d}".format(d.month)
+
+    def get_year(self):
+        d = datetime.now()
+        return "{:04d}".format(d.year)
+
+    invoice_summary_file = fields.Binary("Reporte de Ventas")
+    file_name = fields.Char("File Name")
+    invoice_report_printed = fields.Boolean("Reporte de Ventas")
+    years = fields.Selection(string="Año", selection=_list_anios, default=get_year)
+    months = fields.Selection(
+        string="Mes",
+        selection=[
+            ("01", "Enero"),
+            ("02", "Febrero"),
+            ("03", "Marzo"),
+            ("04", "Abril"),
+            ("05", "Mayo"),
+            ("06", "Junio"),
+            ("07", "Julio"),
+            ("08", "Agosto"),
+            ("09", "Septiembre"),
+            ("10", "Octubre"),
+            ("11", "Noviembre"),
+            ("12", "Diciembre"),
+        ],
+        default=get_month,
+    )
+
+    @api.multi
+    def generaReporte(self):
+        invoice_objs = self.env["account.invoice"].search(
+            [
+                ("date_invoice", ">=", self.years + "-" + self.months + "-01"),
+                ("date_invoice", "<=", self.years + "-" + self.months + "-31"),
+                ("type", "=", "out_invoice"),
+                ("state", "not in", ["draft", "cancel"]),
+            ]
+        )
+
+        for wizard in self:
+            fp = StringIO()
+            cuo = 1
+            for line in invoice_objs:
+                di = datetime.strptime(line.date_invoice, '%Y-%m-%d')
+
+                if line.date_due is False:
+                    dd = line.date_invoice
+                else:
+                    dd = line.date_due
+
+                # Por mientras
+                dd = ""
+
+                # if line.reference is False:
+                #     reference = '0-0'
+                # else:
+                #     reference = line.reference
+
+                if line.partner_id.parent_id:
+                    doccode = line.partner_id.parent_id.catalog_06_id.code
+                    vatcode = line.partner_id.parent_id.vat
+                    docname = line.partner_id.parent_id.name.encode('utf-8')
+                else:
+                    doccode = line.partner_id.catalog_06_id.code
+                    vatcode = line.partner_id.vat
+                    docname = line.partner_id.name.encode('utf-8')
+                ac = "M"+str(cuo).zfill(3)
+
+                fp.write(
+                    self.years + self.months + "00"
+                    + "|"
+                    + str(cuo)
+                    + "|"
+                    + str(ac)
+                    + "|"
+                    + str(di.date()).replace("-", "/")
+                    + "|"
+                    + str(dd)
+                    + "|"
+                    + str(line.tipo_documento)
+                    + "|"
+                    + str(line.number.split("-")[0])
+                    + "|"
+                    + str(line.number.split("-")[1])
+                    + "|"
+                    + ""
+                    + "|"
+                    + str(doccode)
+                    + "|"
+                    + str(vatcode)
+                    + "|"
+                    + str(docname)
+                    + "|"
+                    + ""
+                    + "|"
+                    + str(line.amount_untaxed)
+                    + "|"
+                    + ""
+                    + "|"
+                    + str(line.amount_tax)
+                    + "|"
+                    + ""
+                    + "|"
+                    + ""
+                    + "|"
+                    + ""
+                    + "|"
+                    + ""
+                    + "|"
+                    + ""
+                    + "|"
+                    + ""
+                    + "|"
+                    + ""
+                    + "|"
+                    + str(line.amount_total)
+                    + "|"
+                    + ""
+                    + "|"
+                    + ""
+                    + "|"
+                    + ""
+                    + "|"
+                    + ""
+                    + "|"
+                    + ""
+                    + "|"
+                    + ""
+                    + "|"
+                    + ""
+                    + "|"
+                    + ""
+                    + "|"
+                    + "1"
+                    + "|"
+                    + "1"
+                    + "|"
+                    + ""
+                    + "\n"
+                )
+                cuo = cuo + 1
+
+            # workbook.save(fp)
+            excel_file = base64.encodestring(fp.getvalue())
+            wizard.invoice_summary_file = excel_file
+            wizard.file_name = "Ventas.txt"
+            wizard.invoice_report_printed = True
+            fp.close()
+
+            return {
+                "view_mode": "form",
+                "res_id": wizard.id,
+                "res_model": "print.ventas.reporte.contabilidad",
                 "view_type": "form",
                 "type": "ir.actions.act_window",
                 "context": wizard.env.context,
@@ -1044,8 +1224,11 @@ class PrintReportTextPrueba(models.TransientModel):
             }
 
 
-# registro de ventas
-class PrintReportTextVentas(models.TransientModel):
+
+
+
+# registro diario
+class PrintReportTextDiario(models.TransientModel):
     _name = "print.diario.reporte.contabilidad"
 
     def _list_anios(self):
@@ -1095,7 +1278,7 @@ class PrintReportTextVentas(models.TransientModel):
     )
 
     @api.multi
-    def reporte_prueba(self):
+    def generaReporte(self):
 
         # self.years
         # self.month

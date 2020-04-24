@@ -17,7 +17,7 @@
     'depends': ['base', 'sale', 'account', 'odoope_einvoice_base', 'odoope_ruc_validation', 'odoope_toponyms', 'backend_theme_v10', 'web_responsive'],
     'data': [
         'views/views.xml',
-        'views/print_prueba_reporte_contabilidad.xml',
+        'views/print_reportes_contabilidad.xml',
         'data/account_journal.xml',
         'data/sequences.xml'
     ],
