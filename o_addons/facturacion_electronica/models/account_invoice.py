@@ -579,7 +579,10 @@ class accountInvoice(models.Model):
         url = "https://www.sunat.gob.pe/ol-it-wsconscpegem/billConsultService"
 
         r = requests.post(
-            url=url, data=self.documentoEnvioTicket, headers={"Content-Type": "text/xml"}
+            url=url,
+            data=self.documentoEnvioTicket,
+            headers={"Content-Type": "text/xml"},
+            verify=False,
         )
 
         self.mensajeSUNAT = ET.fromstring(r.text.encode("utf-8"))[0][0][0][1].text
