@@ -1122,6 +1122,8 @@ class PrintReportTextCompras(models.TransientModel):
             cuo = 1
             for line in invoice_objs:
                 di = datetime.strptime(line.date_invoice, "%Y-%m-%d")
+                di = unicode(di.date()).split("-")
+                fdi = "/".join(reversed(di))
 
                 if line.date_due is False:
                     dd = line.date_invoice
@@ -1154,11 +1156,11 @@ class PrintReportTextCompras(models.TransientModel):
                     + "|"
                     + unicode(ac)
                     + "|"
-                    + unicode(di.date()).replace("-", "/")
+                    + unicode(fdi)
                     + "|"
                     + unicode(dd)
                     + "|"
-                    + unicde(line.tipo_documento)
+                    + unicode(line.tipo_documento)
                     + "|"
                     + unicode(reference.split("-")[0])
                     + "|"
@@ -1232,9 +1234,19 @@ class PrintReportTextCompras(models.TransientModel):
                 fp.write(compras.encode("utf-8"))
                 cuo = cuo + 1
 
+            file_text_name = (
+                "LE"
+                + self.create_uid.company_id.vat
+                + self.years
+                + self.months
+                + "0008010000"
+                + "1111.txt"
+            )
+
             excel_file = base64.encodestring(fp.getvalue())
             wizard.invoice_summary_file = excel_file
-            wizard.file_name = "Compras.txt"
+            # wizard.file_name = "Compras.txt"
+            wizard.file_name = file_text_name
             wizard.invoice_report_printed = True
             fp.close()
 
@@ -1320,6 +1332,8 @@ class PrintReportTextVentas(models.TransientModel):
             cuo = 1
             for line in invoice_objs:
                 di = datetime.strptime(line.date_invoice, "%Y-%m-%d")
+                di = unicode(di.date()).split("-")
+                fdi = "/".join(reversed(di))
 
                 if line.date_due is False:
                     dd = line.date_invoice
@@ -1347,7 +1361,7 @@ class PrintReportTextVentas(models.TransientModel):
                     + "|"
                     + unicode(ac)
                     + "|"
-                    + unicode(di.date()).replace("-", "/")
+                    + unicode(fdi)
                     + "|"
                     + unicode(dd)
                     + "|"
@@ -1416,9 +1430,18 @@ class PrintReportTextVentas(models.TransientModel):
                 fp.write(ventas.encode("utf-8"))
                 cuo = cuo + 1
 
+            file_text_name = (
+                "LE"
+                + self.create_uid.company_id.vat
+                + self.years
+                + self.months
+                + "0014010000"
+                + "1111.txt"
+            )
             excel_file = base64.encodestring(fp.getvalue())
             wizard.invoice_summary_file = excel_file
-            wizard.file_name = "Ventas.txt"
+            # wizard.file_name = "Ventas.txt"
+            wizard.file_name = file_text_name
             wizard.invoice_report_printed = True
             fp.close()
 
@@ -1433,7 +1456,7 @@ class PrintReportTextVentas(models.TransientModel):
             }
 
 
-# registro diario
+# REGISTRO DIARIO
 class PrintReportTextDiario(models.TransientModel):
     _name = "print.diario.reporte.contabilidad"
 
@@ -1453,7 +1476,6 @@ class PrintReportTextDiario(models.TransientModel):
 
     def get_month(self):
         d = datetime.now()
-        # return d.month
         return "{:02d}".format(d.month)
 
     def get_year(self):
@@ -1485,104 +1507,107 @@ class PrintReportTextDiario(models.TransientModel):
 
     @api.multi
     def generaReporte(self):
-
-        # self.years
-        # self.month
-        # invoice_objs = self.env["account.invoice"].search(
-        #     [
-        #         ("date_invoice", ">=", self.years + "-01-01"),
-        #         ("date_invoice", "<=", self.years + "-12-31"),
-        #         ("type", "=", "out_invoice"),
-        #         ("state", "not in", ["draft", "cancel"]),
-        #     ]
-        # )
+        monthRange = calendar.monthrange(int(self.years), int(self.months))
 
         invoice_objs = self.env["account.move.line"].search(
-            [("date", ">=", self.years + "-01-01"), ("date", "<=", self.years + "-12-31")]
+            [
+                ("date", ">=", self.years + "-" + self.months + "-01"),
+                ("date", "<=", self.years + "-" + self.months + "-" + str(monthRange[1])),
+            ]
         )
 
         for wizard in self:
             fp = StringIO()
-            # fp.write("\tTest line\n" + self.years + self.months)
+            cuo = 1
             for line in invoice_objs:
                 di = datetime.strptime(line.date, "%Y-%m-%d")
+                di = unicode(di.date()).split("-")
+                fdi = "/".join(reversed(di))
 
                 if line.date_maturity is False:
                     dd = line.date
                 else:
                     dd = line.date_maturity
 
-            if line.move_id.name.find("-") > 0:
-                documento = line.move_id.name
-            else:
-                documento = line.ref
-                # if line.ref is False:
-                #     referencia = '0-0'
-                # else:
-                #     referencia = line.ref
-                referencia = "0-0"
+                if line.move_id.name.find("-") > 0:
+                    documento = self.env["account.invoice"].search(
+                        [("number", "=", line.move_id.name)]
+                    )
 
-                # if line.ref is "":
-                #     document = ""
-                # else:
-                #     document = self.env["account.invoice"].search([("number", "=", line.ref)])
-                #     print("ahora es aqui")
-                print(line.move_id.name.find("-"))
-                #     print(document)
+                    tipo = documento.tipo_documento
+                    serie = documento.number.split("-")[0]
+                    numero = documento.number.split("-")[1]
+                else:
+                    tipo = ""
+                    serie = ""
+                    numero = ""
 
-                fp.write(
+                ac = "M" + unicode(cuo).zfill(3)
+                diario = (
                     self.years
                     + self.months
                     + "00"
                     + "|"
-                    + "CUO"
+                    + unicode(cuo)
                     + "|"
-                    + "ASIENTO CONTABLE"
+                    + unicode(ac)
                     + "|"
-                    + str(line.account_id.code)
+                    + unicode(line.account_id.code)
                     + "|"
-                    + "CODIGO DE LA UNIDAD DE OPERACION"
+                    + ""
                     + "|"
-                    + "CODIGO DE CENTRO DE COSTOS"
+                    + ""
                     + "|"
-                    + str(line.currency_id.name)
+                    + unicode(line.move_id.name)
                     + "|"
-                    + str(line.company_id.partner_id.catalog_06_id.code)
+                    + ""
                     + "|"
-                    + str(line.company_id.partner_id.vat)
+                    + ""
                     + "|"
-                    + "str(document[0].tipo_documento)"
+                    + unicode(tipo)
                     + "|"
-                    + str(referencia.split("-")[0])
+                    + unicode(serie)
                     + "|"
-                    + str(referencia.split("-")[1])
+                    + unicode(numero)
                     + "|"
-                    + str(di)
+                    + unicode(fdi)
                     + "|"
-                    + str(dd)
+                    + unicode(dd).replace("-", "/")
                     + "|"
-                    + str(di)
+                    + unicode(fdi)
                     + "|"
-                    + "GLOSA O DESCRIPCION"
+                    + unicode(line.name)
                     + "|"
-                    + "GLOSA REFERENCIAL"
+                    + ""
                     + "|"
-                    + str(line.debit)
+                    + unicode(line.debit)
                     + "|"
-                    + str(line.credit)
+                    + unicode(line.credit)
                     + "|"
-                    + "COD LIBRO&VCAMPO1&CMAPO2&CAMPO3"
+                    + ""
                     + "|"
-                    + "ESTADO"
+                    + "1"
                     + "|"
                     + ""
                     + "\n"
                 )
 
-            # workbook.save(fp)
+                fp.write(diario.encode("utf-8"))
+                cuo = cuo + 1
+
+            # LERRRRRRRRRRRAAAAMM0005020000OIM1.TXT
+            file_text_name = (
+                "LE"
+                + self.create_uid.company_id.vat
+                + self.years
+                + self.months
+                + "0005020000"
+                + "1111.txt"
+            )
             excel_file = base64.encodestring(fp.getvalue())
             wizard.invoice_summary_file = excel_file
-            wizard.file_name = "Diario_ventas.txt"
+            # wizard.file_name = "Diario_ventas.txt"
+            wizard.file_name = file_text_name
             wizard.invoice_report_printed = True
             fp.close()
 
@@ -1590,6 +1615,113 @@ class PrintReportTextDiario(models.TransientModel):
                 "view_mode": "form",
                 "res_id": wizard.id,
                 "res_model": "print.diario.reporte.contabilidad",
+                "view_type": "form",
+                "type": "ir.actions.act_window",
+                "context": wizard.env.context,
+                "target": "new",
+            }
+
+
+# PLAN CONTABLE
+class PrintReportPlanContable(models.TransientModel):
+    _name = "print.plancontable.reporte.contabilidad"
+
+    def _list_anios(self):
+        d = datetime.now()
+
+        list = []
+
+        i = 0
+        while i < 3:
+            anios = timedelta(days=365 * i)
+            reference_date = d - anios
+            list.append((str(reference_date.year), str(reference_date.year)))
+            i += 1
+
+        return list
+
+    def get_month(self):
+        d = datetime.now()
+        return "{:02d}".format(d.month)
+
+    def get_year(self):
+        d = datetime.now()
+        return "{:04d}".format(d.year)
+
+    invoice_summary_file = fields.Binary("Plan Contable")
+    file_name = fields.Char("File Name")
+    invoice_report_printed = fields.Boolean("Plan contable")
+    years = fields.Selection(string="Año", selection=_list_anios, default=get_year)
+    months = fields.Selection(
+        string="Mes",
+        selection=[
+            ("01", "Enero"),
+            ("02", "Febrero"),
+            ("03", "Marzo"),
+            ("04", "Abril"),
+            ("05", "Mayo"),
+            ("06", "Junio"),
+            ("07", "Julio"),
+            ("08", "Agosto"),
+            ("09", "Septiembre"),
+            ("10", "Octubre"),
+            ("11", "Noviembre"),
+            ("12", "Diciembre"),
+        ],
+        default=get_month,
+    )
+
+    @api.multi
+    def generaReporte(self):
+        plan_object = self.env["account.account"].search([])
+
+        for wizard in self:
+            fp = StringIO()
+
+            for line in plan_object:
+                plan = (
+                    self.years
+                    + self.months
+                    + "00"
+                    + "|"
+                    + unicode(line.code)
+                    + "|"
+                    + unicode(line.name)
+                    + "|"
+                    + "01"
+                    + "|"
+                    + "-"
+                    + "|"
+                    + ""
+                    + "|"
+                    + ""
+                    + "|"
+                    + "1"
+                    + "\n"
+                )
+
+                fp.write(plan.encode("utf-8"))
+
+            # LERRRRRRRRRRRAAAAMM0005040000OIM1.TXT
+            file_text_name = (
+                "LE"
+                + self.create_uid.company_id.vat
+                + self.years
+                + self.months
+                + "0005040000"
+                + "1111.txt"
+            )
+            excel_file = base64.encodestring(fp.getvalue())
+            wizard.invoice_summary_file = excel_file
+            # wizard.file_name = "Plan_contable.txt"
+            wizard.file_name = file_text_name
+            wizard.invoice_report_printed = True
+            fp.close()
+
+            return {
+                "view_mode": "form",
+                "res_id": wizard.id,
+                "res_model": "print.plancontable.reporte.contabilidad",
                 "view_type": "form",
                 "type": "ir.actions.act_window",
                 "context": wizard.env.context,
