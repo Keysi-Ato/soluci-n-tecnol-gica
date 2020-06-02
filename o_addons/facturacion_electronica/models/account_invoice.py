@@ -20,19 +20,13 @@ import requests
 import zipfile
 import base64
 
-# import os
-import os, ssl
+import os
 import logging
 import json
 import math
 import time
 import calendar
 
-
-if not os.environ.get("PYTHONHTTPSVERIFY", "") and getattr(
-    ssl, "_create_unverified_context", None
-):
-    ssl._create_default_https_context = ssl._create_unverified_context
 
 # mapping invoice type to refund type
 TYPE2REFUND = {
@@ -74,7 +68,7 @@ class accountInvoice(models.Model):
     # invoice_type_code = fields.Selection(string="Tipo de Comprobante", store=True, related="journal_id.invoice_type_code_id", readonly=True)
     # invoice_type_code = fields.Char(string="Tipo de Comprobante", default=_set_invoice_type_code, readonly=True)
 
-    # Para docuementos de proveedor
+    # Para documentos de proveedor
     def _list_invoice_type(self):
         catalogs = self.env["einvoice.catalog.01"].search([])
         list = []
@@ -489,8 +483,12 @@ class accountInvoice(models.Model):
     @api.multi
     def enviar(self):
         url = self.company_id.send_route
+
         r = requests.post(
-            url=url, data=self.documentoEnvio, headers={"Content-Type": "text/xml"}
+            url=url,
+            data=self.documentoEnvio,
+            headers={"Content-Type": "text/xml"},
+            verify=False,
         )
 
         try:
