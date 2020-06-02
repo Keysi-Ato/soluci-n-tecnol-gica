@@ -19,12 +19,20 @@ import xml.etree.ElementTree as ET
 import requests
 import zipfile
 import base64
-import os
+
+# import os
+import os, ssl
 import logging
 import json
 import math
 import time
 import calendar
+
+
+if not os.environ.get("PYTHONHTTPSVERIFY", "") and getattr(
+    ssl, "_create_unverified_context", None
+):
+    ssl._create_default_https_context = ssl._create_unverified_context
 
 # mapping invoice type to refund type
 TYPE2REFUND = {
