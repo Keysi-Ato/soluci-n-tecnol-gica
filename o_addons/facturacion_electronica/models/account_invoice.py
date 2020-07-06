@@ -37,6 +37,40 @@ TYPE2REFUND = {
 }
 
 
+class ActivosFijos(models.Model):
+    _name = "account.activos"
+
+    codigo = fields.Text("Código")
+    descripcion = fields.Text("Descripción")
+    marca = fields.Text("Marca de activo fijo")
+    modelo = fields.Text("Modelo del activo fijo")
+    serie = fields.Text("Número de serie y/o placa del activo fijo")
+    saldo = fields.Float("Saldo inicial")
+    adquisicion = fields.Text("Adquisiciones")
+    mejora = fields.Text("Mejoras")
+    retiro = fields.Text("Retiros y/o bajas")
+    otros = fields.Text("Otros ajustes")
+    historico = fields.Text("Valor histórico")
+    inflacion = fields.Text("Ajuste por inflación")
+    ajustado = fields.Text("Valor ajustado")
+    fecha_adq = fields.Date("Fecha de adquisición")
+    fecha_uso = fields.Date("Fecha de inicio de uso")
+    metodo = fields.Text("Método aplicado")
+    n_documento = fields.Text("Nro. de documento de autorización")
+    porcentaje = fields.Float("Porcentaje de depreciación")
+    acumulada = fields.Text("Depreciación acumulada al cierre del ejercicio anterior")
+    depreciacion = fields.Text("Depreciación del ejercicio")
+    depreciacion_retiro = fields.Text(
+        "Depreciación  del ejercicio relacionada con retiros y/o bajas"
+    )
+    depreciacion_otros = fields.Text("Depreciación relacionada con otros ajustes")
+    depreciacion_acumulada = fields.Text("Depreciación acumulada histórica")
+    depreciacion_ajuste = fields.Text("Ajuste por inflación de la depreciación")
+    depreciacion_acumulada_ajustada = fields.Text(
+        "Depreciación acumulada ajustada por inflación"
+    )
+
+
 class accountInvoice(models.Model):
     _inherit = "account.invoice"
 
@@ -66,7 +100,7 @@ class accountInvoice(models.Model):
     )
 
     # invoice_type_code = fields.Selection(string="Tipo de Comprobante", store=True, related="journal_id.invoice_type_code_id", readonly=True)
-    # invoice_type_code = fields.Char(string="Tipo de Comprobante", default=_set_invoice_type_code, readonly=True)
+    # invoice_type_code = fields.Char(string="Tipo de Comprobante", default=_set_invoice_type_code, readonly = True)
 
     # Para documentos de proveedor
     def _list_invoice_type(self):
@@ -738,6 +772,7 @@ class accountInvoice(models.Model):
                     currency_id=str(self.currency_id.name),
                     taxtotal=str(round(tax.amount, 2)),
                     gratuitas=self.total_venta_gratuito,
+                    gravado=self.total_venta_gravado,
                 )
                 Invoice.appendChild(TaxTotal)
         else:
@@ -745,6 +780,7 @@ class accountInvoice(models.Model):
                 currency_id=str(self.currency_id.name),
                 taxtotal="0.0",
                 gratuitas=self.total_venta_gratuito,
+                gravado=self.total_venta_gravado,
             )
             Invoice.appendChild(TaxTotal)
 
@@ -1734,5 +1770,142 @@ class PrintReportPlanContable(models.TransientModel):
                 "view_type": "form",
                 "type": "ir.actions.act_window",
                 "context": wizard.env.context,
+                "target": "new",
+            }
+
+
+class PrintActivosFijos(models.TransientModel):
+    _name = "print.account.activos.fijos"
+
+    invoice_summary_file = fields.Binary("Activos Fijos")
+    file_name = fields.Char("File Name")
+    invoice_report_printed = fields.Boolean("Activos Fijos")
+
+    @api.multi
+    def action_print_account_activos_fijos(self):
+        workbook = xlwt.Workbook()
+        amount_tot = 0
+        column_heading_style = easyxf("font:height 200;font:bold True;")
+        worksheet = workbook.add_sheet("Activos Fijos")
+        worksheet.write(
+            2,
+            5,
+            self.env.user.company_id.name,
+            easyxf("font:height 200;font:bold True;align: horiz center;"),
+        )
+        worksheet.write(
+            4,
+            4,
+            self.from_date,
+            easyxf("font:height 200;font:bold True;align: horiz center;"),
+        )
+        worksheet.write(
+            4, 5, "al", easyxf("font:height 200;font:bold True;align: horiz center;")
+        )
+        worksheet.write(
+            4,
+            6,
+            self.to_date,
+            easyxf("font:height 200;font:bold True;align: horiz center;"),
+        )
+        worksheet.write(6, 0, _("# Factura/Boleta/NotaCrédito"), column_heading_style)
+        worksheet.write(6, 1, _("Documento Origen"), column_heading_style)
+        worksheet.write(6, 2, _("Cliente"), column_heading_style)
+        worksheet.write(6, 3, _("Departamento"), column_heading_style)
+        worksheet.write(6, 4, _("Provincia"), column_heading_style)
+        worksheet.write(6, 5, _("Distrito"), column_heading_style)
+        worksheet.write(6, 6, _("Dirección"), column_heading_style)
+        worksheet.write(6, 7, _("Fecha"), column_heading_style)
+        worksheet.write(6, 8, _("Tienda"), column_heading_style)
+        worksheet.write(6, 9, _("Codigo Producto"), column_heading_style)
+        worksheet.write(6, 10, _("Producto"), column_heading_style)
+        worksheet.write(6, 11, _("Talla"), column_heading_style)
+        worksheet.write(6, 12, _("Color"), column_heading_style)
+        worksheet.write(6, 13, _("Cantidad"), column_heading_style)
+        worksheet.write(6, 14, _("Precio"), column_heading_style)
+
+        worksheet.col(0).width = 5000
+        worksheet.col(1).width = 4000
+        worksheet.col(2).width = 7000
+        worksheet.col(3).width = 4000
+        worksheet.col(4).width = 4000
+        worksheet.col(5).width = 4000
+        worksheet.col(6).width = 7000
+        worksheet.col(7).width = 3000
+        worksheet.col(8).width = 4000
+        worksheet.col(9).width = 6000
+        worksheet.col(10).width = 3000
+        worksheet.col(11).width = 3000
+        worksheet.col(12).width = 1500
+        worksheet.col(13).width = 1500
+        worksheet.col(14).width = 1500
+
+        row = 7
+        customer_row = 2
+        for wizard in self:
+            customer_payment_data = {}
+            heading = "Activos fijos"
+            worksheet.write_merge(
+                0,
+                0,
+                0,
+                14,
+                heading,
+                easyxf(
+                    "font:height 210; align: horiz center;pattern: pattern solid, fore_color black; font: color white; font:bold True;"
+                    "borders: top thin,bottom thin"
+                ),
+            )
+
+            invoice_objs = self.env["account.activos"].search()
+
+            for invoice in invoice_objs:
+                worksheet.write(row, 0, invoice.codigo)
+                worksheet.write(row, 1, invoice.descripcion)
+                worksheet.write(row, 2, invoice.marca)
+                worksheet.write(row, 3, invoice.modelo)
+                worksheet.write(row, 4, invoice.serie)
+                worksheet.write(row, 5, invoice.saldo)
+                worksheet.write(row, 6, invoice.adquisicion)
+                worksheet.write(row, 7, invoice.mejora)
+                worksheet.write(row, 8, invoice.retiro)
+                worksheet.write(row, 9, invoice.otros)
+                worksheet.write(row, 10, invoice.historico)
+                worksheet.write(row, 11, invoice.inflacion)
+                worksheet.write(row, 12, invoice.ajustado)
+                worksheet.write(row, 13, invoice.fecha_adq)
+                worksheet.write(row, 14, invoice.fecha_uso)
+                worksheet.write(row, 15, invoice.metodo)
+                worksheet.write(row, 16, invoice.n_documento)
+                worksheet.write(row, 17, invoice.porcentaje)
+                worksheet.write(row, 18, invoice.acumulada)
+                worksheet.write(row, 19, invoice.depreciacion)
+                worksheet.write(row, 20, invoice.depreciacion_retiro)
+                worksheet.write(row, 21, invoice.depreciacion_otros)
+                worksheet.write(row, 22, invoice.depreciacion_acumulada)
+                worksheet.write(row, 23, invoice.depreciacion_ajuste)
+                worksheet.write(row, 24, invoice.depreciacion_acumulada_ajustada)
+                worksheet.write(row, 25, invoice.acumulada)
+                worksheet.write(row, 26, invoice.acumulada)
+                worksheet.write(row, 27, invoice.acumulada)
+                worksheet.write(row, 28, invoice.acumulada)
+                worksheet.write(row, 29, invoice.acumulada)
+
+                row += 1
+
+            fp = StringIO()
+            workbook.save(fp)
+            excel_file = base64.encodestring(fp.getvalue())
+            wizard.invoice_summary_file = excel_file
+            wizard.file_name = "Reporte de facturas y boletas.xls"
+            wizard.invoice_report_printed = True
+            fp.close()
+            return {
+                "view_mode": "form",
+                "res_id": wizard.id,
+                "res_model": "print.account.activos.fijos",
+                "view_type": "form",
+                "type": "ir.actions.act_window",
+                "context": self.env.context,
                 "target": "new",
             }

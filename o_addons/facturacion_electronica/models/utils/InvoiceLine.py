@@ -1,99 +1,117 @@
 from xml.dom import minidom
 
+
 class Factura:
     def __init__(self):
         self.doc = minidom.Document()
 
     def Root(self):
-        root= self.doc.createElement('Invoice')
+        root = self.doc.createElement("Invoice")
         self.doc.appendChild(root)
-        root.setAttribute('xmlns','urn:oasis:names:specification:ubl:schema:xsd:Invoice-2')
-        root.setAttribute('xmlns:cac','urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2')
-        root.setAttribute('xmlns:cbc','urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2')
-        root.setAttribute('xmlns:ccts','urn:un:unece:uncefact:documentation:2')
-        root.setAttribute('xmlns:ds','http://www.w3.org/2000/09/xmldsig#')
-        root.setAttribute('xmlns:ext','urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2')
-        root.setAttribute('xmlns:qdt','urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2')
-        root.setAttribute('xmlns:udt','urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2')
-        root.setAttribute('xmlns:xsi','http://www.w3.org/2001/XMLSchema-instance')
+        root.setAttribute(
+            "xmlns", "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
+        )
+        root.setAttribute(
+            "xmlns:cac",
+            "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2",
+        )
+        root.setAttribute(
+            "xmlns:cbc",
+            "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2",
+        )
+        root.setAttribute("xmlns:ccts", "urn:un:unece:uncefact:documentation:2")
+        root.setAttribute("xmlns:ds", "http://www.w3.org/2000/09/xmldsig#")
+        root.setAttribute(
+            "xmlns:ext",
+            "urn:oasis:names:specification:ubl:schema:xsd:CommonExtensionComponents-2",
+        )
+        root.setAttribute(
+            "xmlns:qdt",
+            "urn:oasis:names:specification:ubl:schema:xsd:QualifiedDatatypes-2",
+        )
+        root.setAttribute(
+            "xmlns:udt",
+            "urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2",
+        )
+        root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
 
         return root
 
     def UBLExtensions(self):
-        extUBLExtensions = self.doc.createElement('ext:UBLExtensions')
+        extUBLExtensions = self.doc.createElement("ext:UBLExtensions")
         extUBLExtensions.appendChild(self.firma(id="placeholder"))
 
         return extUBLExtensions
 
-    def firma(self,id):
-        UBLExtension=self.doc.createElement("ext:UBLExtension")
-        ExtensionContent=self.doc.createElement("ext:ExtensionContent")
-        Signature=self.doc.createElement("ds:Signature")
-        Signature.setAttribute("Id",id)
+    def firma(self, id):
+        UBLExtension = self.doc.createElement("ext:UBLExtension")
+        ExtensionContent = self.doc.createElement("ext:ExtensionContent")
+        Signature = self.doc.createElement("ds:Signature")
+        Signature.setAttribute("Id", id)
         ExtensionContent.appendChild(Signature)
         UBLExtension.appendChild(ExtensionContent)
 
         return UBLExtension
 
-    def UBLVersion(self,id):
-        UBLVersion = self.doc.createElement('cbc:UBLVersionID')
+    def UBLVersion(self, id):
+        UBLVersion = self.doc.createElement("cbc:UBLVersionID")
         text = self.doc.createTextNode(id)
         UBLVersion.appendChild(text)
         return UBLVersion
 
-    def CustomizationID(self,id):
-        cbcCustomizationID = self.doc.createElement('cbc:CustomizationID')
+    def CustomizationID(self, id):
+        cbcCustomizationID = self.doc.createElement("cbc:CustomizationID")
         text = self.doc.createTextNode(str(id))
         cbcCustomizationID.appendChild(text)
         return cbcCustomizationID
 
-    def ID(self,id):
-        cbcID = self.doc.createElement('cbc:ID')
+    def ID(self, id):
+        cbcID = self.doc.createElement("cbc:ID")
         text = self.doc.createTextNode(id)
         cbcID.appendChild(text)
         return cbcID
 
-    def issueDate(self,fecha):
-        cbcIssueDate = self.doc.createElement('cbc:IssueDate')
+    def issueDate(self, fecha):
+        cbcIssueDate = self.doc.createElement("cbc:IssueDate")
         text = self.doc.createTextNode(fecha)
         cbcIssueDate.appendChild(text)
         return cbcIssueDate
 
-    def issueTime(self,hora):
-        cbcIssueDate = self.doc.createElement('cbc:IssueTime')
+    def issueTime(self, hora):
+        cbcIssueDate = self.doc.createElement("cbc:IssueTime")
         text = self.doc.createTextNode(hora)
         cbcIssueDate.appendChild(text)
         return cbcIssueDate
 
-    def invoiceTypeCode(self,invoicetypecode, operacion):
-        cbcInvoiceTypeCode = self.doc.createElement('cbc:InvoiceTypeCode')
-        cbcInvoiceTypeCode.setAttribute('listID', str(operacion))
+    def invoiceTypeCode(self, invoicetypecode, operacion):
+        cbcInvoiceTypeCode = self.doc.createElement("cbc:InvoiceTypeCode")
+        cbcInvoiceTypeCode.setAttribute("listID", str(operacion))
         text = self.doc.createTextNode(str(invoicetypecode))
         cbcInvoiceTypeCode.appendChild(text)
         return cbcInvoiceTypeCode
 
-    def documentCurrencyCode(self,documentcurrencycode):
-        cbcDocumentCurrencyCode = self.doc.createElement('cbc:DocumentCurrencyCode')
+    def documentCurrencyCode(self, documentcurrencycode):
+        cbcDocumentCurrencyCode = self.doc.createElement("cbc:DocumentCurrencyCode")
         text = self.doc.createTextNode(documentcurrencycode)
         cbcDocumentCurrencyCode.appendChild(text)
         return cbcDocumentCurrencyCode
 
-    def Signature(self,Id,ruc,razon_social,uri):
-        Signature=self.doc.createElement("cac:Signature")
-        ID=self.doc.createElement("cbc:ID")
-        text=self.doc.createTextNode(Id)
+    def Signature(self, Id, ruc, razon_social, uri):
+        Signature = self.doc.createElement("cac:Signature")
+        ID = self.doc.createElement("cbc:ID")
+        text = self.doc.createTextNode(Id)
         ID.appendChild(text)
         Signature.appendChild(ID)
 
-        SignatoryParty=self.doc.createElement("cac:SignatoryParty")
-        PartyIdentification=self.doc.createElement("cac:PartyIdentification")
-        RUC=self.doc.createElement("cbc:ID")
-        text=self.doc.createTextNode(ruc)
+        SignatoryParty = self.doc.createElement("cac:SignatoryParty")
+        PartyIdentification = self.doc.createElement("cac:PartyIdentification")
+        RUC = self.doc.createElement("cbc:ID")
+        text = self.doc.createTextNode(ruc)
         RUC.appendChild(text)
         PartyIdentification.appendChild(RUC)
-        PartyName=self.doc.createElement("cac:PartyName")
-        Name=self.doc.createElement("cbc:Name")
-        text=self.doc.createTextNode(razon_social)
+        PartyName = self.doc.createElement("cac:PartyName")
+        Name = self.doc.createElement("cbc:Name")
+        text = self.doc.createTextNode(razon_social)
         Name.appendChild(text)
         PartyName.appendChild(Name)
         SignatoryParty.appendChild(PartyIdentification)
@@ -101,10 +119,12 @@ class Factura:
 
         Signature.appendChild(SignatoryParty)
 
-        DigitalSignatureAttachment=self.doc.createElement("cac:DigitalSignatureAttachment")
-        ExternalReference=self.doc.createElement("cac:ExternalReference")
-        URI=self.doc.createElement("cbc:URI")
-        text=self.doc.createTextNode(uri)
+        DigitalSignatureAttachment = self.doc.createElement(
+            "cac:DigitalSignatureAttachment"
+        )
+        ExternalReference = self.doc.createElement("cac:ExternalReference")
+        URI = self.doc.createElement("cbc:URI")
+        text = self.doc.createTextNode(uri)
         URI.appendChild(text)
         ExternalReference.appendChild(URI)
         DigitalSignatureAttachment.appendChild(ExternalReference)
@@ -114,23 +134,25 @@ class Factura:
         return Signature
 
     def cacAdditionalDocumentReference(self, documento, num_doc_ident, tipo_doc_ident):
-        cacAdditionalDocumentReference = self.doc.createElement('cac:AdditionalDocumentReference')
-        cbcID = self.doc.createElement('cbc:ID')
+        cacAdditionalDocumentReference = self.doc.createElement(
+            "cac:AdditionalDocumentReference"
+        )
+        cbcID = self.doc.createElement("cbc:ID")
         text = self.doc.createTextNode(documento)
         cbcID.appendChild(text)
 
-        cbcDocumentTypeCode = self.doc.createElement('cbc:DocumentTypeCode')
-        text = self.doc.createTextNode('02')
+        cbcDocumentTypeCode = self.doc.createElement("cbc:DocumentTypeCode")
+        text = self.doc.createTextNode("02")
         cbcDocumentTypeCode.appendChild(text)
 
-        cbcDocumentStatusCode = self.doc.createElement('cbc:DocumentStatusCode')
+        cbcDocumentStatusCode = self.doc.createElement("cbc:DocumentStatusCode")
         text = self.doc.createTextNode(documento)
         cbcDocumentStatusCode.appendChild(text)
 
-        cacIssuerParty = self.doc.createElement('cac:IssuerParty')
-        cacPartyIdentification = self.doc.createElement('cac:PartyIdentification')
-        cbcIDip = self.doc.createElement('cbc:ID')
-        cbcIDip.setAttribute('schemeID', tipo_doc_ident)
+        cacIssuerParty = self.doc.createElement("cac:IssuerParty")
+        cacPartyIdentification = self.doc.createElement("cac:PartyIdentification")
+        cbcIDip = self.doc.createElement("cbc:ID")
+        cbcIDip.setAttribute("schemeID", tipo_doc_ident)
         text = self.doc.createTextNode(num_doc_ident)
         cbcIDip.appendChild(text)
 
@@ -146,14 +168,14 @@ class Factura:
         return cacAdditionalDocumentReference
 
     def cacPrepaidPayment(self, currency, monto, documento):
-        cacPrepaidPayment = self.doc.createElement('cac:PrepaidPayment')
-        cbcID = self.doc.createElement('cbc:ID')
-        cbcID.setAttribute('schemeID', '02')
+        cacPrepaidPayment = self.doc.createElement("cac:PrepaidPayment")
+        cbcID = self.doc.createElement("cbc:ID")
+        cbcID.setAttribute("schemeID", "02")
         text = self.doc.createTextNode(documento)
         cbcID.appendChild(text)
 
-        cbcPaidAmount = self.doc.createElement('cbc:PaidAmount')
-        cbcPaidAmount.setAttribute('currencyID', currency)
+        cbcPaidAmount = self.doc.createElement("cbc:PaidAmount")
+        cbcPaidAmount.setAttribute("currencyID", currency)
         text = self.doc.createTextNode(str(monto))
         cbcPaidAmount.appendChild(text)
 
@@ -161,6 +183,7 @@ class Factura:
         cacPrepaidPayment.appendChild(cbcPaidAmount)
 
         return cacPrepaidPayment
+
     #########################################################################
     #########################################################################
     ## /Invoice/cac:AccountingSupplierParty/cac:Party/cac:PartyIdentification/cbc:ID
@@ -169,26 +192,39 @@ class Factura:
     ## /Invoice/cac:AccountingSupplierParty/cac:Party/cac:PartyLegalEntity/cac:RegistrationAddress/cbc:AddressTypeCode
     #########################################################################
     #########################################################################
-    def cacAccountingSupplierParty(self,num_doc_ident, tipo_doc_ident, nombre_comercial, codigo_ubigeo, nombre_direccion_full, nombre_direccion_division, nombre_departamento, nombre_provincia, nombre_distrito, nombre_proveedor, codigo_pais):
-        cacAccountingSupplierParty = self.doc.createElement('cac:AccountingSupplierParty')
+    def cacAccountingSupplierParty(
+        self,
+        num_doc_ident,
+        tipo_doc_ident,
+        nombre_comercial,
+        codigo_ubigeo,
+        nombre_direccion_full,
+        nombre_direccion_division,
+        nombre_departamento,
+        nombre_provincia,
+        nombre_distrito,
+        nombre_proveedor,
+        codigo_pais,
+    ):
+        cacAccountingSupplierParty = self.doc.createElement("cac:AccountingSupplierParty")
 
-        cacParty = self.doc.createElement('cac:Party')
+        cacParty = self.doc.createElement("cac:Party")
 
-        cacPartyIdentification = self.doc.createElement('cac:PartyIdentification')
-        cbcID = self.doc.createElement('cbc:ID')
-        cbcID.setAttribute('schemeID', '6')
+        cacPartyIdentification = self.doc.createElement("cac:PartyIdentification")
+        cbcID = self.doc.createElement("cbc:ID")
+        cbcID.setAttribute("schemeID", "6")
         text = self.doc.createTextNode(num_doc_ident)
         cbcID.appendChild(text)
         cacPartyIdentification.appendChild(cbcID)
 
-        cacPartyLegalEntity = self.doc.createElement('cac:PartyLegalEntity')
-        cbcRegistrationName = self.doc.createElement('cbc:RegistrationName')
+        cacPartyLegalEntity = self.doc.createElement("cac:PartyLegalEntity")
+        cbcRegistrationName = self.doc.createElement("cbc:RegistrationName")
         text = self.doc.createTextNode(nombre_proveedor)
         cbcRegistrationName.appendChild(text)
 
-        cacRegistrationAddress = self.doc.createElement('cac:RegistrationAddress')
-        cbcAddressTypeCode = self.doc.createElement('cbc:AddressTypeCode')
-        text = self.doc.createTextNode('0000')
+        cacRegistrationAddress = self.doc.createElement("cac:RegistrationAddress")
+        cbcAddressTypeCode = self.doc.createElement("cbc:AddressTypeCode")
+        text = self.doc.createTextNode("0000")
         cbcAddressTypeCode.appendChild(text)
         cacRegistrationAddress.appendChild(cbcAddressTypeCode)
 
@@ -201,6 +237,7 @@ class Factura:
         cacAccountingSupplierParty.appendChild(cacParty)
 
         return cacAccountingSupplierParty
+
     #########################################################################
     #########################################################################
     #########################################################################
@@ -213,31 +250,34 @@ class Factura:
     ## /Invoice/cac:AccountingCustomerParty/cac:Party/cac:PartyLegalEntity/cbc:RegistrationName
     #########################################################################
     #########################################################################
-    def cacAccountingCustomerParty(self, num_doc_identidad, tipo_doc_identidad, nombre_cliente):
-        cacAccountingCustomerParty = self.doc.createElement('cac:AccountingCustomerParty')
+    def cacAccountingCustomerParty(
+        self, num_doc_identidad, tipo_doc_identidad, nombre_cliente
+    ):
+        cacAccountingCustomerParty = self.doc.createElement("cac:AccountingCustomerParty")
 
-        cacParty = self.doc.createElement('cac:Party')
-        
-        cacPartyIdentification = self.doc.createElement('cac:PartyIdentification')    
-        cbcID = self.doc.createElement('cbc:ID')
-        cbcID.setAttribute('schemeID', tipo_doc_identidad)
+        cacParty = self.doc.createElement("cac:Party")
+
+        cacPartyIdentification = self.doc.createElement("cac:PartyIdentification")
+        cbcID = self.doc.createElement("cbc:ID")
+        cbcID.setAttribute("schemeID", tipo_doc_identidad)
         text = self.doc.createTextNode(num_doc_identidad)
         cbcID.appendChild(text)
         cacPartyIdentification.appendChild(cbcID)
 
-        cacPartyLegalEntity = self.doc.createElement('cac:PartyLegalEntity')
-        cbcRegistrationName = self.doc.createElement('cbc:RegistrationName')
+        cacPartyLegalEntity = self.doc.createElement("cac:PartyLegalEntity")
+        cbcRegistrationName = self.doc.createElement("cbc:RegistrationName")
         text = self.doc.createTextNode(nombre_cliente)
         cbcRegistrationName.appendChild(text)
 
         cacPartyLegalEntity.appendChild(cbcRegistrationName)
-        
+
         cacParty.appendChild(cacPartyIdentification)
         cacParty.appendChild(cacPartyLegalEntity)
 
         cacAccountingCustomerParty.appendChild(cacParty)
 
         return cacAccountingCustomerParty
+
     #########################################################################
     #########################################################################
     #########################################################################
@@ -269,74 +309,109 @@ class Factura:
     #########################################################################
     #########################################################################
     # def cacTaxTotal(self, currency_id, taxtotal, gravadas, igv, tributo_code, tributo_name, tributo_id):
-    def cacTaxTotal(self, currency_id, taxtotal, gratuitas):
-        cacTaxTotal = self.doc.createElement('cac:TaxTotal')
+    def cacTaxTotal(self, currency_id, taxtotal, gratuitas, gravado):
+        cacTaxTotal = self.doc.createElement("cac:TaxTotal")
 
-        cbcTaxAmount = self.doc.createElement('cbc:TaxAmount')
-        cbcTaxAmount.setAttribute('currencyID', currency_id)
+        cbcTaxAmount = self.doc.createElement("cbc:TaxAmount")
+        cbcTaxAmount.setAttribute("currencyID", currency_id)
         text = self.doc.createTextNode(str(taxtotal))
         cbcTaxAmount.appendChild(text)
 
-        cacTaxSubtotal = self.doc.createElement('cac:TaxSubtotal')
-        cbcTaxableAmount = self.doc.createElement('cbc:TaxableAmount')
-        cbcTaxableAmount.setAttribute('currencyID', currency_id)
+        cacTaxSubtotalgravado = self.doc.createElement("cac:TaxSubtotal")
+        cbcTaxableAmountgravado = self.doc.createElement("cbc:TaxableAmount")
+        cbcTaxableAmountgravado.setAttribute("currencyID", currency_id)
+        text = self.doc.createTextNode(str(gravado))
+        cbcTaxableAmountgravado.appendChild(text)
+
+        _cbcTaxAmountgravado = self.doc.createElement("cbc:TaxAmount")
+        _cbcTaxAmountgravado.setAttribute("currencyID", currency_id)
+        text = self.doc.createTextNode(str(taxtotal))
+        _cbcTaxAmountgravado.appendChild(text)
+
+        cacTaxCategorygravado = self.doc.createElement("cac:TaxCategory")
+        cacTaxSchemegravado = self.doc.createElement("cac:TaxScheme")
+        cbcIDgravado = self.doc.createElement("cbc:ID")
+        text = self.doc.createTextNode("1000")
+        cbcIDgravado.appendChild(text)
+        cbcNamegravado = self.doc.createElement("cbc:Name")
+        text = self.doc.createTextNode("IGV")
+        cbcNamegravado.appendChild(text)
+        cbcTaxTypeCodegravado = self.doc.createElement("cbc:TaxTypeCode")
+        text = self.doc.createTextNode("VAT")
+        cbcTaxTypeCodegravado.appendChild(text)
+
+        cacTaxSubtotal = self.doc.createElement("cac:TaxSubtotal")
+        cbcTaxableAmount = self.doc.createElement("cbc:TaxableAmount")
+        cbcTaxableAmount.setAttribute("currencyID", currency_id)
         text = self.doc.createTextNode(str(gratuitas))
         cbcTaxableAmount.appendChild(text)
 
-        _cbcTaxAmount = self.doc.createElement('cbc:TaxAmount')
-        _cbcTaxAmount.setAttribute('currencyID', currency_id)
-        text = self.doc.createTextNode('0.0')
+        _cbcTaxAmount = self.doc.createElement("cbc:TaxAmount")
+        _cbcTaxAmount.setAttribute("currencyID", currency_id)
+        text = self.doc.createTextNode("0.0")
         _cbcTaxAmount.appendChild(text)
 
-        cacTaxCategory = self.doc.createElement('cac:TaxCategory')
-        cacTaxScheme = self.doc.createElement('cac:TaxScheme')
-        cbcID = self.doc.createElement('cbc:ID')
-        text = self.doc.createTextNode('9996')
+        cacTaxCategory = self.doc.createElement("cac:TaxCategory")
+        cacTaxScheme = self.doc.createElement("cac:TaxScheme")
+        cbcID = self.doc.createElement("cbc:ID")
+        text = self.doc.createTextNode("9996")
         cbcID.appendChild(text)
-        cbcName = self.doc.createElement('cbc:Name')
-        text = self.doc.createTextNode('GRA')
+        cbcName = self.doc.createElement("cbc:Name")
+        text = self.doc.createTextNode("GRA")
         cbcName.appendChild(text)
-        
-        cbcTaxTypeCode = self.doc.createElement('cbc:TaxTypeCode')
-        text = self.doc.createTextNode('FRE')
+        cbcTaxTypeCode = self.doc.createElement("cbc:TaxTypeCode")
+        text = self.doc.createTextNode("FRE")
         cbcTaxTypeCode.appendChild(text)
-        
+
         cacTaxScheme.appendChild(cbcID)
         cacTaxScheme.appendChild(cbcName)
         cacTaxScheme.appendChild(cbcTaxTypeCode)
 
         cacTaxCategory.appendChild(cacTaxScheme)
-        
+
         cacTaxSubtotal.appendChild(cbcTaxableAmount)
         cacTaxSubtotal.appendChild(_cbcTaxAmount)
         cacTaxSubtotal.appendChild(cacTaxCategory)
-            
+
+        cacTaxSchemegravado.appendChild(cbcIDgravado)
+        cacTaxSchemegravado.appendChild(cbcNamegravado)
+        cacTaxSchemegravado.appendChild(cbcTaxTypeCodegravado)
+
+        cacTaxCategorygravado.appendChild(cacTaxSchemegravado)
+
+        cacTaxSubtotalgravado.appendChild(cbcTaxableAmountgravado)
+        cacTaxSubtotalgravado.appendChild(_cbcTaxAmountgravado)
+        cacTaxSubtotalgravado.appendChild(cacTaxCategorygravado)
+
         cacTaxTotal.appendChild(cbcTaxAmount)
-        
+
         if gratuitas > 0:
             cacTaxTotal.appendChild(cacTaxSubtotal)
+        else:
+            cacTaxTotal.appendChild(cacTaxSubtotalgravado)
 
         return cacTaxTotal
+
     #########################################################################
     #########################################################################
     #########################################################################
     #########################################################################
-    
+
     #########################################################################
     #########################################################################
     ## /Invoice/cac:LegalMonetaryTotal/cbc:PayableAmount
     #########################################################################
     #########################################################################
     def cacLegalMonetaryTotal(self, total, prepaid, currency_id):
-        cacLegalMonetaryTotal = self.doc.createElement('cac:LegalMonetaryTotal')
+        cacLegalMonetaryTotal = self.doc.createElement("cac:LegalMonetaryTotal")
 
-        cbcPrepaidAmount = self.doc.createElement('cbc:PrepaidAmount')
-        cbcPrepaidAmount.setAttribute('currencyID', currency_id)
+        cbcPrepaidAmount = self.doc.createElement("cbc:PrepaidAmount")
+        cbcPrepaidAmount.setAttribute("currencyID", currency_id)
         text = self.doc.createTextNode(str(prepaid))
         cbcPrepaidAmount.appendChild(text)
 
-        cbcPayableAmount = self.doc.createElement('cbc:PayableAmount')
-        cbcPayableAmount.setAttribute('currencyID', currency_id)
+        cbcPayableAmount = self.doc.createElement("cbc:PayableAmount")
+        cbcPayableAmount.setAttribute("currencyID", currency_id)
         text = self.doc.createTextNode(str(total))
         cbcPayableAmount.appendChild(text)
 
@@ -344,6 +419,7 @@ class Factura:
         cacLegalMonetaryTotal.appendChild(cbcPayableAmount)
 
         return cacLegalMonetaryTotal
+
     #########################################################################
     #########################################################################
     #########################################################################
@@ -384,69 +460,100 @@ class Factura:
     ## /Invoice/cac:InvoiceLine/cac:TaxTotal/cac:TaxSubtotal/cac:TaxCategory/cac:TaxScheme/cbc:TaxTypeCode
     #########################################################################
     #########################################################################
-    def cacInvoiceLine(self, operacionTipo, idline, muestra, valor, currency_id, unitcode, quantity, description, price, taxtotal, afectacion, taxcode, taxname, taxtype):
+    def cacInvoiceLine(
+        self,
+        operacionTipo,
+        idline,
+        muestra,
+        valor,
+        currency_id,
+        unitcode,
+        quantity,
+        description,
+        price,
+        taxtotal,
+        afectacion,
+        taxcode,
+        taxname,
+        taxtype,
+    ):
         # Definimos variables a usar en el esquema
-        if operacionTipo in ('0101', '0401'):
-            if afectacion == '10':
-                taxcode = '1000'
-                taxname = 'IGV'
-                taxtype = 'VAT'
-                pricetype = '01'
+        if operacionTipo in ("0101", "0401"):
+            if afectacion == "10":
+                taxcode = "1000"
+                taxname = "IGV"
+                taxtype = "VAT"
+                pricetype = "01"
                 priceamount = price
 
-            elif afectacion in ('11', '12', '13', '14', '15', '16', '21', '31', '32', '33', '34', '35', '36', '37'):
-                taxcode = '9996'
-                taxname = 'GRA'
-                taxtype = 'FRE'
-                pricetype = '02'
-                priceamount = '0.0'
-            
-            elif afectacion == '20':
-                taxcode = '9997'
-                taxname = 'EXO'
-                taxtype = 'VAT'
-                pricetype = '01'
-                priceamount = price
-            
-            elif afectacion == '30':
-                taxcode = '9998'
-                taxname = 'INA'
-                taxtype = 'FRE'
-                pricetype = '01'
+            elif afectacion in (
+                "11",
+                "12",
+                "13",
+                "14",
+                "15",
+                "16",
+                "21",
+                "31",
+                "32",
+                "33",
+                "34",
+                "35",
+                "36",
+                "37",
+            ):
+                taxcode = "9996"
+                taxname = "GRA"
+                taxtype = "FRE"
+                pricetype = "02"
+                priceamount = "0.0"
+
+            elif afectacion == "20":
+                taxcode = "9997"
+                taxname = "EXO"
+                taxtype = "VAT"
+                pricetype = "01"
                 priceamount = price
 
-        elif operacionTipo == '0200':
+            elif afectacion == "30":
+                taxcode = "9998"
+                taxname = "INA"
+                taxtype = "FRE"
+                pricetype = "01"
+                priceamount = price
+
+        elif operacionTipo == "0200":
             if muestra == True:
-                taxcode = '9996'
-                taxname = 'GRA'
-                taxtype = 'FRE'
-                pricetype = '02'
-                priceamount = '0.0'
+                taxcode = "9996"
+                taxname = "GRA"
+                taxtype = "FRE"
+                pricetype = "02"
+                priceamount = "0.0"
             else:
-                taxcode = '9995'
-                taxname = 'EXP'
-                taxtype = 'FRE'
-                pricetype = '01'
+                taxcode = "9995"
+                taxname = "EXP"
+                taxtype = "FRE"
+                pricetype = "01"
                 priceamount = price
 
-        cacInvoiceLine = self.doc.createElement('cac:InvoiceLine')
+        cacInvoiceLine = self.doc.createElement("cac:InvoiceLine")
 
-        cbcID = self.doc.createElement('cbc:ID')
+        cbcID = self.doc.createElement("cbc:ID")
         text = self.doc.createTextNode(str(idline))
         cbcID.appendChild(text)
-        
-        cbcInvoicedQuantity = self.doc.createElement('cbc:InvoicedQuantity')
-        cbcInvoicedQuantity.setAttribute('unitCode', unitcode)
+
+        cbcInvoicedQuantity = self.doc.createElement("cbc:InvoicedQuantity")
+        cbcInvoicedQuantity.setAttribute("unitCode", unitcode)
         text = self.doc.createTextNode(quantity)
         cbcInvoicedQuantity.appendChild(text)
 
-        cbcLineExtensionAmount = self.doc.createElement('cbc:LineExtensionAmount')
-        cbcLineExtensionAmount.setAttribute('currencyID', currency_id)
+        cbcLineExtensionAmount = self.doc.createElement("cbc:LineExtensionAmount")
+        cbcLineExtensionAmount.setAttribute("currencyID", currency_id)
         text = self.doc.createTextNode(valor)
         cbcLineExtensionAmount.appendChild(text)
 
-        cacItem = self.doc.createElement('cac:Item')
-        cbcDescription = self.doc.createElement('cbc:Description')
+        cacItem = self.doc.createElement("cac:Item")
+        cbcDescription = self.doc.createElement("cbc:Description")
         text = self.doc.createTextNode(description)
         cbcDescription.appendChild(text)
 
@@ -458,65 +565,67 @@ class Factura:
 
         cacItem.appendChild(cbcDescription)
         # cacItem.appendChild(cacCommodityClassification)
-        
-        cacPrice = self.doc.createElement('cac:Price')
-        cbcPriceAmount = self.doc.createElement('cbc:PriceAmount')
-        cbcPriceAmount.setAttribute('currencyID', currency_id)
+
+        cacPrice = self.doc.createElement("cac:Price")
+        cbcPriceAmount = self.doc.createElement("cbc:PriceAmount")
+        cbcPriceAmount.setAttribute("currencyID", currency_id)
         # text = self.doc.createTextNode(str(price))
         text = self.doc.createTextNode(priceamount)
         cbcPriceAmount.appendChild(text)
         cacPrice.appendChild(cbcPriceAmount)
 
-        cacPricingReference = self.doc.createElement('cac:PricingReference')
-        cacAlternativeConditionPrice = self.doc.createElement('cac:AlternativeConditionPrice')
-        cbcPriceAmount = self.doc.createElement('cbc:PriceAmount')
-        cbcPriceAmount.setAttribute('currencyID', currency_id)
+        cacPricingReference = self.doc.createElement("cac:PricingReference")
+        cacAlternativeConditionPrice = self.doc.createElement(
+            "cac:AlternativeConditionPrice"
+        )
+        cbcPriceAmount = self.doc.createElement("cbc:PriceAmount")
+        cbcPriceAmount.setAttribute("currencyID", currency_id)
         text = self.doc.createTextNode(price)
         cbcPriceAmount.appendChild(text)
-        cbcPriceTypeCode = self.doc.createElement('cbc:PriceTypeCode')
+        cbcPriceTypeCode = self.doc.createElement("cbc:PriceTypeCode")
         text = self.doc.createTextNode(pricetype)
         cbcPriceTypeCode.appendChild(text)
         cacAlternativeConditionPrice.appendChild(cbcPriceAmount)
         cacAlternativeConditionPrice.appendChild(cbcPriceTypeCode)
         cacPricingReference.appendChild(cacAlternativeConditionPrice)
 
-        cacTaxTotal = self.doc.createElement('cac:TaxTotal')
-        cbcTaxAmount = self.doc.createElement('cbc:TaxAmount')
-        cbcTaxAmount.setAttribute('currencyID', currency_id)
+        cacTaxTotal = self.doc.createElement("cac:TaxTotal")
+        cbcTaxAmount = self.doc.createElement("cbc:TaxAmount")
+        cbcTaxAmount.setAttribute("currencyID", currency_id)
         text = self.doc.createTextNode(str(taxtotal))
         cbcTaxAmount.appendChild(text)
-            
-        cacTaxSubtotal = self.doc.createElement('cac:TaxSubtotal')
-        cbcTaxableAmount = self.doc.createElement('cbc:TaxableAmount')
-        cbcTaxableAmount.setAttribute('currencyID', currency_id)
+
+        cacTaxSubtotal = self.doc.createElement("cac:TaxSubtotal")
+        cbcTaxableAmount = self.doc.createElement("cbc:TaxableAmount")
+        cbcTaxableAmount.setAttribute("currencyID", currency_id)
         text = self.doc.createTextNode(str(valor))
         cbcTaxableAmount.appendChild(text)
 
-        _cbcTaxAmount =self.doc.createElement('cbc:TaxAmount')
-        _cbcTaxAmount.setAttribute('currencyID', currency_id)
+        _cbcTaxAmount = self.doc.createElement("cbc:TaxAmount")
+        _cbcTaxAmount.setAttribute("currencyID", currency_id)
         text = self.doc.createTextNode(str(taxtotal))
         _cbcTaxAmount.appendChild(text)
 
-        cacTaxCategory = self.doc.createElement('cac:TaxCategory')
-        cbcPercent = self.doc.createElement('cbc:Percent')
-        text = self.doc.createTextNode('18.00')
+        cacTaxCategory = self.doc.createElement("cac:TaxCategory")
+        cbcPercent = self.doc.createElement("cbc:Percent")
+        text = self.doc.createTextNode("18.00")
         cbcPercent.appendChild(text)
 
-        cbcTaxExemptionReasonCode = self.doc.createElement('cbc:TaxExemptionReasonCode')
+        cbcTaxExemptionReasonCode = self.doc.createElement("cbc:TaxExemptionReasonCode")
         text = self.doc.createTextNode(str(afectacion))
         cbcTaxExemptionReasonCode.appendChild(text)
 
-        cacTaxScheme = self.doc.createElement('cac:TaxScheme')
+        cacTaxScheme = self.doc.createElement("cac:TaxScheme")
 
-        _cbcID = self.doc.createElement('cbc:ID')
+        _cbcID = self.doc.createElement("cbc:ID")
         text = self.doc.createTextNode(str(taxcode))
         _cbcID.appendChild(text)
 
-        cbcName = self.doc.createElement('cbc:Name')
+        cbcName = self.doc.createElement("cbc:Name")
         text = self.doc.createTextNode(str(taxname))
         cbcName.appendChild(text)
 
-        cbcTaxTypeCode = self.doc.createElement('cbc:TaxTypeCode')
+        cbcTaxTypeCode = self.doc.createElement("cbc:TaxTypeCode")
         text = self.doc.createTextNode(str(taxtype))
         cbcTaxTypeCode.appendChild(text)
 
@@ -544,6 +653,7 @@ class Factura:
         cacInvoiceLine.appendChild(cacPrice)
 
         return cacInvoiceLine
+
     #########################################################################
     #########################################################################
     #########################################################################
@@ -553,32 +663,44 @@ class Factura:
     #########################################################################
     #########################################################################
     #########################################################################
-    def InvoiceRoot(self, rootXML, versionid, customizationid, id, issuedate, issuetime, operacion, invoicetypecode, documentcurrencycode):
+    def InvoiceRoot(
+        self,
+        rootXML,
+        versionid,
+        customizationid,
+        id,
+        issuedate,
+        issuetime,
+        operacion,
+        invoicetypecode,
+        documentcurrencycode,
+    ):
         r = rootXML
-        
+
         r.appendChild(self.UBLVersion(versionid))
         r.appendChild(self.CustomizationID(customizationid))
-        
+
         r.appendChild(self.ID(id))
         r.appendChild(self.issueDate(issuedate))
-        
+
         if issuetime:
             r.appendChild(self.issueTime(issuetime))
-        
+
         r.appendChild(self.invoiceTypeCode(invoicetypecode, operacion))
         r.appendChild(self.documentCurrencyCode(documentcurrencycode))
-        
+
         return r
+
     #########################################################################
     #########################################################################
     #########################################################################
     #########################################################################
 
-  ########################################################################################################################################################
- ########################################################################################################################################################
-########################################################################################################################################################
- ########################################################################################################################################################
-  ########################################################################################################################################################
+    ########################################################################################################################################################
+    ########################################################################################################################################################
+    ########################################################################################################################################################
+    ########################################################################################################################################################
+    ########################################################################################################################################################
     # def InvoiceRoot(self, rootXML, versionid, customizationid, id, issuedate, issuetime, invoicetypecode, documentcurrencycode, paymentduedate):
     #     r = rootXML
     #     #r.appendChild(self.firma())
@@ -599,7 +721,6 @@ class Factura:
     #########################################################################
     #########################################################################
     #########################################################################
-
 
     """
     pago:Codigo de otros conceptos tributarios (Catalogo 14)
@@ -760,7 +881,6 @@ class Factura:
 
     #         cacPricingReference.appendChild(cacAlternativeConditionPrice02)
 
-
     #     return cacPricingReference
 
     """
@@ -799,7 +919,6 @@ class Factura:
     #     cacInvoiceLine.appendChild(cbcLineExtensionAmount)
 
     #     return cacInvoiceLine
-
 
     """
         cac:TaxTotal                                        1..n    Informacion acerca del importe total de un tipo particular de impuesto. Una repeticion por IGV, ISC
@@ -891,7 +1010,7 @@ class Factura:
 
     # def AllowanceCharge(self,discount,currencyID):
     #     cacAllowanceCharge=self.doc.createElement("cac:AllowanceCharge")
-        
+
     #     cbcChargeIndicator=self.doc.createElement("cbc:ChargeIndicator")
     #     text=self.doc.createTextNode("false")
     #     cbcChargeIndicator.appendChild(text)
@@ -945,7 +1064,7 @@ class Factura:
 
     # def LegalMonetaryTotal(self,MontoTotal,currency_id, monto_incoterms):
     #     LegalMonetaryTotal = self.doc.createElement("cac:LegalMonetaryTotal")
-        
+
     #     if monto_incoterms != '0.0':
     #         ChargeTotalAmount = self.doc.createElement("cbc:ChargeTotalAmount")
     #         ChargeTotalAmount.setAttribute("currencyID", currency_id)
@@ -961,172 +1080,168 @@ class Factura:
 
     #     return LegalMonetaryTotal
 
-
     #########################################################################
     #########################################################################
     #########################################################################
     #########################################################################
 
+    #     def AdditionalMonetaryTotal(self,currencyID,gravado,exonerado,inafecto,gratuito,total_descuento, incoterm, operacion):
+    #         extUBLExtensions = self.doc.createElement("ext:UBLExtensions")
+    #         extUBLExtension = self.doc.createElement("ext:UBLExtension")
+    #         extExtensionContent = self.doc.createElement("ext:ExtensionContent")
+    #         sacAdditionalInformation = self.doc.createElement("sac:AdditionalInformation")
 
-#     def AdditionalMonetaryTotal(self,currencyID,gravado,exonerado,inafecto,gratuito,total_descuento, incoterm, operacion):
-#         extUBLExtensions = self.doc.createElement("ext:UBLExtensions")
-#         extUBLExtension = self.doc.createElement("ext:UBLExtension")
-#         extExtensionContent = self.doc.createElement("ext:ExtensionContent")
-#         sacAdditionalInformation = self.doc.createElement("sac:AdditionalInformation")
+    # ## ACTIVAR PARA EXPORTACION
+    #         # idop = '02'
+    #         idop = ''
 
-# ## ACTIVAR PARA EXPORTACION
-#         # idop = '02'
-#         idop = ''
+    #         if incoterm.id != False:
+    #             idop = '02'
 
-#         if incoterm.id != False:
-#             idop = '02'
+    #         if idop is not '02':
+    #             #OPERACIONES GRAVADAS
+    #             sacAdditionalMonetaryTotal_gravado = self.doc.createElement("sac:AdditionalMonetaryTotal")
 
-#         if idop is not '02':
-#             #OPERACIONES GRAVADAS
-#             sacAdditionalMonetaryTotal_gravado = self.doc.createElement("sac:AdditionalMonetaryTotal")
+    #             cbcID=self.doc.createElement("cbc:ID")
+    #             text=self.doc.createTextNode("1001")
+    #             cbcID.appendChild(text)
 
-#             cbcID=self.doc.createElement("cbc:ID")
-#             text=self.doc.createTextNode("1001")
-#             cbcID.appendChild(text)
+    #             cbcPayableAmount=self.doc.createElement("cbc:PayableAmount")
+    #             cbcPayableAmount.setAttribute("currencyID",currencyID)
+    #             text=self.doc.createTextNode(str(gravado))
+    #             cbcPayableAmount.appendChild(text)
 
-#             cbcPayableAmount=self.doc.createElement("cbc:PayableAmount")
-#             cbcPayableAmount.setAttribute("currencyID",currencyID)
-#             text=self.doc.createTextNode(str(gravado))
-#             cbcPayableAmount.appendChild(text)
+    #             sacAdditionalMonetaryTotal_gravado.appendChild(cbcID)
+    #             sacAdditionalMonetaryTotal_gravado.appendChild(cbcPayableAmount)
 
-#             sacAdditionalMonetaryTotal_gravado.appendChild(cbcID)
-#             sacAdditionalMonetaryTotal_gravado.appendChild(cbcPayableAmount)
+    #             #OPERACIONES EXONERADAS
+    #             sacAdditionalMonetaryTotal_exonerado = self.doc.createElement("sac:AdditionalMonetaryTotal")
+    #             cbcID = self.doc.createElement("cbc:ID")
+    #             text = self.doc.createTextNode("1003")
+    #             cbcID.appendChild(text)
 
-#             #OPERACIONES EXONERADAS
-#             sacAdditionalMonetaryTotal_exonerado = self.doc.createElement("sac:AdditionalMonetaryTotal")
-#             cbcID = self.doc.createElement("cbc:ID")
-#             text = self.doc.createTextNode("1003")
-#             cbcID.appendChild(text)
+    #             cbcPayableAmount = self.doc.createElement("cbc:PayableAmount")
+    #             cbcPayableAmount.setAttribute("currencyID", currencyID)
+    #             text = self.doc.createTextNode(str(exonerado))
+    #             cbcPayableAmount.appendChild(text)
 
-#             cbcPayableAmount = self.doc.createElement("cbc:PayableAmount")
-#             cbcPayableAmount.setAttribute("currencyID", currencyID)
-#             text = self.doc.createTextNode(str(exonerado))
-#             cbcPayableAmount.appendChild(text)
+    #             sacAdditionalMonetaryTotal_exonerado.appendChild(cbcID)
+    #             sacAdditionalMonetaryTotal_exonerado.appendChild(cbcPayableAmount)
 
-#             sacAdditionalMonetaryTotal_exonerado.appendChild(cbcID)
-#             sacAdditionalMonetaryTotal_exonerado.appendChild(cbcPayableAmount)
+    #             #OPERACIONES INAFECTAS
+    #             sacAdditionalMonetaryTotal_inafecto = self.doc.createElement("sac:AdditionalMonetaryTotal")
+    #             cbcID = self.doc.createElement("cbc:ID")
+    #             text = self.doc.createTextNode("1002")
+    #             cbcID.appendChild(text)
 
-#             #OPERACIONES INAFECTAS
-#             sacAdditionalMonetaryTotal_inafecto = self.doc.createElement("sac:AdditionalMonetaryTotal")
-#             cbcID = self.doc.createElement("cbc:ID")
-#             text = self.doc.createTextNode("1002")
-#             cbcID.appendChild(text)
+    #             cbcPayableAmount = self.doc.createElement("cbc:PayableAmount")
+    #             cbcPayableAmount.setAttribute("currencyID", currencyID)
+    #             text = self.doc.createTextNode(str(inafecto))
+    #             cbcPayableAmount.appendChild(text)
 
-#             cbcPayableAmount = self.doc.createElement("cbc:PayableAmount")
-#             cbcPayableAmount.setAttribute("currencyID", currencyID)
-#             text = self.doc.createTextNode(str(inafecto))
-#             cbcPayableAmount.appendChild(text)
+    #             sacAdditionalMonetaryTotal_inafecto.appendChild(cbcID)
+    #             sacAdditionalMonetaryTotal_inafecto.appendChild(cbcPayableAmount)
 
-#             sacAdditionalMonetaryTotal_inafecto.appendChild(cbcID)
-#             sacAdditionalMonetaryTotal_inafecto.appendChild(cbcPayableAmount)
+    #             #OPERACIONES GRATUITAS
+    #             sacAdditionalMonetaryTotal_gratuito = self.doc.createElement("sac:AdditionalMonetaryTotal")
+    #             cbcID = self.doc.createElement("cbc:ID")
+    #             text = self.doc.createTextNode("1004")
+    #             cbcID.appendChild(text)
 
-#             #OPERACIONES GRATUITAS
-#             sacAdditionalMonetaryTotal_gratuito = self.doc.createElement("sac:AdditionalMonetaryTotal")
-#             cbcID = self.doc.createElement("cbc:ID")
-#             text = self.doc.createTextNode("1004")
-#             cbcID.appendChild(text)
+    #             cbcPayableAmount = self.doc.createElement("cbc:PayableAmount")
+    #             cbcPayableAmount.setAttribute("currencyID", currencyID)
+    #             text = self.doc.createTextNode(str(gratuito))
+    #             cbcPayableAmount.appendChild(text)
 
-#             cbcPayableAmount = self.doc.createElement("cbc:PayableAmount")
-#             cbcPayableAmount.setAttribute("currencyID", currencyID)
-#             text = self.doc.createTextNode(str(gratuito))
-#             cbcPayableAmount.appendChild(text)
+    #             sacAdditionalMonetaryTotal_gratuito.appendChild(cbcID)
+    #             sacAdditionalMonetaryTotal_gratuito.appendChild(cbcPayableAmount)
 
-#             sacAdditionalMonetaryTotal_gratuito.appendChild(cbcID)
-#             sacAdditionalMonetaryTotal_gratuito.appendChild(cbcPayableAmount)
+    #             # DESCUENTOS
+    #             sacAdditionalMonetaryTotal_descuento = self.doc.createElement("sac:AdditionalMonetaryTotal")
+    #             cbcID = self.doc.createElement("cbc:ID")
+    #             text = self.doc.createTextNode("2005")
+    #             cbcID.appendChild(text)
+    #             cbcPayableAmount = self.doc.createElement("cbc:PayableAmount")
+    #             cbcPayableAmount.setAttribute("currencyID", currencyID)
+    #             text = self.doc.createTextNode(str(total_descuento))
+    #             cbcPayableAmount.appendChild(text)
+    #             sacAdditionalMonetaryTotal_descuento.appendChild(cbcID)
+    #             sacAdditionalMonetaryTotal_descuento.appendChild(cbcPayableAmount)
 
-#             # DESCUENTOS
-#             sacAdditionalMonetaryTotal_descuento = self.doc.createElement("sac:AdditionalMonetaryTotal")
-#             cbcID = self.doc.createElement("cbc:ID")
-#             text = self.doc.createTextNode("2005")
-#             cbcID.appendChild(text)
-#             cbcPayableAmount = self.doc.createElement("cbc:PayableAmount")
-#             cbcPayableAmount.setAttribute("currencyID", currencyID)
-#             text = self.doc.createTextNode(str(total_descuento))
-#             cbcPayableAmount.appendChild(text)
-#             sacAdditionalMonetaryTotal_descuento.appendChild(cbcID)
-#             sacAdditionalMonetaryTotal_descuento.appendChild(cbcPayableAmount)
+    #             sacAdditionalInformation.appendChild(sacAdditionalMonetaryTotal_gravado)
+    #             sacAdditionalInformation.appendChild(sacAdditionalMonetaryTotal_exonerado)
+    #             sacAdditionalInformation.appendChild(sacAdditionalMonetaryTotal_inafecto)
+    #             sacAdditionalInformation.appendChild(sacAdditionalMonetaryTotal_gratuito)
+    #             sacAdditionalInformation.appendChild(sacAdditionalMonetaryTotal_descuento)
 
-#             sacAdditionalInformation.appendChild(sacAdditionalMonetaryTotal_gravado)
-#             sacAdditionalInformation.appendChild(sacAdditionalMonetaryTotal_exonerado)
-#             sacAdditionalInformation.appendChild(sacAdditionalMonetaryTotal_inafecto)
-#             sacAdditionalInformation.appendChild(sacAdditionalMonetaryTotal_gratuito)
-#             sacAdditionalInformation.appendChild(sacAdditionalMonetaryTotal_descuento)
+    #             if operacion == '04':
+    #                 sacSUNATTransaction = self.doc.createElement('sac:SUNATTransaction')
 
-#             if operacion == '04':
-#                 sacSUNATTransaction = self.doc.createElement('sac:SUNATTransaction')
-                
-#                 cbcID = self.doc.createElement('cbc:ID')
-#                 text = self.doc.createTextNode(operacion)
-#                 cbcID.appendChild(text)
+    #                 cbcID = self.doc.createElement('cbc:ID')
+    #                 text = self.doc.createTextNode(operacion)
+    #                 cbcID.appendChild(text)
 
-#                 sacSUNATTransaction.appendChild(cbcID)
-#                 sacAdditionalInformation.appendChild(sacSUNATTransaction)
-#         # sac:AdditionalProperty 1002 TRANSFERENCIA GRATUITA DE UN BIOEN O SERVICIO PRESTADO GRATUITAMENTE
-#         # OBLIGATORIO:
-#         """
-#             Aplicable solo en el caso que todas las operaciones (lineas o items) comprendidas en
-#             la factura electrOnica sean gratuitas.
-#             En el elemento cbc:ID se debe consignar el cOdigo 1002 (segun Catalogo No. 15).
-#         """
-#         if gratuito>0 and gravado==0 and exonerado==0 and inafecto==0  and total_descuento==0 :
-#             sacAdditionalProperty=self.doc.createElement("sac:AdditionalProperty")
-#             cbcID=self.doc.createElement("cbc:ID")
-#             text=self.doc.createTextNode("1002")
-#             cbcID.appendChild(text)
-#             cbcValue=self.doc.createElement("cbc:Value")
-#             #text=self.doc.createTextNode("TRANSFERENCIA GRATUITA DE UN BIEN Y/O SERVICIO PRESTADO GRATUITAMENTE")
-#             text=self.doc.createTextNode("TRANSFERENCIA GRATUITA")
-#             cbcValue.appendChild(text)
-#             sacAdditionalProperty.appendChild(cbcID)
-#             sacAdditionalProperty.appendChild(cbcValue)
-#             sacAdditionalInformation.appendChild(sacAdditionalProperty)
+    #                 sacSUNATTransaction.appendChild(cbcID)
+    #                 sacAdditionalInformation.appendChild(sacSUNATTransaction)
+    #         # sac:AdditionalProperty 1002 TRANSFERENCIA GRATUITA DE UN BIOEN O SERVICIO PRESTADO GRATUITAMENTE
+    #         # OBLIGATORIO:
+    #         """
+    #             Aplicable solo en el caso que todas las operaciones (lineas o items) comprendidas en
+    #             la factura electrOnica sean gratuitas.
+    #             En el elemento cbc:ID se debe consignar el cOdigo 1002 (segun Catalogo No. 15).
+    #         """
+    #         if gratuito>0 and gravado==0 and exonerado==0 and inafecto==0  and total_descuento==0 :
+    #             sacAdditionalProperty=self.doc.createElement("sac:AdditionalProperty")
+    #             cbcID=self.doc.createElement("cbc:ID")
+    #             text=self.doc.createTextNode("1002")
+    #             cbcID.appendChild(text)
+    #             cbcValue=self.doc.createElement("cbc:Value")
+    #             #text=self.doc.createTextNode("TRANSFERENCIA GRATUITA DE UN BIEN Y/O SERVICIO PRESTADO GRATUITAMENTE")
+    #             text=self.doc.createTextNode("TRANSFERENCIA GRATUITA")
+    #             cbcValue.appendChild(text)
+    #             sacAdditionalProperty.appendChild(cbcID)
+    #             sacAdditionalProperty.appendChild(cbcValue)
+    #             sacAdditionalInformation.appendChild(sacAdditionalProperty)
 
-        
-#         # TIPO DE OPERACION
-#         if idop == '02':
-#             # OPERACIONES INAFECTAS
-#             sacAdditionalMonetaryTotal_inafecto = self.doc.createElement("sac:AdditionalMonetaryTotal")
-#             cbcID = self.doc.createElement("cbc:ID")
-#             text = self.doc.createTextNode("1002")
-#             cbcID.appendChild(text)
+    #         # TIPO DE OPERACION
+    #         if idop == '02':
+    #             # OPERACIONES INAFECTAS
+    #             sacAdditionalMonetaryTotal_inafecto = self.doc.createElement("sac:AdditionalMonetaryTotal")
+    #             cbcID = self.doc.createElement("cbc:ID")
+    #             text = self.doc.createTextNode("1002")
+    #             cbcID.appendChild(text)
 
-#             cbcPayableAmount = self.doc.createElement("cbc:PayableAmount")
-#             cbcPayableAmount.setAttribute("currencyID", currencyID)
-#             # cambiar variable 
-#             text = self.doc.createTextNode(str(exonerado))
-#             cbcPayableAmount.appendChild(text)
+    #             cbcPayableAmount = self.doc.createElement("cbc:PayableAmount")
+    #             cbcPayableAmount.setAttribute("currencyID", currencyID)
+    #             # cambiar variable
+    #             text = self.doc.createTextNode(str(exonerado))
+    #             cbcPayableAmount.appendChild(text)
 
-#             sacAdditionalMonetaryTotal_inafecto.appendChild(cbcID)
-#             sacAdditionalMonetaryTotal_inafecto.appendChild(cbcPayableAmount)
-#             sacAdditionalInformation.appendChild(sacAdditionalMonetaryTotal_inafecto)
+    #             sacAdditionalMonetaryTotal_inafecto.appendChild(cbcID)
+    #             sacAdditionalMonetaryTotal_inafecto.appendChild(cbcPayableAmount)
+    #             sacAdditionalInformation.appendChild(sacAdditionalMonetaryTotal_inafecto)
 
-#             # OPERACION
-#             sacSUNATTransaction = self.doc.createElement('sac:SUNATTransaction')
-            
-#             cbcID = self.doc.createElement('cbc:ID')
-#             text = self.doc.createTextNode(idop)
-#             cbcID.appendChild(text)
+    #             # OPERACION
+    #             sacSUNATTransaction = self.doc.createElement('sac:SUNATTransaction')
 
-#             sacSUNATTransaction.appendChild(cbcID)
-#             sacAdditionalInformation.appendChild(sacSUNATTransaction)
+    #             cbcID = self.doc.createElement('cbc:ID')
+    #             text = self.doc.createTextNode(idop)
+    #             cbcID.appendChild(text)
 
-#         extExtensionContent.appendChild(sacAdditionalInformation)
-#         extUBLExtension.appendChild(extExtensionContent)
+    #             sacSUNATTransaction.appendChild(cbcID)
+    #             sacAdditionalInformation.appendChild(sacSUNATTransaction)
 
-#         extUBLExtensions.appendChild(extUBLExtension)
+    #         extExtensionContent.appendChild(sacAdditionalInformation)
+    #         extUBLExtension.appendChild(extExtensionContent)
 
-#         return extUBLExtensions
+    #         extUBLExtensions.appendChild(extUBLExtension)
+
+    #         return extUBLExtensions
 
     #########################################################################
     #########################################################################
     #########################################################################
     #########################################################################
-
 
     # def TaxTotal(self,currencyID,TaxAmount,tributo_id,tributo_nombre,tributo_codigo):
     #     cacTaxTotal=self.doc.createElement("cac:TaxTotal")
@@ -1136,7 +1251,6 @@ class Factura:
     #     text=self.doc.createTextNode(str(TaxAmount))
     #     cbcTaxAmount.appendChild(text)
     #     cacTaxTotal.appendChild(cbcTaxAmount)
-
 
     #     cacTaxSubtotal=self.doc.createElement("cac:TaxSubtotal")
 
@@ -1175,20 +1289,25 @@ class Factura:
     #########################################################################
     #########################################################################
     #########################################################################
-    def sendBill(self,username,password,namefile,contentfile):
-        Envelope=self.doc.createElement("soapenv:Envelope")
-        Envelope.setAttribute("xmlns:soapenv","http://schemas.xmlsoap.org/soap/envelope/")
-        Envelope.setAttribute("xmlns:ser","http://service.sunat.gob.pe")
-        Envelope.setAttribute("xmlns:wsse","http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd")
+    def sendBill(self, username, password, namefile, contentfile):
+        Envelope = self.doc.createElement("soapenv:Envelope")
+        Envelope.setAttribute(
+            "xmlns:soapenv", "http://schemas.xmlsoap.org/soap/envelope/"
+        )
+        Envelope.setAttribute("xmlns:ser", "http://service.sunat.gob.pe")
+        Envelope.setAttribute(
+            "xmlns:wsse",
+            "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd",
+        )
 
-        Header=self.doc.createElement("soapenv:Header")
-        Security=self.doc.createElement("wsse:Security")
-        UsernameToken=self.doc.createElement("wsse:UsernameToken")
-        Username=self.doc.createElement("wsse:Username")
-        text=self.doc.createTextNode(username)
+        Header = self.doc.createElement("soapenv:Header")
+        Security = self.doc.createElement("wsse:Security")
+        UsernameToken = self.doc.createElement("wsse:UsernameToken")
+        Username = self.doc.createElement("wsse:Username")
+        text = self.doc.createTextNode(username)
         Username.appendChild(text)
-        Password=self.doc.createElement("wsse:Password")
-        text=self.doc.createTextNode(password)
+        Password = self.doc.createElement("wsse:Password")
+        text = self.doc.createTextNode(password)
         Password.appendChild(text)
         UsernameToken.appendChild(Username)
         UsernameToken.appendChild(Password)
@@ -1196,13 +1315,13 @@ class Factura:
         Header.appendChild(Security)
         Envelope.appendChild(Header)
 
-        Body=self.doc.createElement("soapenv:Body")
-        sendBill=self.doc.createElement("ser:sendBill")
-        fileName=self.doc.createElement("fileName")
-        text=self.doc.createTextNode(namefile)
+        Body = self.doc.createElement("soapenv:Body")
+        sendBill = self.doc.createElement("ser:sendBill")
+        fileName = self.doc.createElement("fileName")
+        text = self.doc.createTextNode(namefile)
         fileName.appendChild(text)
-        contentFile=self.doc.createElement("contentFile")
-        text=self.doc.createTextNode(contentfile)
+        contentFile = self.doc.createElement("contentFile")
+        text = self.doc.createTextNode(contentfile)
         contentFile.appendChild(text)
         sendBill.appendChild(fileName)
         sendBill.appendChild(contentFile)
@@ -1212,19 +1331,24 @@ class Factura:
         return Envelope
 
     def getStatus(self, username, password, ruc, tipo, numero):
-        Envelope=self.doc.createElement("soapenv:Envelope")
-        Envelope.setAttribute("xmlns:soapenv","http://schemas.xmlsoap.org/soap/envelope/")
-        Envelope.setAttribute("xmlns:ser","http://service.sunat.gob.pe")
-        Envelope.setAttribute("xmlns:wsse","http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd")
+        Envelope = self.doc.createElement("soapenv:Envelope")
+        Envelope.setAttribute(
+            "xmlns:soapenv", "http://schemas.xmlsoap.org/soap/envelope/"
+        )
+        Envelope.setAttribute("xmlns:ser", "http://service.sunat.gob.pe")
+        Envelope.setAttribute(
+            "xmlns:wsse",
+            "http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-secext-1.0.xsd",
+        )
 
-        Header=self.doc.createElement("soapenv:Header")
-        Security=self.doc.createElement("wsse:Security")
-        UsernameToken=self.doc.createElement("wsse:UsernameToken")
-        Username=self.doc.createElement("wsse:Username")
-        text=self.doc.createTextNode(ruc+username)
+        Header = self.doc.createElement("soapenv:Header")
+        Security = self.doc.createElement("wsse:Security")
+        UsernameToken = self.doc.createElement("wsse:UsernameToken")
+        Username = self.doc.createElement("wsse:Username")
+        text = self.doc.createTextNode(ruc + username)
         Username.appendChild(text)
-        Password=self.doc.createElement("wsse:Password")
-        text=self.doc.createTextNode(password)
+        Password = self.doc.createElement("wsse:Password")
+        text = self.doc.createTextNode(password)
         Password.appendChild(text)
         UsernameToken.appendChild(Username)
         UsernameToken.appendChild(Password)
@@ -1232,20 +1356,20 @@ class Factura:
         Header.appendChild(Security)
         Envelope.appendChild(Header)
 
-        Body=self.doc.createElement("soapenv:Body")
-        getStatus=self.doc.createElement("ser:getStatus")
-        nruc=self.doc.createElement("rucComprobante")
-        text=self.doc.createTextNode(ruc)
+        Body = self.doc.createElement("soapenv:Body")
+        getStatus = self.doc.createElement("ser:getStatus")
+        nruc = self.doc.createElement("rucComprobante")
+        text = self.doc.createTextNode(ruc)
         nruc.appendChild(text)
-        ntipo=self.doc.createElement("tipoComprobante")
-        text=self.doc.createTextNode(tipo)
+        ntipo = self.doc.createElement("tipoComprobante")
+        text = self.doc.createTextNode(tipo)
         ntipo.appendChild(text)
-        serie=self.doc.createElement("serieComprobante")
-        text=self.doc.createTextNode(numero[:-9])
+        serie = self.doc.createElement("serieComprobante")
+        text = self.doc.createTextNode(numero[:-9])
         serie.appendChild(text)
-        num=self.doc.createElement("numeroComprobante")
+        num = self.doc.createElement("numeroComprobante")
         v = numero[6:]
-        text=self.doc.createTextNode(str(int(v)))
+        text = self.doc.createTextNode(str(int(v)))
         num.appendChild(text)
         getStatus.appendChild(nruc)
         getStatus.appendChild(ntipo)
@@ -1255,7 +1379,6 @@ class Factura:
         Envelope.appendChild(Body)
 
         return Envelope
-    
 
     #########################################################################
     #########################################################################
