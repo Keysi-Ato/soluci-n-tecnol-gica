@@ -15,6 +15,7 @@
                     </group>
                     <group>
                         <field name="years" required="1" style="width:200px;"/>
+                        <field name="tipo_reporte"/>
                     </group>
                 </group>
                 <group attrs="{'invisible':[('invoice_report_printed','=',False)]}">
@@ -43,6 +44,7 @@
                     </group>
                     <group>
                         <field name="years" required="1" style="width:200px;"/>
+                        <field name="tipo_reporte"/>
                     </group>
                 </group>
                 <group attrs="{'invisible':[('invoice_report_printed','=',False)]}">
@@ -112,6 +114,34 @@
             </form>
         </field>
     </record>
+    <!-- ACTIVOS FIJOS -->
+    <record id="view_print_text_activos_fijos_form" model="ir.ui.view">
+        <field name="name">print.text.activos.fijos.form</field>
+        <field name="model">print.account.activos.fijos</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Reporte de activos fijos">
+                <field name="invoice_report_printed" invisible="1"/>
+                <group attrs="{'invisible':[('invoice_report_printed','=',True)]}">
+                    <group>
+                        <field name="months" required="1" style="width:200px;"/>
+                    </group>
+                    <group>
+                        <field name="years" required="1" style="width:200px;"/>
+                        <field name="tipo_reporte"/>
+                    </group>
+                </group>
+                <group attrs="{'invisible':[('invoice_report_printed','=',False)]}">
+                    <field name="file_name" invisible="1"/>
+                    <field name="invoice_summary_file" readonly="1" filename="file_name"/>
+                </group>
+                <footer>
+                    <button string='GENERAR' name="generaReporte" type="object" class="btn-primary" attrs="{'invisible':[('invoice_report_printed','=',True)]}"/>
+                    <button string="CANCELAR" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
 
     <!-- ACTIONS (llaman a la acción de generacion de reporte del popup) -->
     <!-- REGISTRO DE COMPRAS -->
@@ -144,11 +174,21 @@
         <field name="target">new</field>
     </record>
 
-    <!-- PLAN CONTABLE SIMPLIFICADO-->
+    <!-- PLAN CONTABLE SIMPLIFICADO -->
     <record id="plan_contable_simplificado" model="ir.actions.act_window">
         <field name="name">Plan Contable - Simplificado</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">print.plancontable.reporte.contabilidad</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- REPORTE ACTIVOS FIJOS -->
+    <record id="report_activos_fijos" model="ir.actions.act_window">
+        <field name="name">Plan Contable - Simplificado</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">print.account.activos.fijos</field>
         <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
@@ -163,4 +203,6 @@
     <menuitem id="menu_print_reporte_diario" action="reporte_diario" sequence="200" parent="account.menu_finance_configuration" />
     <!-- PLAN CONTABLE SIMPLIFICADO -->
     <menuitem id="menu_print_plan_contable_simplificado" action="plan_contable_simplificado" sequence="200" parent="account.menu_finance_configuration" />
+    <!-- REPORTE DE ACTIVOS FIJOS -->
+    <menuitem id="menu_print_reporte_activos_fijos" action="report_activos_fijos" sequence="200" parent="account.menu_finance_configuration" />
 </odoo>

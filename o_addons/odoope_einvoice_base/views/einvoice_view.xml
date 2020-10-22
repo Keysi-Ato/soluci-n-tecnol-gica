@@ -26,7 +26,7 @@
                     </group>                    
                 </form>	
             </field>
-	    </record>        
+	    </record>
 	    <record model="ir.actions.act_window" id="catalog_01_action">
 		    <field name="name">Codigo de Tipo de documento</field>
 		    <field name="res_model">einvoice.catalog.01</field>
