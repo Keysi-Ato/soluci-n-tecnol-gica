@@ -11,8 +11,8 @@ services:
 
   odoo10:
     # image: odoo:11.0
-    # build: ./
-    image: victoralin10/odoo10:latest
+    build: ./
+    # image: victoralin10/odoo10:latest
     depends_on:
       - db
     ports:
