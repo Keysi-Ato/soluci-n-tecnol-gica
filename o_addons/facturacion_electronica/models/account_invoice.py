@@ -6,16 +6,25 @@ from odoo.tools.safe_eval import safe_eval
 from odoo.exceptions import UserError, RedirectWarning, ValidationError
 from odoo.http import request
 from odoo.tools.float_utils import float_compare
-from utils.InvoiceLine import Factura
-from utils.NotaCredito import NotaCredito
-from utils.NotaDebito import NotaDebito
-from suds.client import Client
-from suds.wsse import *
-from signxml import XMLSigner, XMLVerifier, methods
+'''from .InvoiceLine import Factura  #utils
+from .NotaCredito import NotaCredito
+from .NotaDebito import NotaDebito
+from . import utils
+from utils import InvoiceLine as Factura 
+from utils import NotaCredito as NotaCredito
+from utils import NotaDebito as NotaDebito'''
+from . import Factura  #
+from . import NotaCredito
+from . import NotaDebito
+from . import GuiaRemision
+#https://stackoverflow.com/questions/16780510/module-object-is-not-callable-calling-method-in-another-file/16780543
+from suds.client import Client  #para exportar y la firma 
+from suds.wsse import * #para exportar y la firmaa
+from signxml import XMLSigner, XMLVerifier, methods  #para exportar y la firmaa
 from datetime import datetime, timedelta
-from cStringIO import StringIO
-import xlwt
-import xlsxwriter
+from io import StringIO
+#import io
+import xlwt, xlsxwriter
 from xlwt import easyxf
 import xml.etree.ElementTree as ET
 import requests
@@ -28,7 +37,10 @@ import json
 import math
 import time
 import calendar
-
+'''import sys 
+sys.path.insert(0, 'utils/InvoiceLine')
+sys.path.insert(0, 'utils/NotaCredito')
+sys.path.insert(0, 'utils/NotaDebito')'''
 
 # mapping invoice type to refund type
 TYPE2REFUND = {
@@ -38,7 +50,7 @@ TYPE2REFUND = {
     "in_refund": "in_invoice",  # Vendor Refund
 }
 
-
+'''
 class ActivosFijos(models.Model):
     _name = "account.activos"
 
@@ -60,25 +72,23 @@ class ActivosFijos(models.Model):
     metodo = fields.Text("Método aplicado")
     n_documento = fields.Text("Nro. de documento de autorización")
     porcentaje = fields.Float("Porcentaje de depreciación")
-    acumulada = fields.Text(
-        "Depreciación acumulada al cierre del ejercicio anterior")
+    acumulada = fields.Text("Depreciación acumulada al cierre del ejercicio anterior")
     depreciacion = fields.Text("Depreciación del ejercicio")
     depreciacion_retiro = fields.Text(
         "Depreciación  del ejercicio relacionada con retiros y/o bajas"
     )
-    depreciacion_otros = fields.Text(
-        "Depreciación relacionada con otros ajustes")
+    depreciacion_otros = fields.Text("Depreciación relacionada con otros ajustes")
     depreciacion_acumulada = fields.Text("Depreciación acumulada histórica")
-    depreciacion_ajuste = fields.Text(
-        "Ajuste por inflación de la depreciación")
+    depreciacion_ajuste = fields.Text("Ajuste por inflación de la depreciación")
     depreciacion_acumulada_ajustada = fields.Text(
         "Depreciación acumulada ajustada por inflación"
     )
-
+'''
 
 class accountInvoice(models.Model):
     _inherit = "account.invoice"
 
+    pruebautils = fields.Text("utils", copy=False)
     documentoXML = fields.Text("Documento XML", default=" ", copy=False)
     documentoXMLcliente = fields.Binary("XML cliente", copy=False)
     documentoXMLcliente_fname = fields.Char(
@@ -142,11 +152,12 @@ class accountInvoice(models.Model):
     total_descuentos = fields.Monetary(
         "Total Descuentos", default=0.0, compute="_compute_total_venta"
     )
+    journal_id=fields.Many2one("account.journal",domain="[('invoice_type_code_id','=','type_code')]", limit=1)#domain="[('invoice_type_code_id','=',type_code)]"
 
     digestvalue = fields.Char("DigestValue")
     final = fields.Boolean("Es final?", default=False, copy=False)
 
-    # @api.one
+    # @api.one 
     # def _set_invoice_type_code(self):
     #     prueba = self.journal_id.invoice_type_code_id
     #     return prueba
@@ -193,15 +204,14 @@ class accountInvoice(models.Model):
                     line._compute_price()
                     line.tipo_afectacion_igv = afectacion
 
-    # MODIFICACIONES DANIEL
+    ## MODIFICACIONES DANIEL
     def enviar_correo(self):
         template = self.env.ref("account.email_template_edi_invoice", False)
-        mail_id = self.env["mail.template"].sudo().browse(
-            template.id).send_mail(self.id)
+        mail_id = self.env["mail.template"].sudo().browse(template.id).send_mail(self.id)
         mail = self.env["mail.mail"].sudo().browse(mail_id)
         mail.send()
 
-    # MODIFICACION DANIEL
+    ## MODIFICACION DANIEL
 
     def _list_reference_code_credito(self):
         catalogs = self.env["einvoice.catalog.09"].search([])
@@ -223,13 +233,12 @@ class accountInvoice(models.Model):
     response_code_debito = fields.Selection(
         string="Código de motivo", selection=_list_reference_code_debito
     )
-    #####################################
-    ######################################
-
+    ##################################### 
+    ###################################### 
     @api.model
     def _prepare_refund(
-        self, invoice, date_invoice=None, date=None, description=None, journal_id=None
-    ):
+        self, invoice, date_invoice=None, date=None, description=None, journal_id=None):
+    
         """ Prepare the dict of values to create the new refund from the invoice.
             This method may be overridden to implement custom
             refund generation (making sure to call super() to establish
@@ -249,8 +258,7 @@ class accountInvoice(models.Model):
             else:
                 values[field] = invoice[field] or False
 
-        values["invoice_line_ids"] = self._refund_cleanup_lines(
-            invoice.invoice_line_ids)
+        values["invoice_line_ids"] = self._refund_cleanup_lines(invoice.invoice_line_ids)
 
         tax_lines = invoice.tax_line_ids
         values["tax_line_ids"] = self._refund_cleanup_lines(tax_lines)
@@ -262,13 +270,11 @@ class accountInvoice(models.Model):
                 [("type", "=", "purchase")], limit=1
             )
         else:
-            journal = self.env["account.journal"].search(
-                [("type", "=", "sale")], limit=1)
+            journal = self.env["account.journal"].search([("type", "=", "sale")], limit=1)
         values["journal_id"] = journal.id
 
         values["type"] = TYPE2REFUND[invoice["type"]]
-        values["date_invoice"] = date_invoice or fields.Date.context_today(
-            invoice)
+        values["date_invoice"] = date_invoice or fields.Date.context_today(invoice)
         values["state"] = "draft"
         values["number"] = False
         values["origin"] = invoice.number
@@ -353,8 +359,7 @@ class accountInvoice(models.Model):
             self.amount_untaxed = sum(
                 line.price_subtotal for line in self.invoice_line_ids
             )
-            self.amount_tax = sum(round_curr(line.amount)
-                                  for line in self.tax_line_ids)
+            self.amount_tax = sum(round_curr(line.amount) for line in self.tax_line_ids)
             self.amount_total = self.amount_untaxed + self.amount_tax
             amount_total_company_signed = self.amount_total
             amount_untaxed_signed = self.amount_untaxed
@@ -363,8 +368,7 @@ class accountInvoice(models.Model):
                 and self.company_id
                 and self.currency_id != self.company_id.currency_id
             ):
-                currency_id = self.currency_id.with_context(
-                    date=self.date_invoice)
+                currency_id = self.currency_id.with_context(date=self.date_invoice)
                 amount_total_company_signed = currency_id.compute(
                     self.amount_total, self.company_id.currency_id
                 )
@@ -433,10 +437,13 @@ class accountInvoice(models.Model):
         self.invoice_type_code = self.journal_id.invoice_type_code_id
 
     @api.multi
-    def firmar(self):
-        data_unsigned = ET.fromstring(
-            self.documentoXML.encode("utf-8").strip())
-
+    def firmar(self):  #hace la firma
+        #data_unsigned = ET.fromstring(self.documentoXML.encode("utf-8").strip()) 
+        data_unsigned = ET.fromstring(self.documentoXML.encode("utf-8").strip())
+        #ET.tostring(signed_root).decode("utf-8")
+        #xml_file = xml_file.encode("utf-8")
+        #self.documentoXMLcliente = base64.b64encode(xml_file)
+        #
         namespaces = {
             "cac": "urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2",
             "cbc": "urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2",
@@ -447,7 +454,8 @@ class accountInvoice(models.Model):
             "sac": "urn:sunat:names:specification:ubl:peru:schema:xsd:SunatAggregateComponents-1",
             "udt": "urn:un:unece:uncefact:data:specification:UnqualifiedDataTypesSchemaModule:2",
             "xsi": "http://www.w3.org/2001/XMLSchema-instance",
-        }
+        }#
+        
 
         if self.invoice_type_code == "01" or self.invoice_type_code == "03":
             if self.type == "out_invoice":
@@ -466,20 +474,32 @@ class accountInvoice(models.Model):
             namespaces.update(
                 {"": "urn:oasis:names:specification:ubl:schema:xsd:DebitNote-2"}
             )
+        else : 
+            if self.type == "out_invoice":
+                namespaces.update(
+                    {"": "urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"}
+                )
+            elif self.type == "out_refund":
+                namespaces.update(
+                    {"": "urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2"}
+                )
 
-        for prefix, uri in namespaces.iteritems():
-            ET.register_namespace(prefix, uri)
+        #
+        for prefix, uri in namespaces.items():#iteritems  items viewitems
+            ET.register_namespace(prefix, uri) #no esta funcionando 
+            #ET._namespace_map[uri] = prefix
+            #ET.register_namespace("20521467984-False-FV/2020/0032.xml", "/var/lib/odoo/")#20521467984-False-FV/2020/0032.xml
 
-        uri = "/var/lib/odoo/"
-
+        uri = "/var/lib/odoo/"  #
+        
+        #lis_numer=str(self.number).split("/")
         name_file = (
             self.company_id.partner_id.vat
-            + "-"
-            + str(self.invoice_type_code)
-            + "-"
-            + str(self.number)
+            + "-" + str(self.invoice_type_code) + "-" + str(self.number)
         )
-        file = open(uri + name_file + ".xml", "w")
+        #+ "-" + str(self.invoice_type_code) + "-" + str(self.number)
+        #+ str(lis_numer[2]) 
+        file = open(uri + name_file + ".xml", "w")#name_file=20521467984-False-FV/2020/0036.xml  + name_file  
 
         signed_root = XMLSigner(
             method=methods.enveloped,
@@ -494,36 +514,38 @@ class accountInvoice(models.Model):
         signed_root[0][0][0][0].set("Id", "SignatureMT")
 
         self.digestvalue = signed_root[0][0][0][0][0][2][2].text
-
-        file.write(ET.tostring(signed_root))
-
+        #element = ET.fromstring(signed_root)  
+        #file.write(tostring(element))#str(ET.tostring(signed_root))  ET.tostring(signed_root)
+        file.write(ET.tostring(signed_root).decode("utf-8"))
         file.close()
 
         xfile = open(uri + name_file + ".xml", "r")
         xml_file = xfile.read()
-        self.documentoXMLcliente = base64.b64encode(str(xml_file))
+        xml_file = xml_file.encode("utf-8")
+        self.documentoXMLcliente = base64.b64encode(xml_file) #str(xml_file) 
         xfile.close()
 
         zf = zipfile.ZipFile(uri + name_file + ".zip", mode="w")
-        try:
+        '''try:
             zf.write(uri + name_file + ".xml", arcname=name_file + ".xml")
         except Exception, e:
-            zf.close()
+            zf.close()'''
         zf.close()
 
         f = open(uri + name_file + ".zip", "rb")
         data_file = f.read()
-        self.documentoZip = base64.b64encode(str(data_file))
+        #data_file = data_file.encode("utf-8") 
+        self.documentoZip = base64.b64encode(data_file) #str(data_file)
         self.documentoXML = ET.tostring(signed_root)
 
         f.close()
 
-        FacturaObject = Factura()
+        FacturaObject = Factura.Factura()
         EnvioXML = FacturaObject.sendBill(
             username=self.company_id.partner_id.vat + self.company_id.sunat_username,
             password=self.company_id.sunat_password,
             namefile=name_file + ".zip",
-            contentfile=self.documentoZip,
+            contentfile=str(self.documentoZip),
         )
         self.documentoEnvio = EnvioXML.toprettyxml("        ")
 
@@ -538,10 +560,10 @@ class accountInvoice(models.Model):
             verify=False,
         )
 
-        try:
+        '''try:
             self.documentoRespuestaZip = ET.fromstring(r.text)[0][0][0].text
         except Exception, e:
-            self.documentoRespuestaZip = ""
+            self.documentoRespuestaZip = "" '''
 
         self.documentoRespuesta = r.text
 
@@ -584,7 +606,7 @@ class accountInvoice(models.Model):
             ]
         )
         for f in facturas:
-            FacturaObject = Factura()
+            FacturaObject = Factura.Factura()
             EnvioXML = FacturaObject.getStatus(
                 username=str(f.company_id.sunat_username),
                 password=str(f.company_id.sunat_password),
@@ -597,14 +619,11 @@ class accountInvoice(models.Model):
             url = "https://www.sunat.gob.pe/ol-it-wsconscpegem/billConsultService"
 
             r = requests.post(
-                url=url, data=f.documentoEnvioTicket, headers={
-                    "Content-Type": "text/xml"}
+                url=url, data=f.documentoEnvioTicket, headers={"Content-Type": "text/xml"}
             )
 
-            f.mensajeSUNAT = ET.fromstring(
-                r.text.encode("utf-8"))[0][0][0][1].text
-            f.codigoretorno = ET.fromstring(
-                r.text.encode("utf-8"))[0][0][0][0].text
+            f.mensajeSUNAT = ET.fromstring(r.text.encode("utf-8"))[0][0][0][1].text
+            f.codigoretorno = ET.fromstring(r.text.encode("utf-8"))[0][0][0][0].text
 
             if f.codigoretorno in ("0001", "0002", "0003"):
                 f.estado_envio = True
@@ -612,7 +631,7 @@ class accountInvoice(models.Model):
     # Genera XML para consulta a SUNAT
     @api.multi
     def estadoTicket(self):
-        FacturaObject = Factura()
+        FacturaObject = Factura.Factura()
         EnvioXML = FacturaObject.getStatus(
             username=str(self.company_id.sunat_username),
             password=str(self.company_id.sunat_password),
@@ -626,26 +645,24 @@ class accountInvoice(models.Model):
     # Envia consulta a SUNAT
     @api.multi
     def enviarTicket(self):
-        # url = "https://www.sunat.gob.pe/ol-it-wsconscpegem/billConsultService"
-        url = "https://e-factura.sunat.gob.pe/ol-it-wsconscpegem/billConsultService"
+        url = "https://www.sunat.gob.pe/ol-it-wsconscpegem/billConsultService"
 
         r = requests.post(
             url=url,
             data=self.documentoEnvioTicket,
-            headers={"Content-Type": "text/xml"}
+            headers={"Content-Type": "text/xml"},
+            verify=False,
         )
 
-        self.mensajeSUNAT = ET.fromstring(
-            r.text.encode("utf-8"))[0][0][0][1].text
-        self.codigoretorno = ET.fromstring(
-            r.text.encode("utf-8"))[0][0][0][0].text
+        self.mensajeSUNAT = ET.fromstring(r.text.encode("utf-8"))[0][0][0][1].text
+        self.codigoretorno = ET.fromstring(r.text.encode("utf-8"))[0][0][0][0].text
 
         if self.codigoretorno in ("0001", "0002", "0003"):
             self.estado_envio = True
 
     # Validacion de documento
     @api.multi
-    def action_invoice_open(self):
+    def action_invoice_open(self):#cambio
 
         # lots of duplicate calls to action_invoice_open, so we remove those already open
         to_open_invoices = self.filtered(lambda inv: inv.state != "open")
@@ -671,6 +688,8 @@ class accountInvoice(models.Model):
                 self.generarNotaCredito()
             elif self.invoice_type_code == "08":
                 self.generarNotaDebito()
+            elif self.invoice_type_code == "09":
+                self.generarGuiaRemision()
 
             self.firmar()
 
@@ -682,9 +701,9 @@ class accountInvoice(models.Model):
     # line = super(SaleOrderLine, self).create(values)
 
     @api.multi
-    def generarFactura(self):
-        ico = self.incoterms_id
-        FacturaObject = Factura()
+    def generarFactura(self):  #generar xml
+        #ico = self.incoterms_id
+        FacturaObject = Factura.Factura()
         Invoice = FacturaObject.Root()
 
         Invoice.appendChild(FacturaObject.UBLExtensions())
@@ -703,8 +722,7 @@ class accountInvoice(models.Model):
 
         if self.final:
             facturas = (
-                self.env["sale.order"].search(
-                    [["name", "=", self.origin]]).invoice_ids
+                self.env["sale.order"].search([["name", "=", self.origin]]).invoice_ids
             )
             for f in facturas:
                 if f.state in ("open", "paid"):
@@ -767,13 +785,41 @@ class accountInvoice(models.Model):
         )
 
         Invoice.appendChild(Cliente)
+        #Transportista
+        """ datos=self.env["stock.picking"].search([["origin", "=", self.origin]])
+        Transportista = FacturaObject.cacShipment(
+            ruc_trans=str(datos.transportista.parent_id.vat),
+            tipo_doc_identidad_trans=str(datos.transportista.parent_id.catalog_06_id.code),
+            razon_social=str(datos.transportista.parent_id.registration_name),#empresa que pertenece el conductor
+            placa_vehiculo=str(datos.transportista.vehiculo.licence_plate),#
+            dni_conductor=str(datos.transportista.vat),
+            tipo_doc_identidad_cond=str(datos.transportista.catalog_06_id.code),
+            motivo_traslado=str(datos.motivo_traslado.name),
+            descrip_motiv_traslado=str(datos.descripcion_motivo_traslado), 
+            indicador_transbordo=str(datos.Indicador_de_transbordo),
+            peso_bruto_total=str(datos.weight),
+            unidad_medida_peso=str(datos.weight_uom_id),
+            numero_de_bulto=str(datos.number_of_packages),
+            modalidad_traslado=str(datos.modalidad_traslado.name),
+            fecha_inicio_traslado=str(datos.transport_date),
+            ubigeo_punto_partida=str(self.company_id.state_id.code),
+            direccion_punto_partida=str(self.company_id.partner_id.street)+' '
+                                    +str(self.company_id.partner_id.street2)+' '
+                                    +str(self.company_id.partner_id.street2),
+            ubigeo_punto_llegada=str(self.partner_id.zip),#del cliente
+            direccion_punto_llegada=str(self.partner_id.zip),#del cliente
+            codigo_puerto_embarque=str(datos.puerto_embar.name),
+            codigo_puerto_desembarque=str(datos.puerto_desembar.name),
+            codigo_contenedor=str(datos.contenedor.name)
+        )
+
+        Invoice.appendChild(Transportista) """
 
         # print('ORIGEN DE FACTURA', self.origin)
         # print('NUMERO DE FACTURA', self.number)
         if self.final:
             facturas = (
-                self.env["sale.order"].search(
-                    [["name", "=", self.origin]]).invoice_ids
+                self.env["sale.order"].search([["name", "=", self.origin]]).invoice_ids
             )
             for f in facturas:
                 if f.state in ("open", "paid"):
@@ -865,8 +911,196 @@ class accountInvoice(models.Model):
         self.documentoXML = I
 
     @api.multi
+    def generarGuiaRemision(self):  #generar xml
+        #ico = self.incoterms_id 
+        FacturaObject = GuiaRemision.GuiaRemision()
+        Invoice = FacturaObject.Root()
+        Invoice.appendChild(FacturaObject.UBLExtensions())
+        Invoice = FacturaObject.InvoiceRoot(
+            rootXML=Invoice,
+            versionid="2.1",
+            customizationid="2.0",
+            id=str(self.number),
+            issuedate=str(self.date_invoice),
+            issuetime="",
+            operacion=self.operacionTipo,
+            invoicetypecode=str(self.journal_id.invoice_type_code_id),
+            documentcurrencycode=str(self.currency_id.name),
+        )
+        if self.final:
+            facturas = (
+                self.env["sale.order"].search([["name", "=", self.origin]]).invoice_ids
+            )
+            for f in facturas:
+                if f.state in ("open", "paid"):
+                    if f.number != self.number:
+                        additional = FacturaObject.cacAdditionalDocumentReference(
+                            documento=f.number,
+                            num_doc_ident=str(self.company_id.partner_id.vat),
+                            tipo_doc_ident=str(
+                                self.company_id.partner_id.catalog_06_id.code
+                            ),
+                        )
+                        Invoice.appendChild(additional)
+
+        Invoice.appendChild(
+            FacturaObject.Signature(
+                Id="IDSignMT",
+                ruc=str(self.company_id.partner_id.vat),
+                razon_social=str(self.company_id.partner_id.registration_name),
+                uri="#SignatureMT",
+            )
+        )
+
+        Empresa = FacturaObject.cacAccountingSupplierParty(
+            num_doc_ident=str(self.company_id.partner_id.vat),
+            tipo_doc_ident=str(self.company_id.partner_id.catalog_06_id.code),
+            nombre_comercial=self.company_id.partner_id.registration_name,
+            codigo_ubigeo=str(self.company_id.partner_id.zip),
+            nombre_direccion_full=str(self.company_id.partner_id.street),
+            nombre_direccion_division=self.company_id.partner_id.street2,
+            nombre_departamento=str(self.company_id.partner_id.state_id.name),
+            nombre_provincia=str(self.company_id.partner_id.province_id.name),
+            nombre_distrito=str(self.company_id.partner_id.district_id.name),
+            nombre_proveedor=str(self.company_id.partner_id.registration_name),
+            codigo_pais="PE",
+        )
+
+        Invoice.appendChild(Empresa)
+
+        # DOCUMENTO DE IDENTIDAD
+        num_doc_ident = str(self.partner_id.vat)
+        if num_doc_ident == "False":
+            num_doc_ident = "-"
+
+        parent = self.partner_id.parent_id
+        if parent:
+            doc_code = str(self.partner_id.parent_id.catalog_06_id.code)
+            nom_cli = self.partner_id.parent_id.registration_name
+            if nom_cli == False:
+                nom_cli = self.partner_id.parent_id.name
+        else:
+            doc_code = str(self.partner_id.catalog_06_id.code)
+            nom_cli = self.partner_id.registration_name
+            if nom_cli == False:
+                nom_cli = self.partner_id.name
+
+        Cliente = FacturaObject.cacAccountingCustomerParty(
+            num_doc_identidad=num_doc_ident,
+            tipo_doc_identidad=doc_code,
+            nombre_cliente=nom_cli,
+        )
+        Invoice.appendChild(Cliente)
+        #Transportista
+        datos=self.env["stock.picking"].search([["origin", "=", self.origin]])
+        Transportista = FacturaObject.cacShipment(
+            ruc_trans=str(datos.transportista.parent_id.vat),
+            tipo_doc_identidad_trans=str(datos.transportista.parent_id.catalog_06_id.code),
+            razon_social=str(datos.transportista.parent_id.registration_name),#empresa que pertenece el conductor
+            placa_vehiculo=str(datos.transportista.vehiculo.licence_plate),#
+            dni_conductor=str(datos.transportista.vat),
+            tipo_doc_identidad_cond=str(datos.transportista.catalog_06_id.code),
+            motivo_traslado=str(datos.motivo_traslado.name),
+            descrip_motiv_traslado=str(datos.descripcion_motivo_traslado), 
+            indicador_transbordo=str(datos.Indicador_de_transbordo),
+            peso_bruto_total=str(datos.weight),
+            unidad_medida_peso=str(datos.weight_uom_id),
+            numero_de_bulto=str(datos.number_of_packages),
+            modalidad_traslado=str(datos.modalidad_traslado.name),
+            fecha_inicio_traslado=str(datos.transport_date),
+            ubigeo_punto_partida=str(self.company_id.state_id.code),
+            direccion_punto_partida=str(self.company_id.partner_id.street)+' '
+                                    +str(self.company_id.partner_id.street2)+' '
+                                    +str(self.company_id.partner_id.street2),
+            ubigeo_punto_llegada=str(self.partner_id.zip),#del cliente
+            direccion_punto_llegada=str(self.partner_id.zip),#del cliente
+            codigo_puerto_embarque=str(datos.puerto_embar.name),
+            codigo_puerto_desembarque=str(datos.puerto_desembar.name),
+            codigo_contenedor=str(datos.contenedor.name)
+        )
+        Invoice.appendChild(Transportista)
+        if self.final:
+            facturas = (
+                self.env["sale.order"].search([["name", "=", self.origin]]).invoice_ids
+            )
+            for f in facturas:
+                if f.state in ("open", "paid"):
+                    if f.number != self.number:
+                        # print('FACTURA DE ORDEN DE VENTA', f.number)
+                        prepaid = FacturaObject.cacPrepaidPayment(
+                            currency=f.currency_id.name,
+                            monto=f.amount_total,
+                            documento=f.number,
+                        )
+                        Invoice.appendChild(prepaid)
+
+        if self.tax_line_ids:
+            for tax in self.tax_line_ids:
+                TaxTotal = FacturaObject.cacTaxTotal(
+                    currency_id=str(self.currency_id.name),
+                    taxtotal=str(round(tax.amount, 2)),
+                    gratuitas=self.total_venta_gratuito,
+                    gravado=self.total_venta_gravado,
+                )
+                Invoice.appendChild(TaxTotal)
+        else:
+            TaxTotal = FacturaObject.cacTaxTotal(
+                currency_id=str(self.currency_id.name),
+                taxtotal="0.0",
+                gratuitas=self.total_venta_gratuito,
+                gravado=self.total_venta_gravado,
+            )
+            Invoice.appendChild(TaxTotal)
+
+        p1 = 0
+        p2 = 0
+        # multiplier = 10 ** 2
+        round_curr = self.currency_id.round
+        for l in self.invoice_line_ids:
+            if l.quantity > 0:
+               p1 = self.amount_total
+            else:
+                p2 = p2 + (l.price_subtotal * (-1))
+
+        LegalMonetaryTotal = FacturaObject.cacLegalMonetaryTotal(
+            total=p1, prepaid=p2, currency_id=str(self.currency_id.name)
+        )
+        
+        Invoice.appendChild(LegalMonetaryTotal)
+
+        idLine = 1
+        for line in self.invoice_line_ids:
+            if line.quantity > 0:
+                invoiceline = FacturaObject.cacInvoiceLine(
+                    operacionTipo=self.operacionTipo,
+                    idline=idLine,
+                    muestra=self.muestra,
+                    valor=str(round(line.price_subtotal, 2)),
+                    currency_id=self.currency_id.name,
+                    unitcode=str(line.uom_id.code),
+                    quantity=str(round(line.quantity, 2)),
+                    description=line.name,
+                    price=str(round(line.price_unit, 2)),
+                    taxtotal=str(
+                        round(
+                            line.price_subtotal * line.invoice_line_tax_ids.amount / 100,
+                            2,
+                        )
+                    ),
+                    afectacion=str(line.tipo_afectacion_igv.code),
+                    taxcode=line.invoice_line_tax_ids.tax_group_id.code,
+                    taxname=line.invoice_line_tax_ids.tax_group_id.description,
+                    taxtype=line.invoice_line_tax_ids.tax_group_id.name_code,
+                )
+                idLine = idLine + 1
+                Invoice.appendChild(invoiceline)
+
+        I = Invoice.toprettyxml("   ")
+        self.documentoXML = I
+
+    @api.multi
     def generarNotaCredito(self):
-        NotaCreditoObject = NotaCredito()
+        NotaCreditoObject = NotaCredito.NotaCredito()
         nota_credito = NotaCreditoObject.Root()
 
         nota_credito.appendChild(NotaCreditoObject.UBLExtensions())
@@ -894,7 +1128,7 @@ class accountInvoice(models.Model):
             documentcurrencycode=str(self.currency_id.name)
         )
 
-        if self.origin[0] == "B":
+        if self.origin[0] == "B": #self.generarNotaDebito[0] == "B":
             DocumentTypeCode = "03"
         elif self.origin[0] == "F":
             DocumentTypeCode = "01"
@@ -984,8 +1218,7 @@ class accountInvoice(models.Model):
                 currency=self.currency_id.name,
                 price=str(round(line.price_unit, 2)),
                 taxtotal=str(
-                    round(line.price_subtotal *
-                          line.invoice_line_tax_ids.amount / 100, 2)
+                    round(line.price_subtotal * line.invoice_line_tax_ids.amount / 100, 2)
                 ),
                 afectacion=str(line.tipo_afectacion_igv.code),
             )
@@ -997,7 +1230,7 @@ class accountInvoice(models.Model):
 
     @api.multi
     def generarNotaDebito(self):
-        NotaDebitoObject = NotaDebito()
+        NotaDebitoObject = NotaDebito.NotaDebito()
         nota_debito = NotaDebitoObject.Root()
 
         nota_debito.appendChild(NotaDebitoObject.UBLExtensions())
@@ -1026,12 +1259,12 @@ class accountInvoice(models.Model):
         #                             response_code = str(self.response_code_debito),
         #                             description = motivo)
 
-        if self.referenceID[0] == "B":
+        if self.origin[0] == "B": #self.referenceID[0]
             DocumentTypeCode = "03"
-        elif self.referenceID[0] == "F":
+        elif self.origin[0] == "F":
             DocumentTypeCode = "01"
         else:
-            DocumentTypeCode = "-"
+            DocumentTypeCode = "-" 
 
         billing_reference = NotaDebitoObject.BillingReference(
             invoice_id=str(self.referenceID), invoice_type_code=DocumentTypeCode
@@ -1106,8 +1339,7 @@ class accountInvoice(models.Model):
                 currency=self.currency_id.name,
                 price=str(round(line.price_unit, 2)),
                 taxtotal=str(
-                    round(line.price_subtotal *
-                          line.invoice_line_tax_ids.amount / 100, 2)
+                    round(line.price_subtotal * line.invoice_line_tax_ids.amount / 100, 2)
                 ),
                 afectacion=str(line.tipo_afectacion_igv.code),
             )
@@ -1117,7 +1349,7 @@ class accountInvoice(models.Model):
         I = nota_debito.toprettyxml("   ")
         self.documentoXML = I
 
-
+'''
 # REGISTRO DE COMPRAS
 class PrintReportTextCompras(models.TransientModel):
     _name = "print.compras.reporte.contabilidad"
@@ -1147,8 +1379,7 @@ class PrintReportTextCompras(models.TransientModel):
     invoice_summary_file = fields.Binary("Reporte de Compras")
     file_name = fields.Char("File Name")
     invoice_report_printed = fields.Boolean("Reporte de Compras")
-    years = fields.Selection(
-        string="Año", selection=_list_anios, default=get_year)
+    years = fields.Selection(string="Año", selection=_list_anios, default=get_year)
     months = fields.Selection(
         string="Mes",
         selection=[
@@ -1334,8 +1565,7 @@ class PrintReportTextCompras(models.TransientModel):
             else:
                 workbook = xlwt.Workbook()
                 amount_tot = 0
-                column_heading_style = easyxf(
-                    "font:height 200;font:bold True;")
+                column_heading_style = easyxf("font:height 200;font:bold True;")
                 worksheet = workbook.add_sheet("Compras")
                 worksheet.write(
                     2,
@@ -1345,14 +1575,12 @@ class PrintReportTextCompras(models.TransientModel):
                 )
                 worksheet.write(6, 0, _("Periodo"), column_heading_style)
                 worksheet.write(6, 1, _("Fecha"), column_heading_style)
-                worksheet.write(6, 2, _("Tipo de documento"),
-                                column_heading_style)
+                worksheet.write(6, 2, _("Tipo de documento"), column_heading_style)
                 worksheet.write(6, 3, _("Serie"), column_heading_style)
                 worksheet.write(6, 4, _("Número"), column_heading_style)
                 worksheet.write(6, 5, _("RUC"), column_heading_style)
                 worksheet.write(6, 6, _("Cliente"), column_heading_style)
-                worksheet.write(6, 7, _("Monto sin impuesto"),
-                                column_heading_style)
+                worksheet.write(6, 7, _("Monto sin impuesto"), column_heading_style)
                 worksheet.write(6, 8, _("Impuesto"), column_heading_style)
                 worksheet.write(6, 9, _("Total"), column_heading_style)
 
@@ -1410,8 +1638,7 @@ class PrintReportTextCompras(models.TransientModel):
                         else:
                             reference = line.reference
 
-                        worksheet.write(row, 0, self.years +
-                                        self.months + "00")
+                        worksheet.write(row, 0, self.years + self.months + "00")
                         worksheet.write(row, 1, fdi)
                         worksheet.write(row, 2, line.tipo_documento)
                         worksheet.write(row, 3, reference.split("-")[0])
@@ -1471,8 +1698,7 @@ class PrintReportTextVentas(models.TransientModel):
     invoice_summary_file = fields.Binary("Reporte de Ventas")
     file_name = fields.Char("File Name")
     invoice_report_printed = fields.Boolean("Reporte de Ventas")
-    years = fields.Selection(
-        string="Año", selection=_list_anios, default=get_year)
+    years = fields.Selection(string="Año", selection=_list_anios, default=get_year)
     months = fields.Selection(
         string="Mes",
         selection=[
@@ -1643,8 +1869,7 @@ class PrintReportTextVentas(models.TransientModel):
             else:
                 workbook = xlwt.Workbook()
                 amount_tot = 0
-                column_heading_style = easyxf(
-                    "font:height 200;font:bold True;")
+                column_heading_style = easyxf("font:height 200;font:bold True;")
                 worksheet = workbook.add_sheet("Ventas")
                 worksheet.write(
                     2,
@@ -1654,14 +1879,12 @@ class PrintReportTextVentas(models.TransientModel):
                 )
                 worksheet.write(6, 0, _("Periodo"), column_heading_style)
                 worksheet.write(6, 1, _("Fecha"), column_heading_style)
-                worksheet.write(6, 2, _("Tipo de documento"),
-                                column_heading_style)
+                worksheet.write(6, 2, _("Tipo de documento"), column_heading_style)
                 worksheet.write(6, 3, _("Serie"), column_heading_style)
                 worksheet.write(6, 4, _("Número"), column_heading_style)
                 worksheet.write(6, 5, _("RUC"), column_heading_style)
                 worksheet.write(6, 6, _("Cliente"), column_heading_style)
-                worksheet.write(6, 7, _("Monto sin impuesto"),
-                                column_heading_style)
+                worksheet.write(6, 7, _("Monto sin impuesto"), column_heading_style)
                 worksheet.write(6, 8, _("Impuesto"), column_heading_style)
                 worksheet.write(6, 9, _("Total"), column_heading_style)
 
@@ -1713,8 +1936,7 @@ class PrintReportTextVentas(models.TransientModel):
                             doccode = line.partner_id.catalog_06_id.code
                             vatcode = line.partner_id.vat
                             docname = line.partner_id.name
-                        worksheet.write(row, 0, self.years +
-                                        self.months + "00")
+                        worksheet.write(row, 0, self.years + self.months + "00")
                         worksheet.write(row, 1, fdi)
                         worksheet.write(row, 2, line.tipo_documento)
                         worksheet.write(row, 3, line.number.split("-")[0])
@@ -1774,8 +1996,7 @@ class PrintReportTextDiario(models.TransientModel):
     invoice_summary_file = fields.Binary("Reporte de Diario")
     file_name = fields.Char("File Name")
     invoice_report_printed = fields.Boolean("Reporte de Diario")
-    years = fields.Selection(
-        string="Año", selection=_list_anios, default=get_year)
+    years = fields.Selection(string="Año", selection=_list_anios, default=get_year)
     months = fields.Selection(
         string="Mes",
         selection=[
@@ -1802,8 +2023,7 @@ class PrintReportTextDiario(models.TransientModel):
         invoice_objs = self.env["account.move.line"].search(
             [
                 ("date", ">=", self.years + "-" + self.months + "-01"),
-                ("date", "<=", self.years + "-" +
-                 self.months + "-" + str(monthRange[1])),
+                ("date", "<=", self.years + "-" + self.months + "-" + str(monthRange[1])),
             ]
         )
 
@@ -1942,8 +2162,7 @@ class PrintReportPlanContable(models.TransientModel):
     invoice_summary_file = fields.Binary("Plan Contable")
     file_name = fields.Char("File Name")
     invoice_report_printed = fields.Boolean("Plan contable")
-    years = fields.Selection(
-        string="Año", selection=_list_anios, default=get_year)
+    years = fields.Selection(string="Año", selection=_list_anios, default=get_year)
     months = fields.Selection(
         string="Mes",
         selection=[
@@ -2027,8 +2246,7 @@ class PrintActivosFijos(models.TransientModel):
     invoice_summary_file = fields.Binary("Activos Fijos")
     file_name = fields.Char("File Name")
     invoice_report_printed = fields.Boolean("Activos Fijos")
-    years = fields.Selection(
-        string="Año", selection=_list_anios, default=get_year)
+    years = fields.Selection(string="Año", selection=_list_anios, default=get_year)
     months = fields.Selection(
         string="Mes",
         selection=[
@@ -2187,8 +2405,7 @@ class PrintActivosFijos(models.TransientModel):
             else:
                 workbook = xlwt.Workbook()
                 amount_tot = 0
-                column_heading_style = easyxf(
-                    "font:height 200;font:bold True;")
+                column_heading_style = easyxf("font:height 200;font:bold True;")
                 worksheet = workbook.add_sheet("Activos Fijos")
                 worksheet.write(
                     2,
@@ -2199,10 +2416,8 @@ class PrintActivosFijos(models.TransientModel):
 
                 worksheet.write(6, 0, _("Código"), column_heading_style)
                 worksheet.write(6, 1, _("Descripción"), column_heading_style)
-                worksheet.write(6, 2, _("Marca de activo fijo"),
-                                column_heading_style)
-                worksheet.write(
-                    6, 3, _("Modelo del activo fijo"), column_heading_style)
+                worksheet.write(6, 2, _("Marca de activo fijo"), column_heading_style)
+                worksheet.write(6, 3, _("Modelo del activo fijo"), column_heading_style)
                 worksheet.write(
                     6,
                     4,
@@ -2212,24 +2427,16 @@ class PrintActivosFijos(models.TransientModel):
                 worksheet.write(6, 5, _("Saldo inicial"), column_heading_style)
                 worksheet.write(6, 6, _("Adquisiciones"), column_heading_style)
                 worksheet.write(6, 7, _("Mejoras"), column_heading_style)
-                worksheet.write(6, 8, _("Retiros y/o bajas"),
-                                column_heading_style)
+                worksheet.write(6, 8, _("Retiros y/o bajas"), column_heading_style)
                 worksheet.write(6, 9, _("Otros ajustes"), column_heading_style)
-                worksheet.write(6, 10, _("Valor histórico"),
-                                column_heading_style)
-                worksheet.write(6, 11, _("Ajuste por inflación"),
-                                column_heading_style)
-                worksheet.write(6, 12, _("Valor ajustado"),
-                                column_heading_style)
-                worksheet.write(6, 13, _("Fecha de adquisición"),
-                                column_heading_style)
+                worksheet.write(6, 10, _("Valor histórico"), column_heading_style)
+                worksheet.write(6, 11, _("Ajuste por inflación"), column_heading_style)
+                worksheet.write(6, 12, _("Valor ajustado"), column_heading_style)
+                worksheet.write(6, 13, _("Fecha de adquisición"), column_heading_style)
+                worksheet.write(6, 14, _("Fecha de inicio de uso"), column_heading_style)
+                worksheet.write(6, 15, _("Método aplicado"), column_heading_style)
                 worksheet.write(
-                    6, 14, _("Fecha de inicio de uso"), column_heading_style)
-                worksheet.write(6, 15, _("Método aplicado"),
-                                column_heading_style)
-                worksheet.write(
-                    6, 16, _(
-                        "Nro. de documento de autorización"), column_heading_style
+                    6, 16, _("Nro. de documento de autorización"), column_heading_style
                 )
                 worksheet.write(
                     6, 17, _("Porcentaje de depreciación"), column_heading_style
@@ -2256,8 +2463,7 @@ class PrintActivosFijos(models.TransientModel):
                     column_heading_style,
                 )
                 worksheet.write(
-                    6, 22, _(
-                        "Depreciación acumulada histórica"), column_heading_style
+                    6, 22, _("Depreciación acumulada histórica"), column_heading_style
                 )
                 worksheet.write(
                     6,
@@ -2341,8 +2547,7 @@ class PrintActivosFijos(models.TransientModel):
                         worksheet.write(row, 21, line.depreciacion_otros)
                         worksheet.write(row, 22, line.depreciacion_acumulada)
                         worksheet.write(row, 23, line.depreciacion_ajuste)
-                        worksheet.write(
-                            row, 24, line.depreciacion_acumulada_ajustada)
+                        worksheet.write(row, 24, line.depreciacion_acumulada_ajustada)
 
                         row += 1
 
@@ -2362,3 +2567,6 @@ class PrintActivosFijos(models.TransientModel):
                         "context": self.env.context,
                         "target": "new",
                     }
+
+
+'''

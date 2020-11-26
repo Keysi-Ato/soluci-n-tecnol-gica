@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data>
+        <record id="view_transport_conductor_tree" model="ir.ui.view">
+            <field name="name">transport.conductor.tree</field>
+            <field name="model">transport.conductor</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <tree string="Conductor">
+                    <field name="name"/>
+                    <field name="middle_name"/>
+                    <field name="last_name"/>
+                    <field name="emergency_contact"/>
+                    <field name="id_number"/>
+                    <field name="nationality"/>
+                </tree>
+            </field>
+        </record>
+        <record id="view_transport_conductor_form" model="ir.ui.view">
+            <field name="name">transport.conductor.form</field>
+            <field name="model">transport.conductor</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <form string="Conductor">
+                    <header>
+                    </header>
+                    <sheet>
+                        <field name="image" widget="image" class="oe_left oe_avatar"/>
+                        <div class="oe_title">
+                            <h1>
+                                <table>
+                                    <tr>
+                                        <td style="padding-right:10px;">
+                                            <field name="name" placeholder="Primer Nombre" required="1"/>
+                                        </td>
+                                        <td style="padding-right:10px;">
+                                            <field name="middle_name" placeholder="Segundo Nombre"/>
+                                        </td>
+                                        <td style="padding-right:10px;">
+                                            <field name="last_name" placeholder="Apellidos" required="1"/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </h1>
+                        </div>
+                        <notebook colspan="4">
+                            <page name="personal_information"
+                                  string="Informacion Personal">
+                                <group col="4" colspan="4"
+                                       name="personal_detail">
+                                    <field name="catalog_06_id" required="1"/>
+                                    <field name="gender" required="1"/>
+                                    <field name="birth_date" />
+                                    <field name="visa_info"/>
+                                    <field name="blood_group"/>
+                                    <field name="email" required="1"/>
+                                    <field name="id_number" required="1"/>
+                                    <field name="nationality"/>
+                                    <field name="state_id" required="1"/>
+                                    <field name="province_id" required="1"/>
+                                    <field name="district_id" required="1"/>
+                                </group>
+                                <group col="3" colspan="3">
+                                    <field name="emergency_contact"
+                                           context="{'show_address': 1}"
+                                           options='{"always_reload": True}'/>
+                                    <field name="direccion" required="1"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+        <record id="view_transport_conductor_search" model="ir.ui.view">
+            <field name="name">transport.conductor.search</field>
+            <field name="model">transport.conductor</field>
+            <field name="priority" eval="8"/>
+            <field name="arch" type="xml">
+                <search string="Conductor">
+                    <field name="name"/>
+                </search>
+            </field>
+        </record>
+        <record model="ir.actions.act_window" id="act_open_transport_conductor_view">
+            <field name="name">Conductor</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">transport.conductor</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="search_view_id" ref="view_transport_conductor_search"/>
+            <field name="domain">[]</field>
+            <field name="context">{}</field>
+        </record>
+
+        <record model="ir.actions.act_window.view" id="act_open_transport_conductor_view_form">
+            <field name="act_window_id" ref="act_open_transport_conductor_view"/>
+            <field name="sequence" eval="20"/>
+            <field name="view_mode">form</field>
+            <field name="view_id" ref="view_transport_conductor_form"/>
+        </record>
+        <record model="ir.actions.act_window.view" id="act_open_transport_conductor_view_tree">
+            <field name="act_window_id" ref="act_open_transport_conductor_view"/>
+            <field name="sequence" eval="10"/>
+            <field name="view_mode">tree</field>
+            <field name="view_id" ref="view_transport_conductor_tree"/>
+        </record>
+
+        <!--conductor-->
+        <!--<menuitem id="main_conductor_menu" name="Transporte Privado"  parent="menu_transportista_main" action="act_open_transport_conductor_view" sequence="3"/>-->
+        
+    </data>
+</odoo>

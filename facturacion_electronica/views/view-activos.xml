@@ -1,0 +1,68 @@
+<odoo>
+    <!-- ACTIVOS FIJOS TREE -->
+    <record id="view_tree_activos_fijos" model="ir.ui.view">
+        <field name="name">Activos Fijos Tree</field>
+        <field name="model">account.activos</field>
+        <field name="arch" type="xml">
+            <tree string="Activos Fijos">
+                <field name="codigo"/>
+                <field name="descripcion"/>
+                <field name="marca"/>
+                <field name="modelo"/>
+                <field name="serie"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- ACTIVOS FIJOS FORM -->
+    <record id="view_form_activos_fijos" model="ir.ui.view">
+        <field name="name">Activos Fijos Form</field>
+        <field name="model">account.activos</field>
+        <field name="arch" type="xml">
+            <form string="Activos Fijos">
+                <group>
+                    <field name="codigo"/>
+                    <field name="descripcion"/>
+                    <field name="marca"/>
+                    <field name="modelo"/>
+                    <field name="serie"/>
+                    <field name="saldo"/>
+                    <field name="adquisicion"/>
+                    <field name="mejora"/>
+                    <field name="retiro"/>
+                    <field name="otros"/>
+                    <field name="historico"/>
+                    <field name="inflacion"/>
+                    <field name="ajustado"/>
+                    <field name="fecha_adq"/>
+                    <field name="fecha_uso"/>
+                    <field name="metodo"/>
+                    <field name="n_documento"/>
+                    <field name="porcentaje"/>
+                    <field name="acumulada"/>
+                </group>
+                <group>
+                    <field name="depreciacion"/>
+                    <field name="depreciacion_retiro"/>
+                    <field name="depreciacion_otros"/>
+                    <field name="depreciacion_acumulada"/>
+                    <field name="depreciacion_ajuste"/>
+                    <field name="depreciacion_acumulada_ajustada"/>
+                </group>
+            </form>
+        </field>
+    </record>
+
+    <!-- ACTIVOS FIJOS -->
+    <record id="activos_fijos" model="ir.actions.act_window">
+        <field name="name">Activos Fijos</field>
+        <field name="res_model">account.activos</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- <act_window id="activos_fijos" name="Activos fijos" res_model="account.activos" view_mode="tree,form" /> -->
+
+    <!-- ACTIVOS FIJOS -->
+    <menuitem name="Activos fijos" id="activos_fijos_menu" parent="account.menu_finance_configuration" action="activos_fijos" sequence="200"/>
+</odoo>

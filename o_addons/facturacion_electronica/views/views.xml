@@ -32,7 +32,7 @@
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='type']" position="after">
                     <field name="invoice_type_code_id"/>
-                </xpath>
+                </xpath><!--falta -->
             </field>
         </record>
 
@@ -74,7 +74,7 @@
             </field>
         </record>
 
-        <!-- Formulario INVOICE -->
+        <!-- Formulario INVOICE falta-->
         <record model="ir.ui.view" id="facturacion_electronica.button_invoice_form">
             <field name="name">Boton para generar factura</field>
             <field name="model">account.invoice</field>
@@ -84,21 +84,21 @@
                     <button name="generarFactura"
                         string="Generar Factura"
                         type="object"
-                        attrs="{'invisible':[('invoice_type_code','!=','01')]}"
-                        groups="base.group_no_one"/>
+                        groups="base.group_no_one" attrs="{'invisible':[('invoice_type_code','!=','01')]}"/><!--attrs="{'invisible':[('invoice_type_code','!=','01')]}"-->
                     <button name="generarNotaCredito"
                         string="Generar NOTA DE CREDITO"
                         type="object"
-                        groups="base.group_no_one"/>
-                    <!-- <button name="generarNotaDebito"
+                        groups="base.group_no_one" attrs="{'invisible':[('invoice_type_code','!=','07')]}"/>
+                    <button name="generarNotaDebito"
                         string="Generar Nota de Débito"
                         type="object"
                         attrs="{'invisible':[('invoice_type_code','!=','08')]}"
-                        groups="base.group_no_one"/> -->
+                        groups="base.group_no_one"/> 
                     <button name="firmar" 
                         string="Firmar" 
                         type="object"
                         groups="base.group_no_one"/>
+                    <field name="estado_envio" invisible="1" />
                     <button name="enviar"
                         string="Enviar SUNAT"
                         type="object"
@@ -107,7 +107,7 @@
                         string="Consultar SUNAT"
                         type="object"/>
                     <field name="invoice_type_code" invisible="1"/>
-                    <button name="descargarRespuesta" string="Descargar Respuesta" type="object" groups="base.group_no_one"/>
+                    <!--<button name="descargarRespuesta" string="Descargar Respuesta" type="object" groups="base.group_no_one"/>-->
                 </xpath>
             </field>
         </record>

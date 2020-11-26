@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from odoo import fields,models,api,_
 from odoo.tools.safe_eval import safe_eval
-from utils.InvoiceLine import Factura
+#from utils.InvoiceLine import Factura
 from suds.client import Client
 from suds.wsse import *
 from signxml import XMLSigner, XMLVerifier,methods

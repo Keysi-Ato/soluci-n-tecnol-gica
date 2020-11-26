@@ -103,5 +103,218 @@
         <record id="e16_01" model="einvoice.catalog.16"><field name="code">01</field><field name="name">Precio unitario (incluye el IGV)</field></record>
         <record id="e16_02" model="einvoice.catalog.16"><field name="code">02</field><field name="name">Valor referencial unitario en operaciones no onerosas</field></record>
 
+        <!-- Catalogo 18  - Códigos – Modalidad de Traslado  -->
+        <record id="e18_01" model="einvoice.catalog.18"><field name="code">01</field><field name="name">Transporte público</field></record>
+        <record id="e18_02" model="einvoice.catalog.18"><field name="code">02</field><field name="name">Transporte privado</field></record>
+
+        <!-- Catalogo 20  - Códigos – Motivos de Traslado  -->
+        <record id="e20_01" model="einvoice.catalog.20"><field name="code">01</field><field name="name">VENTA</field></record>
+        <record id="e20_14" model="einvoice.catalog.20"><field name="code">14</field><field name="name">VENTA SUJETA A CONFIRMACION DEL COMPRADOR</field></record>
+        <record id="e20_02" model="einvoice.catalog.20"><field name="code">02</field><field name="name">COMPRA</field></record>
+        <record id="e20_04" model="einvoice.catalog.20"><field name="code">04</field><field name="name">TRASLADO ENTRE ESTABLECIMIENTOS DE LA MISMA EMPRESA</field></record>
+        <record id="e20_18" model="einvoice.catalog.20"><field name="code">18</field><field name="name">TRASLADO EMISOR ITINERANTE CP</field></record>
+        <record id="e20_08" model="einvoice.catalog.20"><field name="code">08</field><field name="name">IMPORTACION</field></record>
+        <record id="e20_09" model="einvoice.catalog.20"><field name="code">09</field><field name="name">EXPORTACION</field></record>
+        <record id="e20_19" model="einvoice.catalog.20"><field name="code">19</field><field name="name">TRASLADO A ZONA PRIMARIA</field></record>
+        <record id="e20_13" model="einvoice.catalog.20"><field name="code">13</field><field name="name">OTROS</field></record>
+
+        <!-- Catalogo 13  - Códigos – UBIGEO-->
+        <record id="e13_0101" model="einvoice.catalog.13"><field name="code">0101</field><field name="name">CHACHAPOYAS</field></record>
+        <record id="e13_0102" model="einvoice.catalog.13"><field name="code">0102</field><field name="name">BAGUA</field></record>
+        <record id="e13_0103" model="einvoice.catalog.13"><field name="code">0103</field><field name="name">JUMBILLA</field></record>
+        <record id="e13_0104" model="einvoice.catalog.13"><field name="code">0104</field><field name="name">SANTA MARIA DE NIEVA</field></record>
+        <record id="e13_0105" model="einvoice.catalog.13"><field name="code">0105</field><field name="name">LAMUD</field></record>
+        <record id="e13_0106" model="einvoice.catalog.13"><field name="code">0106</field><field name="name">MENDOZA</field></record>
+        <record id="e13_0107" model="einvoice.catalog.13"><field name="code">0107</field><field name="name">BAGUA GRANDE</field></record>
+        <record id="e13_0201" model="einvoice.catalog.13"><field name="code">0201</field><field name="name">HUARAZ</field></record>
+        <record id="e13_0202" model="einvoice.catalog.13"><field name="code">0202</field><field name="name">AIJA</field></record>
+        <record id="e13_0203" model="einvoice.catalog.13"><field name="code">0203</field><field name="name">LLAMELLIN</field></record>
+        <record id="e13_0204" model="einvoice.catalog.13"><field name="code">0204</field><field name="name">CHACAS</field></record>
+        <record id="e13_0205" model="einvoice.catalog.13"><field name="code">0205</field><field name="name">CHIQUIAN</field></record>
+        <record id="e13_0206" model="einvoice.catalog.13"><field name="code">0206</field><field name="name">CARHUAZ</field></record>
+        <record id="e13_0207" model="einvoice.catalog.13"><field name="code">0207</field><field name="name">SAN LUIS</field></record>
+        <record id="e13_0208" model="einvoice.catalog.13"><field name="code">0208</field><field name="name">CASMA</field></record>
+        <record id="e13_0209" model="einvoice.catalog.13"><field name="code">0209</field><field name="name">CORONGO</field></record>
+        <record id="e13_0210" model="einvoice.catalog.13"><field name="code">0210</field><field name="name">HUARI</field></record>
+        <record id="e13_0211" model="einvoice.catalog.13"><field name="code">0211</field><field name="name">HUARMEY</field></record>
+        <record id="e13_0212" model="einvoice.catalog.13"><field name="code">0212</field><field name="name">CARAZ</field></record>
+        <record id="e13_0213" model="einvoice.catalog.13"><field name="code">0213</field><field name="name">PISCOBAMBA</field></record>
+        <record id="e13_0214" model="einvoice.catalog.13"><field name="code">0214</field><field name="name">OCROS</field></record>
+        <record id="e13_0215" model="einvoice.catalog.13"><field name="code">0215</field><field name="name">CABANA</field></record>
+        <record id="e13_0216" model="einvoice.catalog.13"><field name="code">0216</field><field name="name">POMABAMBA</field></record>
+        <record id="e13_0217" model="einvoice.catalog.13"><field name="code">0217</field><field name="name">RECUAY</field></record>
+        <record id="e13_0218" model="einvoice.catalog.13"><field name="code">0218</field><field name="name">CHIMBOTE</field></record>
+        <record id="e13_0219" model="einvoice.catalog.13"><field name="code">0219</field><field name="name">SIHUAS</field></record>
+        <record id="e13_0220" model="einvoice.catalog.13"><field name="code">0220</field><field name="name">YUNGAY</field></record>
+        <record id="e13_0301" model="einvoice.catalog.13"><field name="code">0301</field><field name="name">ABANCAY</field></record>
+        <record id="e13_0302" model="einvoice.catalog.13"><field name="code">0302</field><field name="name">ANDAHUAYLAS</field></record>
+        <record id="e13_0303" model="einvoice.catalog.13"><field name="code">0303</field><field name="name">ANTABAMBA</field></record>
+        <record id="e13_0304" model="einvoice.catalog.13"><field name="code">0304</field><field name="name">CHALHUANCA</field></record>
+        <record id="e13_0305" model="einvoice.catalog.13"><field name="code">0305</field><field name="name">TAMBOBAMBA</field></record>
+        <record id="e13_0306" model="einvoice.catalog.13"><field name="code">0306</field><field name="name">CHINCHEROS</field></record>
+        <record id="e13_0307" model="einvoice.catalog.13"><field name="code">0307</field><field name="name">CHUQUIBAMBILLA</field></record>
+        <record id="e13_0401" model="einvoice.catalog.13"><field name="code">0401</field><field name="name">AREQUIPA</field></record>
+        <record id="e13_0402" model="einvoice.catalog.13"><field name="code">0402</field><field name="name">CAMANA</field></record>
+        <record id="e13_0403" model="einvoice.catalog.13"><field name="code">0403</field><field name="name">CARAVELI</field></record>
+        <record id="e13_0404" model="einvoice.catalog.13"><field name="code">0404</field><field name="name">APLAO</field></record>
+        <record id="e13_0405" model="einvoice.catalog.13"><field name="code">0405</field><field name="name">CHIVAY</field></record>
+        <record id="e13_0406" model="einvoice.catalog.13"><field name="code">0406</field><field name="name">CHUQUIBAMBA</field></record>
+        <record id="e13_0407" model="einvoice.catalog.13"><field name="code">0407</field><field name="name">MOLLENDO</field></record>
+        <record id="e13_0408" model="einvoice.catalog.13"><field name="code">0408</field><field name="name">COTAHUASI</field></record>
+        <record id="e13_0501" model="einvoice.catalog.13"><field name="code">0501</field><field name="name">AYACUCHO</field></record>
+        <record id="e13_0502" model="einvoice.catalog.13"><field name="code">0502</field><field name="name">CANGALLO</field></record>
+        <record id="e13_0503" model="einvoice.catalog.13"><field name="code">0503</field><field name="name">HUANCA SANCOS</field></record>
+        <record id="e13_0504" model="einvoice.catalog.13"><field name="code">0504</field><field name="name">HUANTA</field></record>
+        <record id="e13_0505" model="einvoice.catalog.13"><field name="code">0505</field><field name="name">SAN MIGUEL</field></record>
+        <record id="e13_0506" model="einvoice.catalog.13"><field name="code">0506</field><field name="name">PUQUIO</field></record>
+        <record id="e13_0507" model="einvoice.catalog.13"><field name="code">0507</field><field name="name">CORACORA</field></record>
+        <record id="e13_0508" model="einvoice.catalog.13"><field name="code">0508</field><field name="name">PAUSA</field></record>
+        <record id="e13_0509" model="einvoice.catalog.13"><field name="code">0509</field><field name="name">QUEROBAMBA</field></record>
+        <record id="e13_0510" model="einvoice.catalog.13"><field name="code">0510</field><field name="name">HUANCAPI</field></record>
+        <record id="e13_0511" model="einvoice.catalog.13"><field name="code">0511</field><field name="name">VILCAS HUAMAN</field></record>
+        <record id="e13_0601" model="einvoice.catalog.13"><field name="code">0601</field><field name="name">CAJAMARCA</field></record>
+        <record id="e13_0602" model="einvoice.catalog.13"><field name="code">0602</field><field name="name">CAJABAMBA</field></record>
+        <record id="e13_0603" model="einvoice.catalog.13"><field name="code">0603</field><field name="name">CELENDIN</field></record>
+        <record id="e13_0604" model="einvoice.catalog.13"><field name="code">0604</field><field name="name">CHOTA</field></record>
+        <record id="e13_0605" model="einvoice.catalog.13"><field name="code">0605</field><field name="name">CONTUMAZA</field></record>
+        <record id="e13_0606" model="einvoice.catalog.13"><field name="code">0606</field><field name="name">CUTERVO</field></record>
+        <record id="e13_0607" model="einvoice.catalog.13"><field name="code">0607</field><field name="name">BAMBAMARCA</field></record>
+        <record id="e13_0608" model="einvoice.catalog.13"><field name="code">0608</field><field name="name">JAEN</field></record>
+        <record id="e13_0609" model="einvoice.catalog.13"><field name="code">0609</field><field name="name">SAN IGNACIO</field></record>
+        <record id="e13_0610" model="einvoice.catalog.13"><field name="code">0610</field><field name="name">SAN MARCOS</field></record>
+        <record id="e13_0611" model="einvoice.catalog.13"><field name="code">0611</field><field name="name">SAN MIGUEL DE PALLAQUES</field></record>
+        <record id="e13_0612" model="einvoice.catalog.13"><field name="code">0612</field><field name="name">SAN PABLO</field></record>
+        <record id="e13_0613" model="einvoice.catalog.13"><field name="code">0613</field><field name="name">SANTA CRUZ DE SUCCHABAMBA</field></record>
+        <record id="e13_0701" model="einvoice.catalog.13"><field name="code">0701</field><field name="name">CALLAO</field></record>
+        <record id="e13_0801" model="einvoice.catalog.13"><field name="code">0801</field><field name="name">CUSCO</field></record>
+        <record id="e13_0802" model="einvoice.catalog.13"><field name="code">0802</field><field name="name">ACOMAYO</field></record>
+        <record id="e13_0803" model="einvoice.catalog.13"><field name="code">0803</field><field name="name">ANTA</field></record>
+        <record id="e13_0804" model="einvoice.catalog.13"><field name="code">0804</field><field name="name">CALCA</field></record>
+        <record id="e13_0805" model="einvoice.catalog.13"><field name="code">0805</field><field name="name">YANAOCA</field></record>
+        <record id="e13_0806" model="einvoice.catalog.13"><field name="code">0806</field><field name="name">SICUANI</field></record>
+        <record id="e13_0807" model="einvoice.catalog.13"><field name="code">0807</field><field name="name">SANTO TOMAS</field></record>
+        <record id="e13_0808" model="einvoice.catalog.13"><field name="code">0808</field><field name="name">ESPINAR</field></record>
+        <record id="e13_0809" model="einvoice.catalog.13"><field name="code">0809</field><field name="name">QUILLABAMBA</field></record>
+        <record id="e13_0810" model="einvoice.catalog.13"><field name="code">0810</field><field name="name">PARURO</field></record>
+        <record id="e13_0811" model="einvoice.catalog.13"><field name="code">0811</field><field name="name">PAUCARTAMBO</field></record>
+        <record id="e13_0812" model="einvoice.catalog.13"><field name="code">0812</field><field name="name">URCOS</field></record>
+        <record id="e13_0813" model="einvoice.catalog.13"><field name="code">0813</field><field name="name">URUBAMBA</field></record>
+        <record id="e13_0901" model="einvoice.catalog.13"><field name="code">0901</field><field name="name">HUANCAVELICA</field></record>
+        <record id="e13_0902" model="einvoice.catalog.13"><field name="code">0902</field><field name="name">ACOBAMBA</field></record>
+        <record id="e13_0903" model="einvoice.catalog.13"><field name="code">0903</field><field name="name">LIRCAY</field></record>
+        <record id="e13_0904" model="einvoice.catalog.13"><field name="code">0904</field><field name="name">CASTROVIRREYNA</field></record>
+        <record id="e13_0905" model="einvoice.catalog.13"><field name="code">0905</field><field name="name">CHURCAMPA</field></record>
+        <record id="e13_0906" model="einvoice.catalog.13"><field name="code">0906</field><field name="name">HUAYTARA</field></record>
+        <record id="e13_0907" model="einvoice.catalog.13"><field name="code">0907</field><field name="name">PAMPAS</field></record>
+        <record id="e13_1001" model="einvoice.catalog.13"><field name="code">1001</field><field name="name">HUANUCO</field></record>
+        <record id="e13_1002" model="einvoice.catalog.13"><field name="code">1002</field><field name="name">AMBO</field></record>
+        <record id="e13_1003" model="einvoice.catalog.13"><field name="code">1003</field><field name="name">LA UNION</field></record>
+        <record id="e13_1004" model="einvoice.catalog.13"><field name="code">1004</field><field name="name">HUACAYBAMBA</field></record>
+        <record id="e13_1005" model="einvoice.catalog.13"><field name="code">1005</field><field name="name">LLATA</field></record>
+        <record id="e13_1006" model="einvoice.catalog.13"><field name="code">1006</field><field name="name">TINGO MARIA</field></record>
+        <record id="e13_1007" model="einvoice.catalog.13"><field name="code">1007</field><field name="name">HUACRACHUCO</field></record>
+        <record id="e13_1008" model="einvoice.catalog.13"><field name="code">1008</field><field name="name">PANAO</field></record>
+        <record id="e13_1009" model="einvoice.catalog.13"><field name="code">1009</field><field name="name">PUERTO INCA</field></record>
+        <record id="e13_1010" model="einvoice.catalog.13"><field name="code">1010</field><field name="name">JESUS</field></record>
+        <record id="e13_1011" model="einvoice.catalog.13"><field name="code">1011</field><field name="name">CHAVINILLO</field></record>
+        <record id="e13_1101" model="einvoice.catalog.13"><field name="code">1101</field><field name="name">ICA</field></record>
+        <record id="e13_1102" model="einvoice.catalog.13"><field name="code">1101</field><field name="name">CHINCHA ALTA</field></record>
+        <record id="e13_1103" model="einvoice.catalog.13"><field name="code">1101</field><field name="name">NASCA</field></record>
+        <record id="e13_1104" model="einvoice.catalog.13"><field name="code">1101</field><field name="name">PALPA</field></record>
+        <record id="e13_1105" model="einvoice.catalog.13"><field name="code">1101</field><field name="name">PISCO</field></record>
+        <record id="e13_1201" model="einvoice.catalog.13"><field name="code">1201</field><field name="name">HUANCAYO</field></record>
+        <record id="e13_1202" model="einvoice.catalog.13"><field name="code">1202</field><field name="name">CONCEPCION</field></record>
+        <record id="e13_1203" model="einvoice.catalog.13"><field name="code">1203</field><field name="name">LA MERCED</field></record>
+        <record id="e13_1204" model="einvoice.catalog.13"><field name="code">1204</field><field name="name">JAUJA</field></record>
+        <record id="e13_1205" model="einvoice.catalog.13"><field name="code">1205</field><field name="name">JUNIN</field></record>
+        <record id="e13_1206" model="einvoice.catalog.13"><field name="code">1206</field><field name="name">SATIPO</field></record>
+        <record id="e13_1207" model="einvoice.catalog.13"><field name="code">1207</field><field name="name">TARMA</field></record>
+        <record id="e13_1208" model="einvoice.catalog.13"><field name="code">1208</field><field name="name">LA OROYA</field></record>
+        <record id="e13_1209" model="einvoice.catalog.13"><field name="code">1209</field><field name="name">CHUPACA</field></record>
+        <record id="e13_1301" model="einvoice.catalog.13"><field name="code">1301</field><field name="name">TRUJILLO</field></record>
+        <record id="e13_1302" model="einvoice.catalog.13"><field name="code">1302</field><field name="name">ASCOPE</field></record>
+        <record id="e13_1303" model="einvoice.catalog.13"><field name="code">1303</field><field name="name">BOLIVAR</field></record>
+        <record id="e13_1304" model="einvoice.catalog.13"><field name="code">1304</field><field name="name">CHEPEN</field></record>
+        <record id="e13_1305" model="einvoice.catalog.13"><field name="code">1305</field><field name="name">JULCAN</field></record>
+        <record id="e13_1306" model="einvoice.catalog.13"><field name="code">1306</field><field name="name">OTUZCO</field></record>
+        <record id="e13_1307" model="einvoice.catalog.13"><field name="code">1307</field><field name="name">SAN PEDRO DE LLOC</field></record>
+        <record id="e13_1308" model="einvoice.catalog.13"><field name="code">1308</field><field name="name">TAYABAMBA</field></record>
+        <record id="e13_1309" model="einvoice.catalog.13"><field name="code">1309</field><field name="name">HUAMACHUCO</field></record>
+        <record id="e13_1310" model="einvoice.catalog.13"><field name="code">1310</field><field name="name">SANTIAGO DE CHUCO</field></record>
+        <record id="e13_1311" model="einvoice.catalog.13"><field name="code">1311</field><field name="name">CASCAS</field></record>
+        <record id="e13_1312" model="einvoice.catalog.13"><field name="code">1312</field><field name="name">VIRU</field></record>
+        <record id="e13_1401" model="einvoice.catalog.13"><field name="code">1401</field><field name="name">CHICLAYO</field></record>
+        <record id="e13_1402" model="einvoice.catalog.13"><field name="code">1402</field><field name="name">FERREÑAFE</field></record>
+        <record id="e13_1403" model="einvoice.catalog.13"><field name="code">1403</field><field name="name">LAMBAYEQUE</field></record>
+        <record id="e13_1501" model="einvoice.catalog.13"><field name="code">1501</field><field name="name">LIMA</field></record>
+        <record id="e13_1502" model="einvoice.catalog.13"><field name="code">1502</field><field name="name">BARRANCA</field></record>
+        <record id="e13_1503" model="einvoice.catalog.13"><field name="code">1503</field><field name="name">CAJATAMBO</field></record>
+        <record id="e13_1504" model="einvoice.catalog.13"><field name="code">1504</field><field name="name">CANTA</field></record>
+        <record id="e13_1505" model="einvoice.catalog.13"><field name="code">1505</field><field name="name">SAN VICENTE DE CAÑETE</field></record>
+        <record id="e13_1506" model="einvoice.catalog.13"><field name="code">1506</field><field name="name">HUARAL</field></record>
+        <record id="e13_1507" model="einvoice.catalog.13"><field name="code">1507</field><field name="name">MATUCANA</field></record>
+        <record id="e13_1508" model="einvoice.catalog.13"><field name="code">1508</field><field name="name">HUACHO</field></record>
+        <record id="e13_1509" model="einvoice.catalog.13"><field name="code">1509</field><field name="name">OYON</field></record>
+        <record id="e13_1510" model="einvoice.catalog.13"><field name="code">1510</field><field name="name">YAUYOS</field></record>
+        <record id="e13_1601" model="einvoice.catalog.13"><field name="code">1601</field><field name="name">IQUITOS</field></record>
+        <record id="e13_1602" model="einvoice.catalog.13"><field name="code">1602</field><field name="name">YURIMAGUAS</field></record>
+        <record id="e13_1603" model="einvoice.catalog.13"><field name="code">1603</field><field name="name">NAUTA</field></record>
+        <record id="e13_1604" model="einvoice.catalog.13"><field name="code">1604</field><field name="name">CABALLOCOCHA</field></record>
+        <record id="e13_1605" model="einvoice.catalog.13"><field name="code">1605</field><field name="name">REQUENA</field></record>
+        <record id="e13_1606" model="einvoice.catalog.13"><field name="code">1606</field><field name="name">CONTAMANA</field></record>
+        <record id="e13_1607" model="einvoice.catalog.13"><field name="code">1607</field><field name="name">SAN LORENZO</field></record>
+        <record id="e13_1608" model="einvoice.catalog.13"><field name="code">1608</field><field name="name">SAN ANTONIO DEL ESTRECHO</field></record>
+        <record id="e13_1701" model="einvoice.catalog.13"><field name="code">1701</field><field name="name">PUERTO MALDONADO</field></record>
+        <record id="e13_1702" model="einvoice.catalog.13"><field name="code">1702</field><field name="name">MANU</field></record>
+        <record id="e13_1703" model="einvoice.catalog.13"><field name="code">1703</field><field name="name">IÑAPARI</field></record>
+        <record id="e13_1801" model="einvoice.catalog.13"><field name="code">1801</field><field name="name">MOQUEGUA</field></record>
+        <record id="e13_1802" model="einvoice.catalog.13"><field name="code">1802</field><field name="name">OMATE</field></record>
+        <record id="e13_1803" model="einvoice.catalog.13"><field name="code">1803</field><field name="name">ILO</field></record>
+        <record id="e13_1901" model="einvoice.catalog.13"><field name="code">1901</field><field name="name">CERRO DE PASCO</field></record>
+        <record id="e13_1902" model="einvoice.catalog.13"><field name="code">1902</field><field name="name">YANAHUANCA</field></record>
+        <record id="e13_1903" model="einvoice.catalog.13"><field name="code">1903</field><field name="name">OXAPAMPA</field></record>
+        <record id="e13_2001" model="einvoice.catalog.13"><field name="code">2001</field><field name="name">PIURA</field></record>
+        <record id="e13_2002" model="einvoice.catalog.13"><field name="code">2002</field><field name="name">AYABACA</field></record>
+        <record id="e13_2003" model="einvoice.catalog.13"><field name="code">2003</field><field name="name">HUANCABAMBA</field></record>
+        <record id="e13_2004" model="einvoice.catalog.13"><field name="code">2004</field><field name="name">CHULUCANAS</field></record>
+        <record id="e13_2005" model="einvoice.catalog.13"><field name="code">2005</field><field name="name">PAITA</field></record>
+        <record id="e13_2006" model="einvoice.catalog.13"><field name="code">2006</field><field name="name">SULLANA</field></record>
+        <record id="e13_2007" model="einvoice.catalog.13"><field name="code">2007</field><field name="name">TALARA</field></record>
+        <record id="e13_2008" model="einvoice.catalog.13"><field name="code">2008</field><field name="name">SECHURA</field></record>
+        <record id="e13_2101" model="einvoice.catalog.13"><field name="code">2101</field><field name="name">PUNO</field></record>
+        <record id="e13_2102" model="einvoice.catalog.13"><field name="code">2102</field><field name="name">AZANGARO</field></record>
+        <record id="e13_2103" model="einvoice.catalog.13"><field name="code">2103</field><field name="name">MACUSANI</field></record>
+        <record id="e13_2104" model="einvoice.catalog.13"><field name="code">2104</field><field name="name">JULI</field></record>
+        <record id="e13_2105" model="einvoice.catalog.13"><field name="code">2105</field><field name="name">ILAVE</field></record>
+        <record id="e13_2106" model="einvoice.catalog.13"><field name="code">2106</field><field name="name">HUANCANE</field></record>
+        <record id="e13_2107" model="einvoice.catalog.13"><field name="code">2107</field><field name="name">LAMPA</field></record>
+        <record id="e13_2108" model="einvoice.catalog.13"><field name="code">2108</field><field name="name">AYAVIRI</field></record>
+        <record id="e13_2109" model="einvoice.catalog.13"><field name="code">2109</field><field name="name">MOHO</field></record>
+        <record id="e13_2110" model="einvoice.catalog.13"><field name="code">2110</field><field name="name">PUTINA</field></record>
+        <record id="e13_2111" model="einvoice.catalog.13"><field name="code">2111</field><field name="name">JULIACA</field></record>
+        <record id="e13_2112" model="einvoice.catalog.13"><field name="code">2112</field><field name="name">SANDIA</field></record>
+        <record id="e13_2113" model="einvoice.catalog.13"><field name="code">2113</field><field name="name">YUNGUYO</field></record>
+        <record id="e13_2201" model="einvoice.catalog.13"><field name="code">2201</field><field name="name">MOYOBAMBA</field></record>
+        <record id="e13_2202" model="einvoice.catalog.13"><field name="code">2202</field><field name="name">BELLAVISTA</field></record>
+        <record id="e13_2203" model="einvoice.catalog.13"><field name="code">2203</field><field name="name">SAN JOSE DE SISA</field></record>
+        <record id="e13_2204" model="einvoice.catalog.13"><field name="code">2204</field><field name="name">SAPOSOA</field></record>
+        <record id="e13_2205" model="einvoice.catalog.13"><field name="code">2205</field><field name="name">LAMAS</field></record>
+        <record id="e13_2206" model="einvoice.catalog.13"><field name="code">2206</field><field name="name">JUANJUI</field></record>
+        <record id="e13_2207" model="einvoice.catalog.13"><field name="code">2207</field><field name="name">PICOTA</field></record>
+        <record id="e13_2208" model="einvoice.catalog.13"><field name="code">2208</field><field name="name">RIOJA</field></record>
+        <record id="e13_2209" model="einvoice.catalog.13"><field name="code">2209</field><field name="name">TARAPOTO</field></record>
+        <record id="e13_2210" model="einvoice.catalog.13"><field name="code">2210</field><field name="name">TOCACHE</field></record>
+        <record id="e13_2301" model="einvoice.catalog.13"><field name="code">2301</field><field name="name">TACNA</field></record>
+        <record id="e13_2302" model="einvoice.catalog.13"><field name="code">2302</field><field name="name">CANDARAVE</field></record>
+        <record id="e13_2303" model="einvoice.catalog.13"><field name="code">2303</field><field name="name">LOCUMBA</field></record>
+        <record id="e13_2304" model="einvoice.catalog.13"><field name="code">2304</field><field name="name">TARATA</field></record>
+        <record id="e13_2401" model="einvoice.catalog.13"><field name="code">2401</field><field name="name">TUMBES</field></record>
+        <record id="e13_2402" model="einvoice.catalog.13"><field name="code">2402</field><field name="name">ZORRITOS</field></record>
+        <record id="e13_2403" model="einvoice.catalog.13"><field name="code">2403</field><field name="name">ZARUMILLA</field></record>
+        <record id="e13_2501" model="einvoice.catalog.13"><field name="code">2501</field><field name="name">PUCALLPA</field></record>
+        <record id="e13_2502" model="einvoice.catalog.13"><field name="code">2502</field><field name="name">ATALAYA</field></record>
+        <record id="e13_2503" model="einvoice.catalog.13"><field name="code">2503</field><field name="name">AGUAYTIA</field></record>
+        <record id="e13_2504" model="einvoice.catalog.13"><field name="code">2504</field><field name="name">ESPERANZA</field></record>
+        
     </data>
 </openerp>

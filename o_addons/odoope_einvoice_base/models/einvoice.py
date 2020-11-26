@@ -132,3 +132,71 @@ class einvoice_catalog_16(models.Model):
             l_name += table.name
             result.append((table.id, l_name))
         return result
+
+class einvoice_catalog_18(models.Model):
+    _name = "einvoice.catalog.18"
+    _description = 'Codigos - Modalidad de Traslado'
+
+    code = fields.Char(string='Codigo', size=4, index=True, required=True)
+    name = fields.Char(string='Descripcion', size=128, index=True, required=True)
+	
+    @api.multi
+    @api.depends('code', 'name')
+    def name_get(self):
+        result = []
+        for table in self:
+            l_name = table.code and table.code + ' - ' or ''
+            l_name +=  table.name
+            result.append((table.id, l_name ))
+        return result
+
+class einvoice_catalog_20(models.Model):
+    _name = "einvoice.catalog.20"
+    _description = 'Codigos - Motivos de Traslado'
+
+    code = fields.Char(string='Codigo', size=4, index=True, required=True)
+    name = fields.Char(string='Descripcion', size=128, index=True, required=True)
+	
+    @api.multi
+    @api.depends('code', 'name')
+    def name_get(self):
+        result = []
+        for table in self:
+            l_name = table.code and table.code + ' - ' or ''
+            l_name +=  table.name
+            result.append((table.id, l_name ))
+        return result
+
+class einvoice_catalog_03(models.Model):
+    _name = "einvoice.catalog.03"
+    _description = 'Codigos - Unidad de Medida Comercial'
+
+    code = fields.Char(string='Codigo', size=4, index=True, required=True)
+    name = fields.Char(string='Descripcion', size=128, index=True, required=True)
+	
+    @api.multi
+    @api.depends('code', 'name')
+    def name_get(self):
+        result = []
+        for table in self:
+            l_name = table.code and table.code + ' - ' or ''
+            l_name +=  table.name
+            result.append((table.id, l_name ))
+        return result
+
+class einvoice_catalog_13(models.Model):#de la Inei
+    _name = "einvoice.catalog.13"
+    _description = 'Codigos - Ubicación Geográfica'
+
+    code = fields.Char(string='Codigo', size=4, index=True, required=True)
+    name = fields.Char(string='Descripcion', size=128, index=True, required=True)
+	
+    @api.multi
+    @api.depends('code', 'name')
+    def name_get(self):
+        result = []
+        for table in self:
+            l_name = table.code and table.code + ' - ' or ''
+            l_name +=  table.name
+            result.append((table.id, l_name ))
+        return result

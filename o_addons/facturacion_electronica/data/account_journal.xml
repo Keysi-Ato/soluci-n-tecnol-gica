@@ -8,17 +8,28 @@
                 <xpath expr="//field[@name='journal_id']" position="replace">
                     <field name="journal_id"
                         groups="account.group_account_user"
-                        options="{'no_create': True}"
                         attrs="{'readonly':[('move_name','!=',False)]}"
-                        domain="[('invoice_type_code_id','=',type_code)]"/>
-                    <!-- <field name="invoice_type_code"/> -->
-                </xpath>
+                        /><!--options="{'no_create': True}"-->
+                </xpath><!-- <field name="invoice_type_code"/>  domain="[('invoice_type_code_id','=',type_code)]"-->
+                <!--<field name="invoice_type_code"/> -->
                 <xpath expr="//page[@name='other_info']//field[@name='origin']" position="replace">
                     <field name="origin" groups="base.group_user" attrs="{'invisible':[('invoice_type_code','not in',['07','08'])],'required':[('invoice_type_code','in',['07','08'])]}"></field>
+                    <field name="invoice_type_code" />
                 </xpath>
             </field>
         </record>
-
+        <record model="ir.ui.view" id="facturacion_electronica.field_journal">
+            <field name="name">Field Journal Type</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="journal_id" />
+                    <!--<field name="invoice_type_code" />-->
+                </xpath>
+            </field>
+        </record>
+        <!-- invoice_refund-->
         <!--FACTURA BEGIN-->
         <record id="account.action_invoice_tree1" model="ir.actions.act_window">
             <field name="context">
@@ -84,12 +95,19 @@
         </record>
 
 
-        <menuitem name="Nota de Crédito"
+        <menuitem name="Nota de Credito"
                   id="menu_nota_credito"
                   action="action_credit_note"
-                  parent="account.menu_finance_receivables"/>
+                  sequence="2"
+                  parent="account.menu_finance_receivables"/><!-- ocultar account.menu_finance_receivables_documents-->
         <!--NOTA DE CRÉDITO START-->
-
+        <!--RECTIFICATIVA DEL CLIENTE  account.menu_action_invoice_out_refund -->
+            	<!--<record id="make_invisible" model="res.groups">
+                    <field name="name">Invisible</field>
+                </record>
+                <record model="ir.ui.menu" id="account.menu_action_invoice_out_refund">
+                    <field name="groups_id" eval="[(6,0,[ref('make_invisible')])]"/>
+                </record>-->
          <!--BOLETA DE VENTA BEGIN-->
         <record id="action_boleta_venta" model="ir.actions.act_window" >
             <field name="name">BOLETA DE VENTA</field>
@@ -109,7 +127,7 @@
             </field>
             <field name="search_view_id" ref="account.view_account_invoice_filter"/>
         </record>
-
+        
 
         <record id="action_invoice_refund_out_tree_tree_3" model="ir.actions.act_window.view">
             <field eval="1" name="sequence"/>
@@ -129,7 +147,9 @@
         <menuitem name="Boleta de Venta"
                   id="menu_boleta_venta"
                   action="action_boleta_venta"
-                  parent="account.menu_finance_receivables"/>
+                  sequence="4"
+                  parent="account.menu_finance_receivables"/><!--parent="account.menu_finance_receivables"-->
+        <!-- account.menu_finance_receivables_documents-->
         <!--BOLETA DE VENTA START-->
 
 
@@ -171,7 +191,9 @@
         <menuitem name="Nota de Débito"
                   id="menu_nota_debito"
                   action="facturacion_electronica.action_debit_note"
-                  parent="account.menu_finance_receivables"/>
+                  sequence="3"
+                  parent="account.menu_finance_receivables"/><!--parent="account.menu_finance_receivables"-->
+        <!-- account.menu_finance_receivables_documents-->
         <!--NOTA DE DEBITO START-->
 
     </data>

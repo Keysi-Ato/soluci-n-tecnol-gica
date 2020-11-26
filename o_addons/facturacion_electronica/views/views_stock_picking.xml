@@ -1,0 +1,109 @@
+<odoo>
+    <data>
+        <!-- Formulario INVOICE falta-->
+        <record model="ir.ui.view" id="facturacion_electronica.button_stock_picking">
+            <field name="name">Boton para generar Guia</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//button[@name='action_confirm']" position="after">
+                    <button name="generarGuiaRemision"
+                        string="Generar Guia de Remision"
+                        type="object"
+                        groups="base.group_no_one" /><!--attrs="{'invisible':[('invoice_type_code','!=','01')]}"-->
+                    <button name="firmar" 
+                        string="Firmar" 
+                        type="object"
+                        groups="base.group_no_one"/>
+                    <!--<field name="estado_envio" invisible="1" /> -->
+                    <button name="enviar"
+                        string="Enviar SUNAT"
+                        type="object"
+                        /><!--attrs="{'invisible':[('estado_envio', '=', True)]}"-->
+                    <button name="estadoTicket"
+                        string="Consultar SUNAT"
+                        type="object"/>
+                    <!--<field name="invoice_type_code" invisible="1"/>-->
+                    <!--<button name="descargarRespuesta" string="Descargar Respuesta" type="object" groups="base.group_no_one"/>-->
+                </xpath>
+            </field>
+        </record>
+
+        <!-- FORMULARIO INVOICE -->
+        <record model="ir.ui.view" id="facturacion_electronica.stock_picking_form">
+            <field name="name">Documento XML</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='partner_id']" position="after">
+                    <field name="operacionTipo"/>
+                   <!--<field name="muestra" attrs="{'readonly':[('state', '!=', 'draft')]}"/>--> 
+                    <!--<field name="type" groups="base.group_no_one"/> no va -->
+                    <!--<field name="numeracion" groups="base.group_no_one"/>
+                    <field name="final"/>-->
+                </xpath>
+                <xpath expr="//page[@name='extra']" position="after">
+                    <page string="Facturación Electrónica">
+                        <group>
+                            <group>
+                                <field name="documentoXMLcliente" filename="documentoXMLcliente_fname"></field>
+                                <field name="documentoXMLcliente_fname" invisible="1"></field>
+                            </group>
+                            <group>
+                                <field name="estado_envio" readonly="1"></field>
+                                <field name="mensajeSUNAT"></field>
+                            </group>
+                        </group>
+                    </page>
+                    <page string="Documento XML" groups="base.group_no_one">
+                        <group>
+                            <field name="documentoXML"/>
+                        </group>
+                    </page>
+                    <page string="Documento de Envío">
+                        <group>
+                            <field name="send_route"/>
+                            <field name="documentoRespuestaZip"/>
+                            <field name="documentoRespuesta"/>
+                            <field name="documentoEnvio"/>
+                        </group>
+                    </page>
+                    <page string="XML ticket" groups="base.group_no_one">
+                        <group>
+                            <field name="documentoEnvioTicket"></field>
+                        </group>
+                    </page>
+                </xpath>
+                <!--<xpath expr="//h1[@class='mt0']" position="replace">
+                    <h1 class="mt0" attrs="{'invisible':[('invoice_type_code','!=','01')]}">
+                        <label string="Factura Borrador" attrs="{'invisible': ['|',('state','not in',('draft',)), ('type','&lt;&gt;','out_invoice')]}"/>
+                        <label string="Draft Refund" attrs="{'invisible': ['|',('state','not in',('draft',)), ('type','&lt;&gt;','out_refund')]}"/>
+                        <field name="number" readonly="1" class="oe_inline" attrs="{'invisible': [('state','in',('draft',))]}"/>
+                    </h1>
+                    <h1 class="mt0" attrs="{'invisible':[('invoice_type_code','!=','03')]}">
+                        <label string="Boleta de venta Borrador" attrs="{'invisible': ['|',('state','not in',('draft',)), ('type','&lt;&gt;','out_invoice')]}"/>
+                        <label string="Draft Refund" attrs="{'invisible': ['|',('state','not in',('draft',)), ('type','&lt;&gt;','out_refund')]}"/>
+                        <field name="number" readonly="1" class="oe_inline" attrs="{'invisible': [('state','in',('draft',))]}"/>
+                    </h1>
+                    <h1 class="mt0" attrs="{'invisible':[('invoice_type_code','!=','07')]}">
+                        <label string="Nota de Crédito Borrador" attrs="{'invisible': ['|',('state','not in',('draft',)), ('type','&lt;&gt;','out_invoice')]}"/>
+                        <label string="Draft Refund" attrs="{'invisible': ['|',('state','not in',('draft',)), ('type','&lt;&gt;','out_refund')]}"/>
+                        <field name="number" readonly="1" class="oe_inline" attrs="{'invisible': [('state','in',('draft',))]}"/>
+                    </h1>
+                    <h1 class="mt0" attrs="{'invisible':[('invoice_type_code','!=','08')]}">
+                        <label string="Nota de Débito Borrador" attrs="{'invisible': ['|',('state','not in',('draft',)), ('type','&lt;&gt;','out_invoice')]}"/>
+                        <label string="Draft Refund" attrs="{'invisible': ['|',('state','not in',('draft',)), ('type','&lt;&gt;','out_refund')]}"/>
+                        <field name="number" readonly="1" class="oe_inline" attrs="{'invisible': [('state','in',('draft',))]}"/>
+                    </h1>
+                    <h1 class="mt0" attrs="{'invisible':[('invoice_type_code','!=','31')]}">
+                        <label string="Guia de Remision Borrador" attrs="{'invisible': [('state','not in',('draft',))]}"/>
+                        <label string="Draft Refund" attrs="{'invisible': ['|',('state','not in',('draft',)), ('type','&lt;&gt;','out_refund')]}"/>
+                        <field name="number" readonly="1" class="oe_inline" attrs="{'invisible': [('state','in',('draft',))]}"/>
+                    </h1>
+                </xpath>-->
+            </field>
+        </record>
+
+        
+    </data>
+</odoo>

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
 
-import InvoiceLine
-import NotaCredito
-import NotaDebito
+from . import InvoiceLine
+from . import NotaCredito
+from . import NotaDebito 

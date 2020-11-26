@@ -36,7 +36,7 @@ class Factura:
         root.setAttribute("xmlns:xsi", "http://www.w3.org/2001/XMLSchema-instance")
 
         return root
-
+    
     def UBLExtensions(self):
         extUBLExtensions = self.doc.createElement("ext:UBLExtensions")
         extUBLExtensions.appendChild(self.firma(id="placeholder"))
@@ -690,7 +690,7 @@ class Factura:
         r.appendChild(self.documentCurrencyCode(documentcurrencycode))
 
         return r
-
+    
     #########################################################################
     #########################################################################
     #########################################################################

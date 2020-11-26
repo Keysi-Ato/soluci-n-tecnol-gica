@@ -47,7 +47,7 @@ class saleOrder(models.Model):
         references = {}
         invoices_origin = {}
         invoices_name = {}
-
+        default_journal_id = self.env["account.journal"].search([["invoice_type_code_id", "=", self.tipo_documento]])
         for order in self:
             group_key = order.id if grouped else (order.partner_invoice_id.id, order.currency_id.id)
             for line in order.order_line.sorted(key=lambda l: l.qty_to_invoice < 0):
@@ -77,7 +77,9 @@ class saleOrder(models.Model):
 
         for group_key in invoices:
             invoices[group_key].write({'name': ', '.join(invoices_name[group_key]),
-                                       'origin': ', '.join(invoices_origin[group_key])})
+                                       'origin': ', '.join(invoices_origin[group_key]),
+                                       'journal_id':str(default_journal_id.id)
+                                       })
 
         if not invoices:
             raise UserError(_('There is no invoicable line.'))

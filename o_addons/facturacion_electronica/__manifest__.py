@@ -25,20 +25,31 @@
     ],
     "data": [
         "views/views.xml",
+        "views/views_stock_picking.xml",
         "views/print_reportes_contabilidad.xml",
         "views/view-activos.xml",
-        "data/account_journal.xml",
+        "data/account_journal.xml",  #falta
         "data/sequences.xml",
     ],
     "external_dependencies": {
         "python": [
             "cryptography",
-            "ipaddress",
-            "signxml",
+            "ipaddress",#instalado
+            "signxml",# instalado
             "cffi",
-            "pytesseract",
+            "pytesseract",#instalado 
             "bs4",
             "suds",
         ]
     },
-}
+    'installable': True,
+    'auto_install': False,
+    'application': True,
+}#https://poncesoft.blogspot.com/2018/04/instalacion-odoo-11-con-dockers.html
+#https://github.com/chafarleston/odooadons  
+#sudo pip3 install utils
+# contenedor 6ce2d2f851a3
+#http://puntotron.com/2018/04/10/instalar-odoo-11-y-facturacion-electronica-con-modulos-de-dansanti/
+
+#transporte http://ayuda.trescloud.com/hc/es/articles/224358267-Generar-Gu%C3%ADas-de-Remisi%C3%B3n-en-OPENERP
+#https://repositoriotec.tec.ac.cr/bitstream/handle/2238/11031/propuesta_diseno_software_facturacion_electronica.pdf?sequence=1&isAllowed=y
