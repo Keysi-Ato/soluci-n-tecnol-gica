@@ -644,13 +644,13 @@ class accountInvoice(models.Model):
     # Envia consulta a SUNAT
     @api.multi
     def enviarTicket(self):
-        url = "https://www.sunat.gob.pe/ol-it-wsconscpegem/billConsultService"
+        # url = "https://www.sunat.gob.pe/ol-it-wsconscpegem/billConsultService"
+        url = "https://e-factura.sunat.gob.pe/ol-it-wsconscpegem/billConsultService"
 
         r = requests.post(
             url=url,
             data=self.documentoEnvioTicket,
-            headers={"Content-Type": "text/xml"},
-            verify=False,
+            headers={"Content-Type": "text/xml"}
         )
 
         self.mensajeSUNAT = ET.fromstring(r.text.encode("utf-8"))[0][0][0][1].text
