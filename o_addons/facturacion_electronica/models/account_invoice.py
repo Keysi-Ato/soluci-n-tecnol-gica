@@ -526,16 +526,15 @@ class accountInvoice(models.Model):
         xfile.close()
 
         zf = zipfile.ZipFile(uri + name_file + ".zip", mode="w")
-        '''try:
+        try:
             zf.write(uri + name_file + ".xml", arcname=name_file + ".xml")
         except Exception, e:
-            zf.close()'''
+            zf.close()
         zf.close()
 
         f = open(uri + name_file + ".zip", "rb")
         data_file = f.read()
-        #data_file = data_file.encode("utf-8") 
-        self.documentoZip = base64.b64encode(data_file) #str(data_file)
+        self.documentoZip = base64.b64encode(data_file)
         self.documentoXML = ET.tostring(signed_root)
 
         f.close()
@@ -560,10 +559,10 @@ class accountInvoice(models.Model):
             verify=False,
         )
 
-        '''try:
+        try:
             self.documentoRespuestaZip = ET.fromstring(r.text)[0][0][0].text
         except Exception, e:
-            self.documentoRespuestaZip = "" '''
+            self.documentoRespuestaZip = "" 
 
         self.documentoRespuesta = r.text
 

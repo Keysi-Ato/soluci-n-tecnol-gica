@@ -136,6 +136,7 @@ class einvoice_catalog_16(models.Model):
 class einvoice_catalog_18(models.Model):
     _name = "einvoice.catalog.18"
     _description = 'Codigos - Modalidad de Traslado'
+    _order = 'code desc'
 
     code = fields.Char(string='Codigo', size=4, index=True, required=True)
     name = fields.Char(string='Descripcion', size=128, index=True, required=True)

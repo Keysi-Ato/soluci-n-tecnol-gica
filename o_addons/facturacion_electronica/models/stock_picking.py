@@ -444,10 +444,10 @@ class StockPicking(models.Model):
         xfile.close()
 
         zf = zipfile.ZipFile(uri + name_file + ".zip", mode="w")
-        '''try:
+        try:
             zf.write(uri + name_file + ".xml", arcname=name_file + ".xml")
         except Exception, e:
-            zf.close()'''
+            zf.close()
         zf.close()
 
         f = open(uri + name_file + ".zip", "rb")
@@ -478,10 +478,10 @@ class StockPicking(models.Model):
             verify=False,
         )
 
-        '''try:
+        try:
             self.documentoRespuestaZip = ET.fromstring(r.text)[0][0][0].text
         except Exception, e:
-            self.documentoRespuestaZip = "" '''
+            self.documentoRespuestaZip = "" 
 
         self.documentoRespuesta = r.text
 

@@ -20,5 +20,7 @@
     'data': [
         'views/res_currency_view.xml',
 		'views/report_test.xml',
+        'views/report_guia.xml',
+        'views/report_menu.xml',
     ],
 }
