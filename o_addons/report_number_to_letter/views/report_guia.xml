@@ -110,7 +110,9 @@
 						</tr>
 					</thead>
 					<tbody class="invoice_tbody" style="font-size:10px;">
+						<t t-set="i" t-value="1"/>
 						<tr t-foreach="o.pack_operation_product_ids" t-as="l">
+							<t t-set="i" t-value="i+1"/>
 							<td>
 								<span t-field="l.product_qty"/>
 							</td>
@@ -126,8 +128,10 @@
 				</table>
 				
 				<p><br/></p>
-				<div style="padding-top: 270px">
-				</div>
+				<p t-if="6>=i"><div style="padding-top: 270px"></div></p>
+				<p t-elif="12>i and i>6 "><div style="padding-top: 125px"></div></p>
+				<p t-else=""><div style="padding-top: 350px"></div></p>
+				<!--<p t-elif="i>12 "><div style="padding-top: 300px"</p>-->
 				<br/>
 				<div class="row">
 				
