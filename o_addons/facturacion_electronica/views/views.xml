@@ -10,6 +10,7 @@
                     <page name="sunat_config" string="SUNAT config">
                         <group>
                             <field name="send_route"/>
+                            <field name="send_route_guia"/>
                         </group>
                     </page>
                     <page name="certificados" string="Certificados Digitales">
@@ -257,7 +258,22 @@
                   <!-- <field name="tipo_venta" widget="radio" /> -->
                 <field name="tipo_documento" attrs="{'readonly':[['state','not in',['draft','sent']]],'required':True}"/>
               </xpath>
+              <!--<xpath expr="//field[@name='carrier_id']" position="replace">
+                <field name="carrier_id" invisible="1"/>
+              </xpath>-->
           </field>
       </record>
+
+      <record model="ir.ui.view" id="sin_metodo_envio">
+          <field name="name">sin_metodo_envio</field>
+          <field name="model">sale.order</field>
+          <field name="inherit_id" ref="delivery.view_order_form_with_carrier"/>
+          <field name="arch" type="xml">
+              <xpath expr="//field[@name='carrier_id']" position="replace">
+                <field name="carrier_id" invisible="1"/>
+              </xpath>
+          </field>
+      </record>
+
     </data>
 </odoo>

@@ -89,7 +89,7 @@ class ActivosFijos(models.Model):
 
 class StockPicking(models.Model):
     _inherit = "stock.picking"
-
+    _order = "min_date desc"
     pruebautils = fields.Text("utils", copy=False)
     documentoXML = fields.Text("Documento XML", default=" ", copy=False)
     documentoXMLcliente = fields.Binary("XML cliente", copy=False)
@@ -142,7 +142,7 @@ class StockPicking(models.Model):
     )
     muestra = fields.Boolean("Muestra", default=False)
     send_route = fields.Selection(
-        string="Ruta de envío", store=True, related="company_id.send_route", readonly=True
+        string="Ruta de envío", store=True, related="company_id.send_route_guia"
     )
 
     response_code = fields.Char("response_code", copy=False)
@@ -469,7 +469,7 @@ class StockPicking(models.Model):
 
     @api.multi
     def enviar(self):
-        url = self.company_id.send_route
+        url = self.company_id.send_route_guia
 
         r = requests.post(
             url=url,

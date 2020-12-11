@@ -10,6 +10,7 @@
                     <page name="sunat_config" string="SUNAT config">
                         <group>
                             <field name="send_route"/>
+                            <field name="send_route_guia"/>
                         </group>
                     </page>
                     <page name="certificados" string="Certificados Digitales">

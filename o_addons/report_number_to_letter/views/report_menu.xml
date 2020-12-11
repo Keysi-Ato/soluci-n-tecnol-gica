@@ -3,9 +3,9 @@
 	<report 
         id="action_report_guia_remi"
         model="stock.picking"
-        string="Guia de Remitente"
         report_type="qweb-pdf"
         name="report_number_to_letter.report_guia_remitente_document"
         file="report_number_to_letter.report_guia_remitente_document"
         menu="True" />
+        <!--string="Guia de Remitente"-->
 </odoo>

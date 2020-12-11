@@ -26,3 +26,8 @@ class resCompany(models.Model):
         ('https://e-beta.sunat.gob.pe/ol-ti-itcpfegem-beta/billService','Servidor Beta'),
         ('https://e-factura.sunat.gob.pe/ol-ti-itcpfegem/billService','Servidor de producción')
         ], string="Ruta de envío")
+
+    send_route_guia = fields.Selection([
+        ('https://e-beta.sunat.gob.pe/ol-ti-itemision-guia-gem-beta/billService','Servidor Beta'),
+        ('https://e-guiaremision.sunat.gob.pe/ol-ti-itemision-guia-gem/billService','Servidor de producción')
+        ], string="Ruta de envío Guía")
