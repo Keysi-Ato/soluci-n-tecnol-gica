@@ -279,9 +279,12 @@ class GuiaRemision:
             tipo_doc_identidad_cond,motivo_traslado,descrip_motiv_traslado,indicador_transbordo,
             peso_bruto_total,unidad_medida_peso,numero_de_bulto,modalidad_traslado,fecha_inicio_traslado,
             ubigeo_punto_partida,direccion_punto_partida,ubigeo_punto_llegada,direccion_punto_llegada,
-            codigo_puerto_embarque,codigo_puerto_desembarque,codigo_contenedor
+            codigo_puerto_embarque,codigo_puerto_desembarque,codigo_contenedor,id
     ):
         cacShipment = self.doc.createElement("cac:Shipment")#transporte
+        cbcId = self.doc.createElement("cbc:ID")
+        text = self.doc.createTextNode(id)#motivo de traslado
+        cbcId.appendChild(text)
         cbcHandlingCode = self.doc.createElement("cbc:HandlingCode")
         text = self.doc.createTextNode(motivo_traslado)#motivo de traslado
         cbcHandlingCode.appendChild(text)
@@ -370,6 +373,7 @@ class GuiaRemision:
         cbcID.appendChild(text)
         cacFirstArrivalPortLocation.appendChild(cbcID)
 
+        cacShipment.appendChild(cbcId)
         cacShipment.appendChild(cbcHandlingCode)
         if descrip_motiv_traslado != 'False' : 
             cacShipment.appendChild(cbcInformation)

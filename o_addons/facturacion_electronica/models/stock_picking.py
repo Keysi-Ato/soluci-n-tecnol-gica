@@ -655,7 +655,7 @@ class StockPicking(models.Model):
         Invoice = FacturaObject.InvoiceRoot(
             rootXML=Invoice,
             versionid="2.1",
-            customizationid="2.0",
+            customizationid="1.0",
             id=str(self.name),#Numeracion, conformada por serie y Número correlativo
             issuedate=str(fecha_hora[0]),#fecha emision
             issuetime=str(fecha_hora[1]),#hora de emision
@@ -757,37 +757,43 @@ class StockPicking(models.Model):
             partner_id_country_id = 'Peru'
         #trans_tab = dict.fromkeys(map(ord, u'\u0301\u0308'), None)
         #s = unicodedata.normalize('NFKC', unicodedata.normalize('NFKD', s).translate(trans_tab))
+        ubigeo_cliente = self.partner_id.zip
+        if ubigeo_cliente == False:
+            ubigeo_cliente = '000000'
+        ubigeo_compania = self.company_id.partner_id.zip
+        if ubigeo_compania == False:
+            ubigeo_compania = '000000'
 
         if self.picking_type_id.code=='incoming' :  #proveedor
             direccion_punto_llegada=str(self.company_id.partner_id.street)+' '+str(self.company_id.partner_id.street2)+' '+str(self.company_id.partner_id.city)+' '+str(self.company_id.partner_id.state_id.name)+' '+str(self.company_id.partner_id.country_id.name)
             direccion_punto_partida=str(partner_id_street)+' '+str(partner_id_street2)+' '+str(partner_id_city)+' '+str(partner_id_state_id_name)+' '+str(partner_id_country_id)
-            ubigeo_punto_partida=self.partner_id.state_id.code
-            ubigeo_punto_llegada=self.company_id.state_id.code
+            ubigeo_punto_partida=ubigeo_cliente
+            ubigeo_punto_llegada=ubigeo_compania
         elif self.picking_type_id.code=='outgoing' : #cliente
             direccion_punto_llegada=str(partner_id_street)+' '+str(partner_id_street2)+' '+str(partner_id_city)+' '+str(partner_id_state_id_name)+' '+partner_id_country_id
             direccion_punto_partida=str(self.company_id.partner_id.street)+' '+str(self.company_id.partner_id.street2)+' '+str(self.company_id.partner_id.city)+' '+str(self.company_id.partner_id.state_id.name)+' '+self.company_id.partner_id.country_id.name#falta
-            ubigeo_punto_partida=self.company_id.state_id.code
-            ubigeo_punto_llegada=self.partner_id.state_id.code
+            ubigeo_punto_partida=ubigeo_compania
+            ubigeo_punto_llegada=ubigeo_cliente
         else:
             direccion_punto_llegada=str(partner_id_street)+' '+str(partner_id_street2)+' '+str(partner_id_city)+' '+str(partner_id_state_id_name)+' '+str(partner_id_country_id)
             direccion_punto_partida=str(self.company_id.partner_id.street)+' '+str(self.company_id.partner_id.street2)+' '+str(self.company_id.partner_id.city)+' '+str(self.company_id.partner_id.state_id.name)+' '+str(self.company_id.partner_id.country_id.name)
-            ubigeo_punto_partida=self.company_id.state_id.code
-            ubigeo_punto_llegada=self.partner_id.state_id.code
+            ubigeo_punto_partida=ubigeo_compania
+            ubigeo_punto_llegada=ubigeo_cliente
         datos=self.env["stock.picking"].search([["origin", "=", self.origin]], limit=1)
         Transportista = FacturaObject.cacShipment(
-            ruc_trans=str(datos.transportista.parent_id.vat),
+            ruc_trans=str(datos.transportista.parent_id.vat),#str(datos.transportista.parent_id.vat)
             tipo_doc_identidad_trans=str(datos.transportista.parent_id.catalog_06_id.code),
             razon_social=str(datos.transportista.parent_id.registration_name),#empresa que pertenece el conductor
             placa_vehiculo=str(datos.transportista.vehiculo.licence_plate),#
             dni_conductor=str(datos.transportista.vat),
             tipo_doc_identidad_cond=str(datos.transportista.catalog_06_id.code),
-            motivo_traslado=str(datos.motivo_traslado.name),
-            descrip_motiv_traslado=str(datos.descripcion_motivo_traslado), 
+            motivo_traslado=datos.motivo_traslado.code,#venta
+            descrip_motiv_traslado=str(datos.motivo_traslado.name),#str(datos.descripcion_motivo_traslado), 
             indicador_transbordo=str(datos.Indicador_de_transbordo),
             peso_bruto_total=str(datos.weight),
             unidad_medida_peso=str(datos.weight_uom_id),
             numero_de_bulto=str(datos.number_of_packages),
-            modalidad_traslado=datos.modalidad_traslado.name,#tilde falla
+            modalidad_traslado=datos.modalidad_traslado.code,#datos.modalidad_traslado.name,#tilde falla
             fecha_inicio_traslado=str(datos.transport_date),
             ubigeo_punto_partida=str(ubigeo_punto_partida),
             direccion_punto_partida=direccion_punto_partida,#
@@ -795,7 +801,8 @@ class StockPicking(models.Model):
             direccion_punto_llegada=direccion_punto_llegada,#del cliente
             codigo_puerto_embarque=str(datos.puerto_embar.name),
             codigo_puerto_desembarque=str(datos.puerto_desembar.name),
-            codigo_contenedor=str(datos.contenedor.name)
+            codigo_contenedor=str(datos.contenedor.name),
+            id=str('02')
         )
         Invoice.appendChild(Transportista)
         if self.final:
