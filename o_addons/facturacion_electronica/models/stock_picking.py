@@ -773,7 +773,7 @@ class StockPicking(models.Model):
             direccion_punto_partida=str(self.company_id.partner_id.street)+' '+str(self.company_id.partner_id.street2)+' '+str(self.company_id.partner_id.city)+' '+str(self.company_id.partner_id.state_id.name)+' '+str(self.company_id.partner_id.country_id.name)
             ubigeo_punto_partida=self.company_id.state_id.code
             ubigeo_punto_llegada=self.partner_id.state_id.code
-        datos=self.env["stock.picking"].search([["origin", "=", self.origin]])
+        datos=self.env["stock.picking"].search([["origin", "=", self.origin]], limit=1)
         Transportista = FacturaObject.cacShipment(
             ruc_trans=str(datos.transportista.parent_id.vat),
             tipo_doc_identidad_trans=str(datos.transportista.parent_id.catalog_06_id.code),
@@ -800,7 +800,7 @@ class StockPicking(models.Model):
         Invoice.appendChild(Transportista)
         if self.final:
             facturas = (
-                self.env["sale.order"].search([["name", "=", self.origin]]).invoice_ids
+                self.env["sale.order"].search(["name", "=", self.origin]).invoice_ids
             )
             for f in facturas:
                 if f.state in ("open", "paid"):
