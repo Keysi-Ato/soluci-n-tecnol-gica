@@ -578,27 +578,30 @@ class StockPicking(models.Model):
         if self.codigoretorno in ("0001", "0002", "0003"):
             self.estado_envio = True
 
-    @api.one
-    def button_validate(self):
-        ''' Herencia de metodo original de validacion de facturas.'''
+    #@api.one
+    #def button_validate(self):
+     #   ''' Herencia de metodo original de validacion de facturas.'''
         #to_open_invoices = self.filtered(lambda inv: inv.state != "done")
         
-        res = super(StockPicking, self).button_validate()
+     #   res = super(StockPicking, self).button_validate()
         #if self.invoice_type_code == "09":
-        self.generarGuiaRemision()#
-        self.firmar()
+     #   self.generarGuiaRemision()#
+    #  self.firmar()
         #response =to_open_invoices.button_validate()
-        return res
+     #   return res
 
-    @api.one
+    @api.multi
     def do_new_transfer(self):
         ''' Herencia de metodo original de validacion de facturas.'''
         #to_open_invoices = self.filtered(lambda inv: inv.state != "done")
         
         res = super(StockPicking, self).do_new_transfer()
         #if self.invoice_type_code == "09":
+      
         self.generarGuiaRemision()#
         self.firmar()
+      #  res["state"] = "assigned"
+        #self.state="assigned"
         #response =to_open_invoices.button_validate()
         return res
 

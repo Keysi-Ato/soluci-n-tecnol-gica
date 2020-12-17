@@ -16,6 +16,7 @@
         'base',
         'account',
         'report',
+        'stock',
     ],
     'data': [
         'views/res_currency_view.xml',

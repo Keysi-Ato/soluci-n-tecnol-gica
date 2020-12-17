@@ -26,6 +26,12 @@
                     <!--<field name="invoice_type_code" invisible="1"/>-->
                     <!--<button name="descargarRespuesta" string="Descargar Respuesta" type="object" groups="base.group_no_one"/>-->
                 </xpath>
+                <xpath expr="//button[@name='do_print_picking']" position="replace">
+                    <button name="%(report_number_to_letter.action_report_guia_remi)d" string="IMPRIMIR" type="action"/>
+                </xpath>
+                <xpath expr="//button[@name='259']" position="replace">
+                
+                </xpath>
             </field>
         </record>
 

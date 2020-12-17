@@ -1,6 +1,15 @@
 # -*- coding: utf-8 -*-
 #import number_to_letter
 from odoo import models, api
+#
+#class StockPicking2(models.Model):
+    #_inherit = "stock.picking"
+
+     #@api.multi
+     #def do_print_picking(self):
+        #self.write({'printed': True})
+        #return self.env.ref('stock.action_report_guia_remi').report_action(self)
+
 
 class StockReportGuiaRemitente(models.AbstractModel):
     #_name = 'report.stock.report_guia_remitente'
