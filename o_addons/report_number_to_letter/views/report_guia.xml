@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!--<?xml version="1.0" ?>encoding="utf-8"-->
 <odoo>
 	    <template id="report_guia_remitente_document">
         	<!--<t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})"/>-->
@@ -103,8 +103,9 @@
 					<thead>
 						<tr>
 							<th>Cantidad</th>
+							<!--<th>Producto</th>-->
 							<th>Descripcion</th>
-							<th class="hidden">Source Document</th>
+							<!--<th class="hidden">Source Document</th>-->
 							<th class="text-right">Unidad de Medida</th>
 							<!--<th class="text-right">Peso</th>-->
 						</tr>
@@ -116,7 +117,8 @@
 							<td>
 								<span t-field="l.product_qty"/>
 							</td>
-						  	<td><span t-field="l.product_id"/></td>
+						  	<!--<td><span t-field="l.product_id"/></td>-->
+							<td><span t-field="l.product_descripcion"/></td>
 							<td class="text-right">
 								<span t-field="l.product_uom_id" />
 							</td>

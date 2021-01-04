@@ -52,40 +52,22 @@ TYPE2REFUND = {
     "in_refund": "in_invoice",  # Vendor Refund
 }
 
-'''
-class ActivosFijos(models.Model):
-    _name = "account.activos"
+class stockPackOperation(models.Model):
+    _inherit = "stock.pack.operation"
+    product_descripcion = fields.Char("Descripcion", compute='_compute_descrip_prod')
 
-    codigo = fields.Text("Código")
-    descripcion = fields.Text("Descripción")
-    marca = fields.Text("Marca de activo fijo")
-    modelo = fields.Text("Modelo del activo fijo")
-    serie = fields.Text("Número de serie y/o placa del activo fijo")
-    saldo = fields.Float("Saldo inicial")
-    adquisicion = fields.Text("Adquisiciones")
-    mejora = fields.Text("Mejoras")
-    retiro = fields.Text("Retiros y/o bajas")
-    otros = fields.Text("Otros ajustes")
-    historico = fields.Text("Valor histórico")
-    inflacion = fields.Text("Ajuste por inflación")
-    ajustado = fields.Text("Valor ajustado")
-    fecha_adq = fields.Date("Fecha de adquisición")
-    fecha_uso = fields.Date("Fecha de inicio de uso")
-    metodo = fields.Text("Método aplicado")
-    n_documento = fields.Text("Nro. de documento de autorización")
-    porcentaje = fields.Float("Porcentaje de depreciación")
-    acumulada = fields.Text("Depreciación acumulada al cierre del ejercicio anterior")
-    depreciacion = fields.Text("Depreciación del ejercicio")
-    depreciacion_retiro = fields.Text(
-        "Depreciación  del ejercicio relacionada con retiros y/o bajas"
-    )
-    depreciacion_otros = fields.Text("Depreciación relacionada con otros ajustes")
-    depreciacion_acumulada = fields.Text("Depreciación acumulada histórica")
-    depreciacion_ajuste = fields.Text("Ajuste por inflación de la depreciación")
-    depreciacion_acumulada_ajustada = fields.Text(
-        "Depreciación acumulada ajustada por inflación"
-    )
-'''
+    #@api.depends('product_id')
+    #def _compute_stage_fold(self):
+    #    self.product_descripcion = self.product_id.name
+    #@api.multi
+    @api.depends('picking_id','product_id')
+    def _compute_descrip_prod(self):
+        for record in self:
+            sale_ord=self.env["sale.order"].search([("name", "=", record.picking_id.origin)], limit=1)
+            #values["journal_id"] = journal.id
+            sale_ord_lin=self.env["sale.order.line"].search([("order_id", "=", sale_ord.id),("product_id", "=", record.product_id.id)])
+            for sol in sale_ord_lin:
+                record.product_descripcion = sol.name #descripcion
 
 class StockPicking(models.Model):
     _inherit = "stock.picking"
