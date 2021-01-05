@@ -72,6 +72,7 @@ class stockPackOperation(models.Model):
 class StockPicking(models.Model):
     _inherit = "stock.picking"
     _order = "min_date desc"
+    
     pruebautils = fields.Text("utils", copy=False)
     documentoXML = fields.Text("Documento XML", default=" ", copy=False)
     documentoXMLcliente = fields.Binary("XML cliente", copy=False)
@@ -579,7 +580,11 @@ class StockPicking(models.Model):
         
         res = super(StockPicking, self).do_new_transfer()
         #if self.invoice_type_code == "09":
-      
+        number_name=str(self.journal_id.sequence_id.number_next_actual)
+        number_name = number_name.zfill(self.journal_id.sequence_id.padding)
+        self.name=str(self.journal_id.sequence_id.prefix)+str(number_name)
+        self.journal_id.sequence_id.number_next_actual=self.journal_id.sequence_id.number_next_actual+self.journal_id.sequence_id.number_increment
+        #self.picking_type_id.id == 1#recepciones->1 ordenes de compra->4 
         self.generarGuiaRemision()#
         self.firmar()
       #  res["state"] = "assigned"
