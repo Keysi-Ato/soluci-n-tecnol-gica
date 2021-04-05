@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 from odoo import fields,models,api,_
 from odoo.tools.safe_eval import safe_eval
-#from utils.InvoiceLine import Factura
-from . import Factura
+from utils.InvoiceLine import Factura
 from suds.client import Client
 from suds.wsse import *
 from signxml import XMLSigner, XMLVerifier,methods
@@ -49,7 +48,7 @@ class accountInvoiceRefund(models.TransientModel):
 
                 date = form.date or False
                 description = form.description or inv.name
-                refund = inv.refund(form.date_invoice, date, description, 2 )#inv.journal_id.id
+                refund = inv.refund(form.date_invoice, date, description, inv.journal_id.id)
 
                 created_inv.append(refund.id)
                 if mode in ('cancel', 'modify'):
@@ -85,8 +84,7 @@ class accountInvoiceRefund(models.TransientModel):
                             'date': date,
                             'origin': inv.origin,
                             'fiscal_position_id': inv.fiscal_position_id.id,
-                            'invoice_type_code': '07',
-                            'journal_id': 2
+                            'invoice_type_code': '07'
                         })
                         for field in inv_obj._get_refund_common_fields():
                             if inv_obj._fields[field].type == 'many2one':

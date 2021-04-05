@@ -12,6 +12,6 @@ RUN pip install setuptools==45.0.0 pip==20.0.2
 RUN pip install lxml defusedxml bs4
 RUN pip install cryptography cffi
 RUN pip install ofxparse pyserial python-chart pyusb suds-jurko
-RUN pip install ipaddress signxml pytesseract oca-decorators pysftp culqipy pymongo
+RUN pip install ipaddress signxml pytesseract oca-decorators pysftp culqipy pymongo openupgradelib
 
 USER odoo
