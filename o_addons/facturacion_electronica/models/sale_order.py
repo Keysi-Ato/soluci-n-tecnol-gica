@@ -25,8 +25,8 @@ class saleOrder(models.Model):
             action['views'] = [(self.env.ref('account.invoice_form').id, 'form')]
             action['res_id'] = invoices.ids[0]
 
-            default_journal_id = self.env["account.journal"].search([["invoice_type_code_id", "=", self.tipo_documento]])
-            action["context"] = "{'type_code':'"+self.tipo_documento+"'}"
+            #default_journal_id = self.env["account.journal"].search([["invoice_type_code_id", "=", self.tipo_documento]])
+            #action["context"] = "{'type_code':'"+self.tipo_documento+"'}"
         else:
             action = {'type': 'ir.actions.act_window_close'}
 
@@ -47,7 +47,7 @@ class saleOrder(models.Model):
         references = {}
         invoices_origin = {}
         invoices_name = {}
-        default_journal_id = self.env["account.journal"].search([["invoice_type_code_id", "=", self.tipo_documento]])
+        default_journal_id = self.env["account.journal"].search([["invoice_type_code_id", "=", '01']])
         for order in self:
             group_key = order.id if grouped else (order.partner_invoice_id.id, order.currency_id.id)
             for line in order.order_line.sorted(key=lambda l: l.qty_to_invoice < 0):
@@ -79,7 +79,7 @@ class saleOrder(models.Model):
             invoices[group_key].write({'name': ', '.join(invoices_name[group_key]),
                                        'origin': ', '.join(invoices_origin[group_key]),
                                        'journal_id':str(default_journal_id.id)
-                                       })
+                                       })#'journal_id':str(default_journal_id.id)
 
         if not invoices:
             raise UserError(_('There is no invoicable line.'))
