@@ -1,2 +1,0 @@
-import Resumen
-import Comunicacion
